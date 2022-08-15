@@ -15,4 +15,11 @@ function defineNextConfig(config) {
 export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    domains: [
+      "lh3.googleusercontent.com", // URL for google profile pics
+      "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)F
+      "t3-larry-bucket.s3.eu-west-2.amazonaws.com",
+    ],
+  },
 });
