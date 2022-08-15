@@ -12,8 +12,57 @@ datasource db {
     referentialIntegrity = "prisma"
 }
 
-model Example {
-    id String @id @default(cuid())
+enum Role {
+    USER
+    ADMIN
+}
+
+enum Agent {
+    BRIMSTONE
+    VIPER
+    OMEN
+    KILLJOY
+    CYPHER
+    SOVA
+    SAGE
+    PHOENIX
+    JETT
+    REYNA
+    RAZE
+    BREACH
+    SKYE
+    YORU
+    ASTRA
+    CHAMBER
+    NEON
+    FADE
+}
+
+enum Map {
+    BIND
+    HAVEN
+    SPLIT
+    ASCENT
+    ICEBOX
+    BREEZE
+    FRACTURE
+    PEARL
+}
+
+model Lineup {
+    id        String   @id @default(cuid())
+    title     String
+    creator   String
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+    agent     Agent
+    map       Map
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    // TODO: Make image NOT optional once proper fileupload is setup
+    image     String?
+    text      String?
+    votes     Int      @default(0)
 }
 
 // Necessary for Next auth
@@ -51,6 +100,8 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    Role          Role      @default(USER)
+    Lineups       Lineup[]
 }
 
 model VerificationToken {

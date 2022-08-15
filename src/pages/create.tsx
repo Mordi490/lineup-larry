@@ -73,6 +73,7 @@ const Create = () => {
     } catch (e) {
       console.log(e);
     }
+    // TODO: give user feedback on success and redirect?
   };
 
   if (!session)

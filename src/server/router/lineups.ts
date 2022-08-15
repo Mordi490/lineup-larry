@@ -4,10 +4,7 @@ import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { createLineupSchema } from "./schemas/lineup.schema";
 import { s3 } from "../../utils/FileUpload";
-import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { PresignedPost } from "aws-sdk/clients/s3";
-import { createPresingdPost } from "../../utils/FileUpload";
 
 /**
  * Default selector for Lineup.
@@ -157,7 +154,7 @@ export const proctedLineupRouter = createRouter()
             Expires: 120, // time in seconds the user have to upload,
             Bucket: process.env.BUCKET_NAME,
             Conditions: [
-              // TODO: make it also accept videos
+              // TODO: support video + mutliple files, consider uploading to a folder
               ["starts-with", "$Content-Type", "image/"], // whitelist images for now
               ["content-length-range", 0, 1024 * 1024 * 18], // 18 mb limit for now
             ],

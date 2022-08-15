@@ -5,15 +5,19 @@ import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
+import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
-    </SessionProvider>
+    <>
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
+      <Toaster />
+    </>
   );
 };
 
