@@ -22,18 +22,17 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
-// schema types: edit, create, delete?
+// describes the form object for creating & editing lineups
 export const lineupFormValues = z.object({
-  title: z.string(),
-  agent: z.string(),
-  map: z.string(),
-  text: z.string(),
+  title: z.string().min(1, { message: "Required" }),
+  agent: z.string().min(1, { message: "Required" }),
+  map: z.string().min(1, { message: "Required" }),
+  text: z.string().min(1, { message: "Required" }),
   image: z.any(),
 });
 
 export const createLineupSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
-  // TODO: confirm that these can be set via trpc endpoint
   creator: z.string(),
   userId: z.string(),
   // TODO: double chek the refine behavior
@@ -44,7 +43,17 @@ export const createLineupSchema = z.object({
   image: z.any(),
 });
 
+export const editLineupSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  agent: z.string().refine((val) => Agent.map((agent) => agent)),
+  map: z.string().refine((val) => Map.map((map) => map)),
+  text: z.string().min(1, { message: "Text is required" }),
+  // TODO: force multiple files to be selected
+  image: z.any(),
+});
+
 /**
+ * Attempt at file upload validationF
  * any()
     .refine((files) => files?.length == 1, "Image is required")
     .refine((files) => files?.[0].size <= MAX_FILE_SIZE, "Max file size is 5MB")

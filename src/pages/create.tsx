@@ -22,8 +22,7 @@ const Create = () => {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm({
-    mode: "all",
+  } = useForm<formSchemaType>({
     resolver: zodResolver(lineupFormValues),
   });
 
@@ -52,6 +51,7 @@ const Create = () => {
     }
 
     // send image to s3
+    // TODO: error handling, make sure this only conts if successful
     const s3Res = await fetch(url, {
       method: "POST",
       body: formData,
@@ -64,7 +64,6 @@ const Create = () => {
       agent: formInput.agent,
       map: formInput.map,
       text: formInput.text,
-      // image val SHOULD have been overwritten to the s3Url by
       image: fields.Key,
     };
 
