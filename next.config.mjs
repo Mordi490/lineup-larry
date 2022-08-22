@@ -17,6 +17,7 @@ export default defineNextConfig({
   swcMinify: true,
   images: {
     domains: [
+      "cdn.discordapp.com", // URL for discord profile pics
       "lh3.googleusercontent.com", // URL for google profile pics
       "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)F
       "t3-larry-bucket.s3.eu-west-2.amazonaws.com",

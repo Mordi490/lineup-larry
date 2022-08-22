@@ -2,7 +2,7 @@ import { createRouter } from "./context";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { createLineupSchema } from "./schemas/lineup.schema";
+import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 import { s3 } from "../../utils/FileUpload";
 import { v4 as uuidv4 } from "uuid";
 
@@ -49,18 +49,19 @@ export const lineupRouter = createRouter()
   // fetch byId
   .query("by-id", {
     input: z.object({
-      id: z.string().cuid(),
+      id: z.string(),
     }),
     async resolve({ input }) {
-      const { id } = input;
       const lineup = await prisma?.lineup.findUnique({
-        where: { id },
+        where: {
+          id: input.id,
+        },
         select: defaultLineupSelect,
       });
       if (!lineup) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: `No lineup with id ${id}`,
+          message: `No lineup with id ${input.id}`,
         });
       }
       return lineup;
@@ -96,20 +97,16 @@ export const proctedLineupRouter = createRouter()
       return lineup?.id;
     },
   })
-  .mutation("edit", {
+  .mutation("update-lineup", {
     input: z.object({
-      id: z.string().cuid(),
-      data: z.object({
-        title: z.string().optional(),
-        text: z.string().optional(),
-      }),
+      id: z.string(),
+      data: editLineupSchema,
     }),
     async resolve({ input, ctx }) {
       const { id, data } = input;
       const lineup = await ctx.prisma.lineup.update({
         where: { id },
         data,
-        select: defaultLineupSelect,
       });
       return lineup;
     },
@@ -163,6 +160,51 @@ export const proctedLineupRouter = createRouter()
             if (err) return reject(err);
             // returns url and fields if successful
             resolve(signed);
+          }
+        );
+      });
+    },
+  })
+  // TODO: confirm that this works
+  .mutation("delete-s3-object", {
+    input: z.object({
+      id: z.string(), // lineup id
+    }),
+    async resolve({ input, ctx }) {
+      if (!ctx.session) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You need to be logged in to perform this action",
+        });
+      }
+      // fetch current lineup date
+      const lineup = await ctx.prisma.lineup.findUnique({
+        where: { id: input.id },
+      });
+      if (!lineup) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `No lineup with id: ${input.id}`,
+        });
+      }
+
+      // deletion process
+      return new Promise((resolve, reject) => {
+        s3.deleteObject(
+          {
+            Bucket: process.env.BUCKET_NAME,
+            Key: lineup?.image,
+          },
+          (err, success) => {
+            if (err) {
+              reject(err);
+              throw new TRPCError({
+                // TODO: Figure out a less cryptic err msg
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Failed to communicate with server",
+              });
+            }
+            resolve(success);
           }
         );
       });
