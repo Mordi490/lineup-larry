@@ -5,7 +5,7 @@ import superjson from "superjson";
 import { protectedExampleRouter } from "./protected-example-router";
 import { lineupRouter, proctedLineupRouter } from "./lineups";
 import { userRouter, privateUserRouter } from "./user";
-import { commentRouter } from "./comments";
+import { commentRouter, protectedCommentRouter } from "./comments";
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -14,7 +14,8 @@ export const appRouter = createRouter()
   .merge("privateLineup.", proctedLineupRouter)
   .merge("user.", userRouter)
   .merge("privateUserRouter.", privateUserRouter)
-  .merge("commentRouter.", commentRouter);
+  .merge("commentRouter.", commentRouter)
+  .merge("protectedCommentRouter.", protectedCommentRouter);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

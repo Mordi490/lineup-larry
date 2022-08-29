@@ -5,8 +5,45 @@ import { trpc } from "../../utils/trpc";
 import Image from "next/image";
 import Nav from "../../../components/Nav";
 import { FaMinus, FaPlus } from "react-icons/fa";
+import { z } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { commentForm } from "../../server/router/schemas/comment.schema";
+import { userRouter } from "../../server/router/user";
 
 const SpecificLineup = () => {
+  type formSchemaType = z.infer<typeof commentForm>;
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<formSchemaType>({
+    resolver: zodResolver(commentForm),
+  });
+
+  const { mutate: createComment } = trpc.useMutation([
+    "protectedCommentRouter.create-comment",
+  ]);
+
+  const onSubmit: SubmitHandler<formSchemaType> = async (input) => {
+    /**
+     * we need: user, content, lineup
+     */
+    // see id above
+    const test = {
+      content: input.content,
+      lineupId: lineupQuery?.id,
+    };
+
+    try {
+      createComment(test);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const { data } = useSession();
   const id = useRouter().query.id as string;
   const { data: lineupQuery, isLoading } = trpc.useQuery([
@@ -81,16 +118,40 @@ const SpecificLineup = () => {
       </div>
       <hr className="my-4" />
       <div>
-        <h1>Write a comment</h1>
+        <h1 className="text-center text-xl font-bold">Write a comment</h1>
+        <form className="" onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex justify-center">
+            <textarea
+              placeholder="Write a comment..."
+              className="text-white bg-gray-600 w-1/3 h-32"
+              {...register("content")}
+              disabled={isSubmitting}
+            ></textarea>
+            {errors.content && (
+              <p className="text-sm text-red-600 mt-1">
+                {errors.content.message}
+              </p>
+            )}
+          </div>
+          <div className="mt-4 flex w-5/6 justify-end">
+            <button
+              type="submit"
+              className=" h-fit w-fit px-8 py-4 uppercase text-white font-semibold bg-blue-600 rounded-lg disabled:bg-gray-100 disabled:text-gray-400"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Uploading..." : "Submit"}
+            </button>
+          </div>
+        </form>
       </div>
       <hr className="my-4" />
 
       <div className="container flex flex-col gap-2 sm:mx-1">
         <h1 className="text-xl">Comment section</h1>
         {comments?.map((comment) => (
-          <section key={comment.id}>
+          <section key={comment.id} className="border border-1 ">
             <article className="flex justify-start">
-              <div className="flex flex-col">
+              <div className="flex flex-colz">
                 <Link href={`/user/${comment.user.id}`}>
                   <a>
                     <div className="text-sm w-16 truncate font-semibold hover:text-clip">
@@ -106,9 +167,9 @@ const SpecificLineup = () => {
                   </a>
                 </Link>
               </div>
-              <div className="flex flex-col">
-                <p className="text-xl my-auto">{comment.content}</p>
-                <p className="text-sm italic justify-end">
+              <div className="flex flex-col grow">
+                <p className="text-xl mt-6">{comment.content}</p>
+                <p className="text-sm italic flex justify-end">
                   Posted on: {new Date(comment.date).toLocaleString()}
                 </p>
               </div>

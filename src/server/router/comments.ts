@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { createRouter } from "./context";
 import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import { createCommentSchema } from "./schemas/comment.schema";
 
 const defaultCommentSelect = Prisma.validator<Prisma.CommentSelect>()({
   id: true,
@@ -31,3 +33,33 @@ export const commentRouter = createRouter().query("get-lineup-comments", {
     return comments;
   },
 });
+
+export const protectedCommentRouter = createRouter().mutation(
+  "create-comment",
+  {
+    input: createCommentSchema,
+    async resolve({ ctx, input }) {
+      // find the lineup first
+      const lineup = await ctx.prisma.lineup.findUnique({
+        where: { id: input.lineupId },
+      });
+
+      if (!lineup) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `No lineup with id: ${input.lineupId}`,
+        });
+      }
+
+      const comment = await ctx.prisma.comment.create({
+        data: {
+          ...input,
+          lineupId: lineup.id,
+          userId: ctx.session?.user?.id,
+        },
+      });
+
+      return comment;
+    },
+  }
+);
