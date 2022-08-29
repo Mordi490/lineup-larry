@@ -1,4 +1,3 @@
-import { Comment, Lineup } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -81,24 +80,31 @@ const SpecificLineup = () => {
         </button>
       </div>
       <hr className="my-4" />
+      <div>
+        <h1>Write a comment</h1>
+      </div>
+      <hr className="my-4" />
+
       <div className="container flex flex-col gap-2 sm:mx-1">
         <h1 className="text-xl">Comment section</h1>
         {comments?.map((comment) => (
           <section key={comment.id}>
             <article className="flex justify-start">
               <div className="flex flex-col">
-                <div className="">
-                  <div className="text-sm w-16 truncate font-semibold">
-                    {comment.user.name}
-                  </div>
-                  <Image
-                    src={comment.user.image}
-                    width={48}
-                    height={48}
-                    alt={`${comment.user.name}'s profile picture`}
-                    className="rounded-full"
-                  />
-                </div>
+                <Link href={`/user/${comment.user.id}`}>
+                  <a>
+                    <div className="text-sm w-16 truncate font-semibold hover:text-clip">
+                      {comment.user.name}
+                    </div>
+                    <Image
+                      src={comment.user.image}
+                      width={48}
+                      height={48}
+                      alt={`${comment.user.name}'s profile picture`}
+                      className="rounded-full"
+                    />
+                  </a>
+                </Link>
               </div>
               <div className="flex flex-col">
                 <p className="text-xl my-auto">{comment.content}</p>
