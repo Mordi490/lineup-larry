@@ -50,19 +50,30 @@ enum Map {
 }
 
 model Lineup {
-    id        String   @id @default(cuid())
+    id        String    @id @default(cuid())
     title     String
     creator   String
     userId    String
-    user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+    user      User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
     agent     Agent
     map       Map
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
     // TODO: Make image NOT optional once proper fileupload is setup
     image     String?
     text      String?
-    votes     Int      @default(0)
+    votes     Int       @default(0)
+    comments  Comment[]
+}
+
+model Comment {
+    id       String   @id @default(uuid())
+    user     User     @relation(fields: [userId], references: [id])
+    content  String
+    date     DateTime @default(now())
+    Lineup   Lineup   @relation(fields: [lineupId], references: [id])
+    lineupId String
+    userId   String
 }
 
 // Necessary for Next auth
@@ -102,6 +113,7 @@ model User {
     sessions      Session[]
     Role          Role      @default(USER)
     Lineups       Lineup[]
+    Comment       Comment[]
 }
 
 model VerificationToken {

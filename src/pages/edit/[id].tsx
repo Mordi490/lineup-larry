@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { PresignedPost } from "aws-sdk/clients/s3";
 import Image from "next/image";
+import Nav from "../../../components/Nav";
 
 const EditLineup = () => {
   const { data: session } = useSession();
@@ -136,9 +137,9 @@ const EditLineup = () => {
         <title>Edit {lineup?.title}</title>
       </Head>
 
-      <h1 className="text-center text-2xl text-bold mt-2">
-        Editing {lineup?.title}
-      </h1>
+      <Nav />
+
+      <h1 className="text-center text-2xl text-bold mt-2">Editing Lineup</h1>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="py-8 px-6 shadow rounded-lg sm:px-10">
@@ -237,9 +238,6 @@ const EditLineup = () => {
             </button>
           </form>
         </div>
-        <hr className="my-8" />
-        <p>HEHEHEH</p>
-        <pre>{JSON.stringify(watch(), null, 4)}</pre>
       </div>
     </>
   );

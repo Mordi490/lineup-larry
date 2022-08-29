@@ -2,10 +2,10 @@
 import { createRouter } from "./context";
 import superjson from "superjson";
 
-import { exampleRouter } from "./example";
 import { protectedExampleRouter } from "./protected-example-router";
 import { lineupRouter, proctedLineupRouter } from "./lineups";
 import { userRouter, privateUserRouter } from "./user";
+import { commentRouter } from "./comments";
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -13,7 +13,8 @@ export const appRouter = createRouter()
   .merge("lineup.", lineupRouter)
   .merge("privateLineup.", proctedLineupRouter)
   .merge("user.", userRouter)
-  .merge("privateUserRouter.", privateUserRouter);
+  .merge("privateUserRouter.", privateUserRouter)
+  .merge("commentRouter.", commentRouter);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

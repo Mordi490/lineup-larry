@@ -46,7 +46,7 @@ const Nav = () => {
           {session && (
             <>
               <Menu as="div" className="relative inline-block text-left">
-                <Menu.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 sm font-medium text-white hover:focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+                <Menu.Button className="inline-flex justify-center w-full rounded-md border border-sky-300 shadow-sm px-4 py-2 sm font-medium text-white hover:focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
                   <Image
                     src={session?.user?.image}
                     height={64}

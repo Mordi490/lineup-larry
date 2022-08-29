@@ -4,6 +4,7 @@ import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import Nav from "../../components/Nav";
 import { trpc } from "../utils/trpc";
 
 const Lineups: NextPage = () => {
@@ -22,6 +23,7 @@ const Lineups: NextPage = () => {
 
   return (
     <>
+      <Nav />
       <h1 className="text-4xl text-center mb-4">Lineups</h1>
       <main className="container ml-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {data?.map((lineup) => (

@@ -1,9 +1,10 @@
-import { Lineup } from "@prisma/client";
+import { Comment, Lineup } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import Image from "next/image";
+import Nav from "../../../components/Nav";
 import { FaMinus, FaPlus } from "react-icons/fa";
 
 const SpecificLineup = () => {
@@ -14,12 +15,18 @@ const SpecificLineup = () => {
     { id },
   ]);
 
+  const { data: comments, isSuccess } = trpc.useQuery([
+    "commentRouter.get-lineup-comments",
+    { id },
+  ]);
+
   if (isLoading) {
     return "...Loading";
   }
 
   return (
     <>
+      <Nav />
       <h1 className="text-center font-bold text-3xl pt-2">
         {lineupQuery?.title}
       </h1>
@@ -73,8 +80,60 @@ const SpecificLineup = () => {
           <FaMinus />
         </button>
       </div>
+      <hr className="my-4" />
+      <div className="container flex flex-col gap-2 sm:mx-1">
+        <h1 className="text-xl">Comment section</h1>
+        {comments?.map((comment) => (
+          <section key={comment.id}>
+            <article className="flex justify-start">
+              <div className="flex flex-col">
+                <div className="">
+                  <div className="text-sm w-16 truncate font-semibold">
+                    {comment.user.name}
+                  </div>
+                  <Image
+                    src={comment.user.image}
+                    width={48}
+                    height={48}
+                    alt={`${comment.user.name}'s profile picture`}
+                    className="rounded-full"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <p className="text-xl my-auto">{comment.content}</p>
+                <p className="text-sm italic justify-end">
+                  Posted on: {new Date(comment.date).toLocaleString()}
+                </p>
+              </div>
+            </article>
+          </section>
+        ))}
+      </div>
     </>
   );
+};
+
+export const Comments = (comments) => {
+  /**
+   * I am too dumb for this rn:
+   * 
+   *   if (!comments) {
+    return (
+      <>
+        <h1>No comments here yet</h1>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {comments.map((comment: Comment) => (
+        <section key={comment.id}>{comment.content}</section>
+      ))}
+    </>
+  );
+   */
 };
 
 export default SpecificLineup;

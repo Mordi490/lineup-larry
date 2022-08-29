@@ -23,6 +23,12 @@ const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   Lineups: false,
 });
 
+// Might not be needed
+const userCommentInfo = Prisma.validator<Prisma.UserSelect>()({
+  name: true,
+  image: true,
+});
+
 export const userRouter = createRouter().query("get-user", {
   input: z.object({
     id: z.string(),
