@@ -20,12 +20,14 @@ const Lineups = () => {
       <h1 className="text-center text-lg">
         Here are all the lineups for the user: {userInfo?.name}
       </h1>
-      <Image
-        src={userInfo?.image}
-        height={64}
-        width={64}
-        alt="Discord profile picture"
-      />
+      {userInfo?.image && (
+        <Image
+          src={userInfo?.image}
+          height={64}
+          width={64}
+          alt="Discord profile picture"
+        />
+      )}
       <p>Display high lvl info: # lineups, total votes, etc </p>
 
       <h1>hehehe remove l8er</h1>

@@ -9,7 +9,6 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { commentForm } from "../../server/router/schemas/comment.schema";
-import { userRouter } from "../../server/router/user";
 
 const SpecificLineup = () => {
   type formSchemaType = z.infer<typeof commentForm>;
@@ -17,7 +16,6 @@ const SpecificLineup = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<formSchemaType>({
     resolver: zodResolver(commentForm),
@@ -26,23 +24,6 @@ const SpecificLineup = () => {
   const { mutate: createComment } = trpc.useMutation([
     "protectedCommentRouter.create-comment",
   ]);
-
-  const onSubmit: SubmitHandler<formSchemaType> = async (input) => {
-    /**
-     * we need: user, content, lineup
-     */
-    // see id above
-    const test = {
-      content: input.content,
-      lineupId: lineupQuery?.id,
-    };
-
-    try {
-      createComment(test);
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   const { data } = useSession();
   const id = useRouter().query.id as string;
@@ -56,20 +37,37 @@ const SpecificLineup = () => {
     { id },
   ]);
 
+  const onSubmit: SubmitHandler<formSchemaType> = async (input) => {
+    const comment = {
+      content: input.content,
+      lineupId: id,
+    };
+
+    try {
+      createComment(comment);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   if (isLoading) {
     return "...Loading";
+  }
+
+  if (!lineupQuery) {
+    return "Somewting went wrong";
   }
 
   return (
     <>
       <Nav />
       <h1 className="text-center font-bold text-3xl pt-2">
-        {lineupQuery?.title}
+        {lineupQuery.title}
       </h1>
       <div className="flex justify-between py-4">
         <div className="flex justify-start">
           <div>Created by: </div>
-          <Link href={`/user/${lineupQuery?.user.id}`}>
+          <Link href={`/user/${lineupQuery.user.id}`}>
             <span className="text-blue-400 underline ml-1 font-bold">
               {lineupQuery?.user.name}
             </span>
@@ -79,19 +77,19 @@ const SpecificLineup = () => {
           <div>
             Created at:
             <span className="ml-1 font-semibold">
-              {lineupQuery?.createdAt.toDateString()}
+              {lineupQuery.createdAt.toDateString()}
             </span>
           </div>
           <div>
             Last edit:
             <span className="ml-1 font-semibold">
-              {lineupQuery?.updatedAt.toDateString()}
+              {lineupQuery.updatedAt.toDateString()}
             </span>
           </div>
 
           {/* Conditional render of edit button */}
-          {lineupQuery?.user.id === data?.user?.id ? (
-            <Link href={`/edit/${lineupQuery?.id}`}>
+          {lineupQuery.user.id === data?.user?.id ? (
+            <Link href={`/edit/${lineupQuery.id}`}>
               <button className="rounded bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl w-12 h-8">
                 Edit
               </button>
@@ -100,9 +98,9 @@ const SpecificLineup = () => {
         </div>
       </div>
       <hr />
-      <p className="py-4">{lineupQuery?.text}</p>
+      <p className="py-4">{lineupQuery.text}</p>
       <Image
-        src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${lineupQuery?.image}`}
+        src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${lineupQuery.image}`}
         alt="Valorant screenshot"
         width={1080}
         height={600}
@@ -157,13 +155,15 @@ const SpecificLineup = () => {
                     <div className="text-sm w-16 truncate font-semibold hover:text-clip">
                       {comment.user.name}
                     </div>
-                    <Image
-                      src={comment.user.image}
-                      width={48}
-                      height={48}
-                      alt={`${comment.user.name}'s profile picture`}
-                      className="rounded-full"
-                    />
+                    {comment.user.image && (
+                      <Image
+                        src={comment.user.image}
+                        width={48}
+                        height={48}
+                        alt={`${comment.user.name}'s profile picture`}
+                        className="rounded-full"
+                      />
+                    )}
                   </a>
                 </Link>
               </div>
@@ -179,28 +179,6 @@ const SpecificLineup = () => {
       </div>
     </>
   );
-};
-
-export const Comments = (comments) => {
-  /**
-   * I am too dumb for this rn:
-   * 
-   *   if (!comments) {
-    return (
-      <>
-        <h1>No comments here yet</h1>
-      </>
-    );
-  }
-
-  return (
-    <>
-      {comments.map((comment: Comment) => (
-        <section key={comment.id}>{comment.content}</section>
-      ))}
-    </>
-  );
-   */
 };
 
 export default SpecificLineup;

@@ -60,7 +60,7 @@ model Lineup {
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     // TODO: Make image NOT optional once proper fileupload is setup
-    image     String?
+    image     String
     text      String?
     votes     Int       @default(0)
     comments  Comment[]
@@ -108,7 +108,7 @@ model User {
     name          String?
     email         String?   @unique
     emailVerified DateTime?
-    image         String?
+    image         String
     accounts      Account[]
     sessions      Session[]
     Role          Role      @default(USER)

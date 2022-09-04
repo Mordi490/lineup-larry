@@ -5,24 +5,24 @@ import Image from "next/image";
 import { FaDiscord } from "react-icons/fa";
 import { Menu, Transition } from "@headlessui/react";
 import { forwardRef } from "react";
-import { NextComponentType } from "next";
 
+/** See if we can do without these
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 // https://headlessui.com/react/menu#integrating-with-next-js
-// eslint-disable-next-line react/display-name
-const NextLink = forwardRef((props, ref) => {
+const MyLink = forwardRef((props, ref) => {
   let { href, children, ...rest } = props;
   return (
     <Link href={href}>
-      <a ref={ref as any} {...rest}>
+      <a ref={ref} {...rest}>
         {children}
       </a>
     </Link>
   );
 });
+*/
 
 const Nav = () => {
   const { data: session } = useSession();
@@ -42,13 +42,14 @@ const Nav = () => {
 
         {/* right side */}
         <div className="flex gap-2 justify-end">
+          {/* Conditional render logged in vs login */}
           {/* if logged in */}
-          {session && (
+          {session?.user?.image ? (
             <>
               <Menu as="div" className="relative inline-block text-left">
                 <Menu.Button className="inline-flex justify-center w-full rounded-md border border-sky-300 shadow-sm px-4 py-2 sm font-medium text-white hover:focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
                   <Image
-                    src={session?.user?.image}
+                    src={session.user.image}
                     height={64}
                     width={64}
                     alt="Discord profile picture"
@@ -56,46 +57,43 @@ const Nav = () => {
                 </Menu.Button>
                 <Menu.Items className="absolute right-0 bg-white rounded-md shadow-lg border w-48">
                   <Menu.Item>
-                    <NextLink
+                    <Link
                       href={`/${session.user?.id}/lineups`}
                       className="block px-4 py-2 text-sm text-white"
                     >
                       Your Lineups
-                    </NextLink>
+                    </Link>
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <NextLink
+                      <Link
                         href={`/create`}
                         className="block px-4 py-2 text-sm text-white"
                       >
                         Submit Lineup
-                      </NextLink>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
-                    <NextLink
+                    <Link
                       href={`/user/${session.user?.id}`}
                       className="block px-4 py-2 text-sm text-white"
                     >
                       View Profile
-                    </NextLink>
+                    </Link>
                   </Menu.Item>
                   <Menu.Item>
-                    <NextLink
+                    <Link
                       href={`/api/auth/signout`}
                       className="block px-4 py-2 text-sm text-white"
                     >
                       Logout
-                    </NextLink>
+                    </Link>
                   </Menu.Item>
                 </Menu.Items>
               </Menu>
             </>
-          )}
-
-          {/* not logged in */}
-          {session == null && (
+          ) : (
             <Link href="/api/auth/signin">
               <button className="flex gap-2 rounded-full bg-gray-200 p-4 font-bold text-gray-800 hover:bg-gray-100">
                 Login via Discord

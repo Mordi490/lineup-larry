@@ -2,8 +2,7 @@ import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Agent from "../../../utils/Agent";
-import Map from "../../../utils/Map";
+import { Agent, Map, TypedKeys } from "../../../utils/enums";
 import { lineupFormValues } from "../../server/router/schemas/lineup.schema";
 import { trpc } from "../../utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,12 +16,14 @@ const EditLineup = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
+  const agentList = TypedKeys(Agent);
+  const mapList = TypedKeys(Map);
+
   type formSchemaType = z.infer<typeof lineupFormValues>;
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<formSchemaType>({
     resolver: zodResolver(lineupFormValues),
@@ -85,13 +86,19 @@ const EditLineup = () => {
 
     // create a new S3 object
     // HAS TO BE DONE FIRST IN ORDER TO OBTAIN THE IMAGE URL
-    const fileType: String = formInput.image?.[0].type;
+    const fileType: string = formInput.image?.[0].type;
     const file: File = formInput.image[0];
 
     const { url, fields }: { url: string; fields: PresignedPost.Fields } =
       await preSignedUrl();
 
-    const s3Data = {
+    interface S3ImageData {
+      "Content-Type": string;
+      file: File;
+      Policy: string;
+      "X-Amz-Signature": string;
+    }
+    const s3Data: S3ImageData = {
       ...fields,
       "Content-Type": fileType,
       file,
@@ -99,7 +106,7 @@ const EditLineup = () => {
 
     const formData = new FormData();
     for (const name in s3Data) {
-      formData.append(name, s3Data[name]);
+      formData.append(name, s3Data[name as keyof S3ImageData]);
     }
 
     // send updated image to s3
@@ -116,6 +123,7 @@ const EditLineup = () => {
     // update db
     const updatedLineupObject = {
       title: formInput.title,
+      // TODO: determine if we care about creator/userID anymore
       creator: session.user?.name as string,
       userId: session.user?.id as string,
       agent: formInput.agent,
@@ -126,7 +134,7 @@ const EditLineup = () => {
 
     const updateRes = updatedLineup({
       id: currS3Key,
-      data: updatedLineupObject,
+      updatedData: updatedLineupObject,
     });
   };
 
@@ -166,8 +174,8 @@ const EditLineup = () => {
                   <option value="Agent" placeholder={`${lineup?.agent}`}>
                     {lineup?.agent}
                   </option>
-                  {Agent.map((agent) => (
-                    <option key={agent} value={agent} disabled={isSubmitting}>
+                  {agentList.map((agent) => (
+                    <option value={agent} key={agent} disabled={isSubmitting}>
                       {agent}
                     </option>
                   ))}
@@ -185,7 +193,7 @@ const EditLineup = () => {
               <div className="mt-1">
                 <select {...register("map")} className="text-black">
                   <option placeholder={`${lineup?.map}`}>{lineup?.map}</option>
-                  {Map.map((map) => (
+                  {mapList.map((map) => (
                     <option key={map} value={map} disabled={isSubmitting}>
                       {map}
                     </option>

@@ -1,5 +1,4 @@
 import { S3 } from "aws-sdk/";
-import { PresignedPost } from "aws-sdk/clients/s3";
 
 // init && conf s3 client
 export const s3 = new S3({

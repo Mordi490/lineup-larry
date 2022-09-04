@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 import { s3 } from "../../utils/FileUpload";
 import { v4 as uuidv4 } from "uuid";
+import { S3 } from "aws-sdk";
 
 /**
  * Default selector for Lineup.
@@ -100,13 +101,19 @@ export const proctedLineupRouter = createRouter()
   .mutation("update-lineup", {
     input: z.object({
       id: z.string(),
-      data: editLineupSchema,
+      updatedData: editLineupSchema,
     }),
     async resolve({ input, ctx }) {
-      const { id, data } = input;
+      const { id, updatedData } = input;
       const lineup = await ctx.prisma.lineup.update({
-        where: { id },
-        data,
+        where: { id: input.id },
+        data: {
+          title: updatedData.title,
+          agent: updatedData.agent,
+          map: updatedData.map,
+          image: updatedData.image,
+          text: updatedData.text,
+        },
       });
       return lineup;
     },
@@ -122,9 +129,13 @@ export const proctedLineupRouter = createRouter()
       }
       const lineup = await ctx.prisma.lineup.create({
         data: {
-          ...input,
+          title: input.title,
+          text: input.text,
+          image: input.image,
+          agent: input.agent,
+          map: input.map,
+          userId: input.userId,
           creator: ctx.session.user.name as string,
-          userId: ctx.session.user.id,
         },
       });
 
@@ -141,27 +152,17 @@ export const proctedLineupRouter = createRouter()
       }
       const rndKey = uuidv4();
 
-      // create and recieve the URL and Fields for a presigned URL
-      return new Promise((resolve, reject) => {
-        s3.createPresignedPost(
-          {
-            Fields: {
-              Key: rndKey,
-            },
-            Expires: 120, // time in seconds the user have to upload,
-            Bucket: process.env.BUCKET_NAME,
-            Conditions: [
-              // TODO: support video + mutliple files, consider uploading to a folder
-              ["starts-with", "$Content-Type", "image/"], // whitelist images for now
-              ["content-length-range", 0, 1024 * 1024 * 18], // 18 mb limit for now
-            ],
-          },
-          (err, signed) => {
-            if (err) return reject(err);
-            // returns url and fields if successful
-            resolve(signed);
-          }
-        );
+      return s3.createPresignedPost({
+        Fields: {
+          Key: rndKey,
+        },
+        Expires: 120, // time in seconds the user have to upload,
+        Bucket: process.env.BUCKET_NAME,
+        Conditions: [
+          // TODO: support video + mutliple files, consider uploading to a folder
+          ["starts-with", "$Content-Type", "image/"], // whitelist images for now
+          ["content-length-range", 0, 1024 * 1024 * 18], // 18 mb (total) limit for now
+        ],
       });
     },
   })

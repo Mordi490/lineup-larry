@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Agent from "../../../../utils/Agent";
+import Agent from "../../../../utils/enums";
 import Map from "../../../../utils/Map";
 
 /**
@@ -36,8 +36,8 @@ export const createLineupSchema = z.object({
   creator: z.string(),
   userId: z.string(),
   // TODO: double chek the refine behavior
-  agent: z.string().refine((val) => Agent.map((agent) => agent)),
-  map: z.string().refine((val) => Map.map((map) => map)),
+  agent: z.string(),
+  map: z.string(),
   text: z.string().min(1, { message: "Text is required" }),
   // TODO: force multiple files to be selected
   image: z.any(),
@@ -45,8 +45,8 @@ export const createLineupSchema = z.object({
 
 export const editLineupSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
-  agent: z.string().refine((val) => Agent.map((agent) => agent)),
-  map: z.string().refine((val) => Map.map((map) => map)),
+  agent: z.string(),
+  map: z.string(),
   text: z.string().min(1, { message: "Text is required" }),
   // TODO: force multiple files to be selected
   image: z.any(),

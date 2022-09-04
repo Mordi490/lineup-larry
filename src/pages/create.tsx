@@ -2,18 +2,18 @@ import { signIn, useSession } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import Agent from "../../utils/Agent";
-import Map from "../../utils/Map";
+import { Agent, Map, TypedKeys } from "../../utils/enums";
 import { lineupFormValues } from "../server/router/schemas/lineup.schema";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
-import { useRouter } from "next/router";
-import { PresignedPost } from "aws-sdk/clients/s3";
+import Nav from "../../components/Nav";
+import { any, string, TypeOf } from "zod";
 
 const Create = () => {
   const { data: session } = useSession();
 
-  const router = useRouter();
+  const agentList = TypedKeys(Agent);
+  const mapList = TypedKeys(Map);
 
   type formSchemaType = z.infer<typeof lineupFormValues>;
 
@@ -35,11 +35,17 @@ const Create = () => {
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
     const fileType: string = formInput.image?.[0].type;
     const file: File = formInput.image?.[0];
-    const { url, fields }: { url: string; fields: PresignedPost.Fields } =
-      await preSignedUrl();
+    const { url, fields } = await preSignedUrl();
 
-    // create the data we want to send to the
-    const s3Data = {
+    interface S3ImageData {
+      "Content-Type": string;
+      file: File;
+      Policy: string;
+      "X-Amz-Signature": string;
+    }
+
+    // marshall the data we want to send to s3
+    const s3Data: S3ImageData = {
       ...fields,
       "Content-Type": fileType,
       file,
@@ -47,7 +53,7 @@ const Create = () => {
 
     const formData = new FormData();
     for (const name in s3Data) {
-      formData.append(name, s3Data[name]);
+      formData.append(name, s3Data[name as keyof S3ImageData]);
     }
 
     // send image to s3
@@ -58,11 +64,11 @@ const Create = () => {
     });
 
     const createLineupObject = {
-      title: formInput.text,
+      title: formInput.title,
       creator: session?.user?.name as string,
       userId: session?.user?.id as string,
-      agent: formInput.agent,
-      map: formInput.map,
+      agent: formInput.agent.toUpperCase(),
+      map: formInput.map.toUpperCase(),
       text: formInput.text,
       image: fields.Key,
     };
@@ -90,6 +96,7 @@ const Create = () => {
 
   return (
     <>
+      <Nav />
       <Head>
         <title>Create a lineup</title>
       </Head>
@@ -121,11 +128,11 @@ const Create = () => {
               <label className="block text-sm font-medium">Agent</label>
               <div className="mt-1">
                 <select className="text-black" {...register("agent")}>
-                  <option placeholder="select Agent" disabled={true}>
-                    Select Agent
+                  <option placeholder="select Map" disabled={true}>
+                    Select agent
                   </option>
-                  {Agent.map((agent) => (
-                    <option key={agent} value={agent} disabled={isSubmitting}>
+                  {agentList.map((agent) => (
+                    <option value={agent} key={agent} disabled={isSubmitting}>
                       {agent}
                     </option>
                   ))}
@@ -145,7 +152,7 @@ const Create = () => {
                   <option placeholder="select Map" disabled={true}>
                     Select Map
                   </option>
-                  {Map.map((map) => (
+                  {mapList.map((map) => (
                     <option key={map} value={map} disabled={isSubmitting}>
                       {map}
                     </option>
@@ -199,8 +206,6 @@ const Create = () => {
             </div>
           </form>
         </div>
-
-        <pre>{JSON.stringify(watch(), null, 4)}</pre>
       </div>
     </>
   );
