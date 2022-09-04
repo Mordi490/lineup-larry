@@ -51,11 +51,20 @@ export const protectedCommentRouter = createRouter().mutation(
         });
       }
 
+      const user = ctx.session?.user;
+
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "you have to be logged in",
+        });
+      }
+
       const comment = await ctx.prisma.comment.create({
         data: {
-          ...input,
-          lineupId: lineup.id,
-          userId: ctx.session?.user?.id,
+          content: input.content,
+          userId: user.id as string,
+          lineupId: lineup.id as string,
         },
       });
 

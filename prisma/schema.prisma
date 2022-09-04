@@ -59,7 +59,6 @@ model Lineup {
     map       Map
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
-    // TODO: Make image NOT optional once proper fileupload is setup
     image     String
     text      String?
     votes     Int       @default(0)

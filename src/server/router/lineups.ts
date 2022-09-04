@@ -193,7 +193,7 @@ export const proctedLineupRouter = createRouter()
       return new Promise((resolve, reject) => {
         s3.deleteObject(
           {
-            Bucket: process.env.BUCKET_NAME,
+            Bucket: process.env.BUCKET_NAME as string,
             Key: lineup?.image,
           },
           (err, success) => {

@@ -1,6 +1,4 @@
 import { z } from "zod";
-import Agent from "../../../../utils/enums";
-import Map from "../../../../utils/Map";
 
 /**
  * notes on how to handle file sizes
