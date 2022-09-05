@@ -6,6 +6,7 @@ import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 import { s3 } from "../../utils/FileUpload";
 import { v4 as uuidv4 } from "uuid";
 import { S3 } from "aws-sdk";
+import { Agent, Map } from "../../../utils/enums";
 
 /**
  * Default selector for Lineup.
@@ -109,8 +110,8 @@ export const proctedLineupRouter = createRouter()
         where: { id: input.id },
         data: {
           title: updatedData.title,
-          agent: updatedData.agent,
-          map: updatedData.map,
+          agent: updatedData.agent as Agent,
+          map: updatedData.map as Map,
           image: updatedData.image,
           text: updatedData.text,
         },
@@ -132,8 +133,8 @@ export const proctedLineupRouter = createRouter()
           title: input.title,
           text: input.text,
           image: input.image,
-          agent: input.agent,
-          map: input.map,
+          agent: input.agent as Agent,
+          map: input.map as Map,
           userId: input.userId,
           creator: ctx.session.user.name as string,
         },
