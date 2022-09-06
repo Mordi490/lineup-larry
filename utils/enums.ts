@@ -20,6 +20,28 @@ export enum Agent {
   Fade = "FADE",
 }
 
+export const AgentArr: string[] = [
+  "Brimstone",
+  "Viper",
+  "Omen",
+  "killjoy",
+  "Cypher",
+  "Sova",
+  "Sage",
+  "Phoenix",
+  "Jett",
+  "Reyna",
+  "raze",
+  "Breach",
+  "Skye",
+  "Yoru",
+  "Astra",
+  "Kayo",
+  "Chamber",
+  "Neon",
+  "Fade",
+];
+
 export enum Map {
   Bind = "BIND",
   Haven = "HAVEN",
@@ -31,7 +53,7 @@ export enum Map {
   Fracture = "FRACTURE",
 }
 
-export const MapString: string[] = [
+export const MapArr: string[] = [
   "BIND",
   "HAVEN",
   "SPLIT",

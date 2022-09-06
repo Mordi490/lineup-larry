@@ -55,8 +55,8 @@ model Lineup {
     creator   String
     userId    String
     user      User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-    agent     Agent
-    map       Map
+    agent     String
+    map       String
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     image     String

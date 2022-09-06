@@ -67,8 +67,8 @@ const Create = () => {
       title: formInput.title,
       creator: session?.user?.name as string,
       userId: session?.user?.id as string,
-      agent: formInput.agent.toUpperCase(),
-      map: formInput.map.toUpperCase(),
+      agent: formInput.agent as Agent,
+      map: formInput.map as Map,
       text: formInput.text,
       image: fields.Key,
     };
