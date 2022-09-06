@@ -43,6 +43,7 @@ const SpecificLineup = () => {
       lineupId: id,
     };
 
+    // TODO: push the new comment onto the comment section upon success, eg. optimistic refresh
     try {
       createComment(comment);
     } catch (e) {
