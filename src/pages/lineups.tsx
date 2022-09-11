@@ -8,9 +8,6 @@ import Nav from "../../components/Nav";
 import { trpc } from "../utils/trpc";
 
 const Lineups: NextPage = () => {
-  const { data: session, status } = useSession();
-  const user = session?.user;
-
   const { data, isLoading } = trpc.useQuery(["lineup.get-all"]);
 
   if (isLoading) {

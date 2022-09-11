@@ -1,11 +1,8 @@
 import type { NextPage } from "next";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import Nav from "../../components/Nav";
 
 const Home: NextPage = () => {
-  const { data: session, status } = useSession();
-  const user = session?.user;
 
   return (
     <>

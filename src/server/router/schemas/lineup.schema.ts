@@ -24,8 +24,8 @@ const ACCEPTED_IMAGE_TYPES = [
 // describes the form object for creating & editing lineups
 export const lineupFormValues = z.object({
   title: z.string().min(1, { message: "Required" }),
-  agent: z.nativeEnum(Agent),
-  map: z.nativeEnum(Map),
+  agent: z.string().min(1, { message: "An Agent has to be selected" }),
+  map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Required" }),
   image: z.any(),
 });
@@ -35,8 +35,8 @@ export const createLineupSchema = z.object({
   creator: z.string(),
   userId: z.string(),
   // TODO: double chek the refine behavior
-  agent: z.nativeEnum(Agent),
-  map: z.nativeEnum(Map),
+  agent: z.string().min(1, { message: "An Agent has to be selected" }),
+  map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Text is required" }),
   // TODO: force multiple files to be selected
   image: z.any(),
@@ -44,8 +44,8 @@ export const createLineupSchema = z.object({
 
 export const editLineupSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
-  agent: z.nativeEnum(Agent),
-  map: z.nativeEnum(Map),
+  agent: z.string().min(1, { message: "An Agent has to be selected" }),
+  map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Text is required" }),
   // TODO: force multiple files to be selected
   image: z.any(),

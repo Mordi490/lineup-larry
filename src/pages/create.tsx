@@ -7,7 +7,6 @@ import { lineupFormValues } from "../server/router/schemas/lineup.schema";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
 import Nav from "../../components/Nav";
-import { any, string, TypeOf } from "zod";
 
 const Create = () => {
   const { data: session } = useSession();
@@ -67,8 +66,8 @@ const Create = () => {
       title: formInput.title,
       creator: session?.user?.name as string,
       userId: session?.user?.id as string,
-      agent: formInput.agent as Agent,
-      map: formInput.map as Map,
+      agent: formInput.agent,
+      map: formInput.map,
       text: formInput.text,
       image: fields.Key,
     };
@@ -133,7 +132,7 @@ const Create = () => {
                   </option>
                   {agentList.map((agent) => (
                     <option value={agent} key={agent} disabled={isSubmitting}>
-                      {agent}
+                      {agent.toUpperCase()}
                     </option>
                   ))}
                 </select>
@@ -154,7 +153,7 @@ const Create = () => {
                   </option>
                   {mapList.map((map) => (
                     <option key={map} value={map} disabled={isSubmitting}>
-                      {map}
+                      {map.toUpperCase()}
                     </option>
                   ))}
                 </select>
