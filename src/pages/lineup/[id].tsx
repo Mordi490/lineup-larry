@@ -1,55 +1,21 @@
 import { useSession } from "next-auth/react";
+import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { trpc } from "../../utils/trpc";
-import Image from "next/image";
-import Nav from "../../../components/Nav";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { z } from "zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { commentForm } from "../../server/router/schemas/comment.schema";
+import CommentForm from "../../../components/CommentForm";
+import CommentSection from "../../../components/CommentSection";
+import Nav from "../../../components/Nav";
+import { trpc } from "../../utils/trpc";
 
 const SpecificLineup = () => {
-  type formSchemaType = z.infer<typeof commentForm>;
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<formSchemaType>({
-    resolver: zodResolver(commentForm),
-  });
-
-  const { mutate: createComment } = trpc.useMutation([
-    "protectedCommentRouter.create-comment",
-  ]);
-
   const { data } = useSession();
   const id = useRouter().query.id as string;
   const { data: lineupQuery, isLoading } = trpc.useQuery([
     "lineup.by-id",
     { id },
   ]);
-
-  const { data: comments, isSuccess } = trpc.useQuery([
-    "commentRouter.get-lineup-comments",
-    { id },
-  ]);
-
-  const onSubmit: SubmitHandler<formSchemaType> = async (input) => {
-    const comment = {
-      content: input.content,
-      lineupId: id,
-    };
-
-    // TODO: push the new comment onto the comment section upon success, eg. optimistic refresh
-    try {
-      createComment(comment);
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   if (isLoading) {
     return "...Loading";
@@ -61,6 +27,9 @@ const SpecificLineup = () => {
 
   return (
     <>
+      <Head>
+        <title>{lineupQuery.title}</title>
+      </Head>
       <Nav />
       <h1 className="text-center font-bold text-3xl pt-2">
         {lineupQuery.title}
@@ -116,68 +85,9 @@ const SpecificLineup = () => {
         </button>
       </div>
       <hr className="my-4" />
-      <div>
-        <h1 className="text-center text-xl font-bold">Write a comment</h1>
-        <form className="" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex justify-center">
-            <textarea
-              placeholder="Write a comment..."
-              className="text-white bg-gray-600 w-1/3 h-32"
-              {...register("content")}
-              disabled={isSubmitting}
-            ></textarea>
-            {errors.content && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.content.message}
-              </p>
-            )}
-          </div>
-          <div className="mt-4 flex w-5/6 justify-end">
-            <button
-              type="submit"
-              className=" h-fit w-fit px-8 py-4 uppercase text-white font-semibold bg-blue-600 rounded-lg disabled:bg-gray-100 disabled:text-gray-400"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Uploading..." : "Submit"}
-            </button>
-          </div>
-        </form>
-      </div>
+      <CommentForm />
       <hr className="my-4" />
-
-      <div className="container flex flex-col gap-2 sm:mx-1">
-        <h1 className="text-xl">Comment section</h1>
-        {comments?.map((comment) => (
-          <section key={comment.id} className="border border-1 ">
-            <article className="flex justify-start">
-              <div className="flex flex-colz">
-                <Link href={`/user/${comment.user.id}`}>
-                  <a>
-                    <div className="text-sm w-16 truncate font-semibold hover:text-clip">
-                      {comment.user.name}
-                    </div>
-                    {comment.user.image && (
-                      <Image
-                        src={comment.user.image}
-                        width={48}
-                        height={48}
-                        alt={`${comment.user.name}'s profile picture`}
-                        className="rounded-full"
-                      />
-                    )}
-                  </a>
-                </Link>
-              </div>
-              <div className="flex flex-col grow">
-                <p className="text-xl mt-6">{comment.content}</p>
-                <p className="text-sm italic flex justify-end">
-                  Posted on: {new Date(comment.date).toLocaleString()}
-                </p>
-              </div>
-            </article>
-          </section>
-        ))}
-      </div>
+      <CommentSection />
     </>
   );
 };

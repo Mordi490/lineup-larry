@@ -1,12 +1,10 @@
-import { createRouter } from "./context";
-import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
-import { s3 } from "../../utils/FileUpload";
 import { v4 as uuidv4 } from "uuid";
-import { S3 } from "aws-sdk";
-import { Agent, Map } from "../../../utils/enums";
+import { z } from "zod";
+import { s3 } from "../../utils/FileUpload";
+import { createRouter } from "./context";
+import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 
 /**
  * Default selector for Lineup.

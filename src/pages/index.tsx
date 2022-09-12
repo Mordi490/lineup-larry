@@ -1,11 +1,14 @@
 import type { NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import Nav from "../../components/Nav";
 
 const Home: NextPage = () => {
-
   return (
     <>
+      <Head>
+        <title>Lineup Larry</title>
+      </Head>
       <Nav />
       <div className="flex flex-col flex-grow mx-auto justify-center items-center">
         <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold">

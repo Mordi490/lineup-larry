@@ -10,6 +10,7 @@ import { z } from "zod";
 import { PresignedPost } from "aws-sdk/clients/s3";
 import Image from "next/image";
 import Nav from "../../../components/Nav";
+import Loading from "../../../components/loading";
 
 const EditLineup = () => {
   const { data: session } = useSession();
@@ -33,6 +34,7 @@ const EditLineup = () => {
   const {
     data: lineup,
     isLoading,
+    isError,
     error,
   } = trpc.useQuery(["lineup.by-id", { id }]);
 
@@ -53,7 +55,14 @@ const EditLineup = () => {
   ]);
 
   if (isLoading) {
-    return "...Loading";
+    return (
+      <>
+        <Head>
+          <title>Create a lineup</title>
+        </Head>
+        <Loading />
+      </>
+    );
   }
 
   if (!session) {
@@ -70,7 +79,7 @@ const EditLineup = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <>
         <h1>Sorry Something went wrong</h1>
@@ -138,7 +147,6 @@ const EditLineup = () => {
     });
   };
 
-  // the actual form
   return (
     <>
       <Head>
@@ -150,12 +158,12 @@ const EditLineup = () => {
       <h1 className="text-center text-2xl text-bold mt-2">Editing Lineup</h1>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="py-8 px-6 shadow rounded-lg sm:px-10">
+        <div className="py-8 px-6 sm:px-10">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <label>Title</label>
             <div className="mt-1">
               <input
-                className="text-black"
+                className="text-white"
                 placeholder={`${lineup?.title}`}
                 defaultValue={`${lineup?.title}`}
                 {...register("title")}
@@ -170,7 +178,7 @@ const EditLineup = () => {
             <div>
               <label>Agent</label>
               <div className="mt-1">
-                <select {...register("agent")} className="text-black">
+                <select {...register("agent")} className="text-white">
                   <option value="Agent" placeholder={`${lineup?.agent}`}>
                     {lineup?.agent}
                   </option>
@@ -191,7 +199,7 @@ const EditLineup = () => {
             <div>
               <label>Map</label>
               <div className="mt-1">
-                <select {...register("map")} className="text-black">
+                <select {...register("map")} className="text-white">
                   <option placeholder={`${lineup?.map}`}>{lineup?.map}</option>
                   {mapList.map((map) => (
                     <option key={map} value={map} disabled={isSubmitting}>
@@ -213,7 +221,7 @@ const EditLineup = () => {
                 <textarea
                   cols={30}
                   rows={10}
-                  className="text-black"
+                  className="text-white"
                   {...register("text")}
                   placeholder="Supplement text"
                   defaultValue={`${lineup?.text}`}

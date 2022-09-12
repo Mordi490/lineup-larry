@@ -104,7 +104,7 @@ const Create = () => {
         Please fill out the form below
       </h1>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="py-8 px-6 shadow rounded-lg sm:px-10">
+        <div className="py-8 px-6 sm:px-10">
           <form className="mb-0 space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <label form="title" className="block text-sm font-medium">
               Title
@@ -112,7 +112,7 @@ const Create = () => {
             <div className="mt-1">
               <input
                 placeholder="Lineup Title"
-                className="text-black"
+                className="text-white"
                 {...register("title")}
                 disabled={isSubmitting}
               />
@@ -126,7 +126,7 @@ const Create = () => {
             <div>
               <label className="block text-sm font-medium">Agent</label>
               <div className="mt-1">
-                <select className="text-black" {...register("agent")}>
+                <select className="text-white" {...register("agent")}>
                   <option placeholder="select Map" disabled={true}>
                     Select agent
                   </option>
@@ -147,7 +147,7 @@ const Create = () => {
             <div>
               <label className="block text-sm font-medium">Map</label>
               <div className="mt-1">
-                <select className="text-black" {...register("map")}>
+                <select className="text-white" {...register("map")}>
                   <option placeholder="select Map" disabled={true}>
                     Select Map
                   </option>
@@ -170,7 +170,7 @@ const Create = () => {
               <div className="mt-1">
                 <textarea
                   placeholder="a few words about the lineup"
-                  className="text-black"
+                  className="text-white"
                   {...register("text")}
                   disabled={isSubmitting}
                 />

@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import Image from "next/image";
+import Head from "next/head";
 
 const Lineups = () => {
   const { data: session } = useSession();
@@ -17,6 +18,9 @@ const Lineups = () => {
 
   return (
     <>
+      <Head>
+        <title>{`${userInfo?.name}'s lineups`}</title>
+      </Head>
       <h1 className="text-center text-lg">
         Here are all the lineups for the user: {userInfo?.name}
       </h1>
