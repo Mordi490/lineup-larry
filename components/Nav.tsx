@@ -1,12 +1,11 @@
+import { Menu } from "@headlessui/react";
 import { useSession } from "next-auth/react";
-import { GiBowArrow } from "react-icons/gi";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { FaDiscord } from "react-icons/fa";
-import { Menu, Transition } from "@headlessui/react";
-import { forwardRef } from "react";
+import { GiBowArrow } from "react-icons/gi";
 
-/** See if we can do without these
+/*
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
@@ -38,12 +37,15 @@ const Nav = () => {
         </Link>
 
         {/* center */}
-        <h1 className="flex gap-2 text-4xl font-bold">Lineup Larry</h1>
+        <Link href={"/"}>
+          <button>
+            <h1 className="flex gap-2 text-4xl font-bold p-2">Lineup Larry</h1>
+          </button>
+        </Link>
 
         {/* right side */}
         <div className="flex gap-2 justify-end">
           {/* Conditional render logged in vs login */}
-          {/* if logged in */}
           {session?.user?.image ? (
             <>
               <Menu as="div" className="relative inline-block text-left">
@@ -55,20 +57,22 @@ const Nav = () => {
                     alt="Discord profile picture"
                   />
                 </Menu.Button>
-                <Menu.Items className="absolute right-0 bg-white rounded-md shadow-lg border w-48">
+                <Menu.Items className="absolute right-0 bg-white rounded-md shadow-lg w-48">
                   <Menu.Item>
-                    <Link
-                      href={`/${session.user?.id}/lineups`}
-                      className="block px-4 py-2 text-sm text-white"
-                    >
-                      Your Lineups
-                    </Link>
+                    {({ active }) => (
+                      <Link
+                        href={`/${session.user?.id}/lineups`}
+                        className={`${active && "bg-blue-500"}`}
+                      >
+                        Your Lineups
+                      </Link>
+                    )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
                       <Link
                         href={`/create`}
-                        className="block px-4 py-2 text-sm text-white"
+                        className={`${active && "bg-blue-500"}`}
                       >
                         Submit Lineup
                       </Link>
