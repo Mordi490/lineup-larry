@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createRouter } from "./context";
 import { Prisma } from "@prisma/client";
+import { prisma } from "../db/client";
 import { TRPCError } from "@trpc/server";
 import { createCommentSchema } from "./schemas/comment.schema";
 
@@ -23,7 +24,7 @@ export const commentRouter = createRouter().query("get-lineup-comments", {
   }),
   async resolve({ input }) {
     // comments
-    const comments = await prisma?.comment.findMany({
+    const comments = await prisma.comment.findMany({
       where: {
         lineupId: input.id,
       },

@@ -1,10 +1,11 @@
-import { Prisma } from "@prisma/client";
+import { prisma } from "../db/client";
 import { TRPCError } from "@trpc/server";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { s3 } from "../../utils/FileUpload";
 import { createRouter } from "./context";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
+import { Prisma } from "@prisma/client";
 
 /**
  * Default selector for Lineup.
@@ -30,7 +31,7 @@ export const lineupRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ input }) {
-      return prisma?.lineup.findMany({
+      return prisma.lineup.findMany({
         where: {
           userId: input.id,
         },
@@ -40,7 +41,7 @@ export const lineupRouter = createRouter()
   // fetch all endpoint
   .query("get-all", {
     async resolve({}) {
-      const lineups = await prisma?.lineup.findMany({
+      const lineups = await prisma.lineup.findMany({
         orderBy: { votes: "asc" },
       });
       return lineups;
@@ -52,7 +53,7 @@ export const lineupRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ input }) {
-      const lineup = await prisma?.lineup.findUnique({
+      const lineup = await prisma.lineup.findUnique({
         where: {
           id: input.id,
         },

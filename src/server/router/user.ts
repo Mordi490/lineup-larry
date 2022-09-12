@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { prisma } from "../db/client";
 import { z } from "zod";
 import { createRouter } from "./context";
 import { createProtectedRouter } from "./protected-router";
@@ -9,25 +9,6 @@ import { createProtectedRouter } from "./protected-router";
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
  * @see https://github.com/prisma/prisma/issues/9353
  */
-
-// Might not be needed
-const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
-  id: false,
-  name: true,
-  email: false,
-  emailVerified: false,
-  image: true,
-  accounts: false,
-  sessions: false,
-  Role: true,
-  Lineups: false,
-});
-
-// Might not be needed
-const userCommentInfo = Prisma.validator<Prisma.UserSelect>()({
-  name: true,
-  image: true,
-});
 
 export const userRouter = createRouter().query("get-user", {
   input: z.object({
