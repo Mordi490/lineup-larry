@@ -14,7 +14,7 @@
     "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.9.7",
     "@next-auth/prisma-adapter": "^1.0.4",
-    "@prisma/client": "^4.3.0",
+    "@prisma/client": "^4.3.1",
     "@trpc/client": "^9.26.2",
     "@trpc/next": "^9.26.2",
     "@trpc/react": "^9.26.2",
