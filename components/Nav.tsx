@@ -1,117 +1,96 @@
-import { Menu } from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaDiscord } from "react-icons/fa";
 import { GiBowArrow } from "react-icons/gi";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import Head from "next/head";
 
-/*
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
-}
-
-// https://headlessui.com/react/menu#integrating-with-next-js
-const MyLink = forwardRef((props, ref) => {
-  let { href, children, ...rest } = props;
-  return (
-    <Link href={href}>
-      <a ref={ref} {...rest}>
-        {children}
-      </a>
-    </Link>
-  );
-});
-*/
-
-const Nav = () => {
+const Nav = (title?: string) => {
   const { data: session } = useSession();
 
   return (
-    <nav className="flex min-h-0 flex-1 flex-col">
-      <div className="flex items-center justify-between text-center py-4 space-x-4">
-        {/* left side */}
-        <Link href={"/"}>
-          <button>
-            <GiBowArrow size={64} color="cyan" />
-          </button>
-        </Link>
+    <>
+      <Head>
+        {title?.length ? <title>{title}</title> : <title>Lineup Larry</title>}
+      </Head>
 
-        {/* center */}
-        <Link href={"/"}>
-          <button>
-            <h1 className="flex gap-2 text-4xl font-bold p-2">Lineup Larry</h1>
-          </button>
-        </Link>
+      <nav className="flex min-h-0 flex-1 flex-col">
+        <div className="flex items-center justify-between text-center py-4 space-x-4">
+          {/* left side */}
+          <Link href={"/"}>
+            <button>
+              <GiBowArrow size={64} color="cyan" />
+            </button>
+          </Link>
 
-        {/* right side */}
-        <div className="flex gap-2 justify-end">
-          {/* Conditional render logged in vs login */}
-          {session?.user?.image ? (
-            <>
-              <Menu as="div" className="relative inline-block text-left">
-                <Menu.Button className="inline-flex justify-center w-full rounded-md border border-sky-300 shadow-sm px-4 py-2 sm font-medium text-white hover:focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+          {/* center */}
+          <Link href={"/"}>
+            <button>
+              <h1 className="flex gap-2 text-4xl font-bold p-2">
+                Lineup Larry
+              </h1>
+            </button>
+          </Link>
+
+          {/* right side */}
+          <div className="fixed inline-block text-left">
+            {/* Conditional render logged in vs login */}
+            {session?.user?.image ? (
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
                   <Image
                     src={session.user.image}
-                    height={64}
                     width={64}
+                    height={64}
+                    className="rounded-full"
                     alt="Discord profile picture"
                   />
-                </Menu.Button>
-                <Menu.Items className="absolute right-0 bg-white rounded-md shadow-lg w-48">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                        href={`/${session.user?.id}/lineups`}
-                        className={`${active && "bg-blue-500"}`}
-                      >
-                        Your Lineups
-                      </Link>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                        href={`/create`}
-                        className={`${active && "bg-blue-500"}`}
-                      >
-                        Submit Lineup
-                      </Link>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Link
-                      href={`/user/${session.user?.id}`}
-                      className="block px-4 py-2 text-sm text-white"
-                    >
-                      View Profile
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content loop sideOffset={6} className="text-xl">
+                  <DropdownMenu.Item className="bg-yellow-300">
+                    <Link href={`/${session.user?.id}/lineups`}>
+                      <a>Your Lineups</a>
                     </Link>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Link
-                      href={`/api/auth/signout`}
-                      className="block px-4 py-2 text-sm text-white"
-                    >
-                      Logout
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item>
+                    <Link href={`/create`}>
+                      <a>Submit Lineup</a>
                     </Link>
-                  </Menu.Item>
-                </Menu.Items>
-              </Menu>
-            </>
-          ) : (
-            <Link href="/api/auth/signin">
-              <button className="flex gap-2 rounded-full bg-gray-200 p-4 font-bold text-gray-800 hover:bg-gray-100">
-                Login via Discord
-                {/* TODO: center the discord icon */}
-                <span className="">
-                  <FaDiscord />
-                </span>
-              </button>
-            </Link>
-          )}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item>
+                    <Link href={`/user/${session.user?.id}`}>
+                      <a>View Profile</a>
+                    </Link>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator className="my-1 h-px fill-green-300 bg-green-300s" />
+                  <DropdownMenu.Item>
+                    <Link href={`/api/auth/signout`}>
+                      <a>Logout</a>
+                    </Link>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Arrow className="" />
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            ) : (
+              <Link href="/api/auth/signin">
+                <a>
+                  <button className="flex gap-2 rounded-full bg-gray-200 p-4 font-bold text-gray-800 hover:bg-gray-100">
+                    Login via Discord
+                    {/* TODO: center the discord icon */}
+                    <span className="">
+                      <FaDiscord />
+                    </span>
+                  </button>
+                </a>
+              </Link>
+            )}
+          </div>
+          {/* End of top level flex container */}
         </div>
-      </div>
-      <hr className="py-4" />
-    </nav>
+        <hr className="py-4" />
+      </nav>
+    </>
   );
 };
 
