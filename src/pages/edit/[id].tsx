@@ -9,8 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { PresignedPost } from "aws-sdk/clients/s3";
 import Image from "next/image";
-import Nav from "../../../components/Nav";
 import Loading from "../../../components/loading";
+import Layout from "../../../components/layout";
 
 const EditLineup = () => {
   const { data: session } = useSession();
@@ -148,13 +148,7 @@ const EditLineup = () => {
   };
 
   return (
-    <>
-      <Head>
-        <title>Edit {lineup?.title}</title>
-      </Head>
-
-      <Nav />
-
+    <Layout title={`${lineup?.title}`}>
       <h1 className="text-center text-2xl text-bold mt-2">Editing Lineup</h1>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -255,7 +249,7 @@ const EditLineup = () => {
           </form>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 

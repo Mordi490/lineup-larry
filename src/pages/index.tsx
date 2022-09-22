@@ -1,16 +1,14 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import Nav from "../../components/Nav";
+import Layout from "../../components/layout";
+import Nav from "../../components/nav";
+import Footer from "./footer";
 
 const Home: NextPage = () => {
   return (
-    <>
-      <Head>
-        <title>Lineup Larry</title>
-      </Head>
-      <Nav />
-      <div className="flex flex-col flex-grow mx-auto justify-center items-center">
+    <Layout>
+      <div className="flex flex-col flex-grow justify-center items-center py-20 w-full">
         <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold">
           Lineup Larry
         </h1>
@@ -38,7 +36,7 @@ const Home: NextPage = () => {
           </Link>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 

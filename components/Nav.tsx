@@ -6,7 +6,11 @@ import { GiBowArrow } from "react-icons/gi";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Head from "next/head";
 
-const Nav = (title?: string) => {
+type Props = {
+  title?: string;
+};
+
+const Nav = ({ title }: Props) => {
   const { data: session } = useSession();
 
   return (
@@ -15,12 +19,14 @@ const Nav = (title?: string) => {
         {title?.length ? <title>{title}</title> : <title>Lineup Larry</title>}
       </Head>
 
-      <nav className="flex min-h-0 flex-1 flex-col">
+      <nav className="flex min-h-0 flex-1 flex-col bg-gray-800">
         <div className="flex items-center justify-between text-center py-4 space-x-4">
           {/* left side */}
           <Link href={"/"}>
             <button>
-              <GiBowArrow size={64} color="cyan" />
+              <a>
+                <GiBowArrow size={64} color="cyan" />
+              </a>
             </button>
           </Link>
 
@@ -88,8 +94,8 @@ const Nav = (title?: string) => {
           </div>
           {/* End of top level flex container */}
         </div>
-        <hr className="py-4" />
       </nav>
+      <hr className="py-4" />
     </>
   );
 };

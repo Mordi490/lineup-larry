@@ -1,13 +1,11 @@
 // default page to showcase lineups
 
 import { NextPage } from "next";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import Nav from "../../components/Nav";
 import { trpc } from "../utils/trpc";
 import Loading from "../../components/loading";
-import Head from "next/head";
+import Layout from "../../components/layout";
 
 const Lineups: NextPage = () => {
   const { data, isLoading, isError, error } = trpc.useQuery(["lineup.get-all"]);
@@ -21,11 +19,7 @@ const Lineups: NextPage = () => {
   }
 
   return (
-    <>
-      <Head>
-        <title>Lineups</title>
-      </Head>
-      <Nav />
+    <Layout>
       <h1 className="text-4xl text-center mb-4">Lineups</h1>
       <main className="container ml-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {data?.length ? (
@@ -59,7 +53,7 @@ const Lineups: NextPage = () => {
           <div>There are currently no lineups</div>
         )}
       </main>
-    </>
+    </Layout>
   );
 };
 

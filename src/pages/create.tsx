@@ -4,9 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
 import { lineupFormValues } from "../server/router/schemas/lineup.schema";
-import Head from "next/head";
 import { trpc } from "../utils/trpc";
-import Nav from "../../components/Nav";
+import Layout from "../../components/layout";
 
 const Create = () => {
   const { data: session } = useSession();
@@ -82,24 +81,15 @@ const Create = () => {
 
   if (!session)
     return (
-      <>
-        <Head>
-          <title>Create a lineup</title>
-        </Head>
-
+      <Layout title="Create a lineup">
         <h1>You have to be logged in to create a lineup</h1>
         <h1>Please log in</h1>
         <button onClick={() => signIn("discord")}>Sign in with Discord</button>
-      </>
+      </Layout>
     );
 
   return (
-    <>
-      <Nav />
-      <Head>
-        <title>Create a lineup</title>
-      </Head>
-
+    <Layout title="Create a lineup">
       <h1 className="text-center text-2xl text-bold mt-2">
         Please fill out the form below
       </h1>
@@ -206,7 +196,7 @@ const Create = () => {
           </form>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 

@@ -1,12 +1,11 @@
 import { useSession } from "next-auth/react";
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import CommentForm from "../../../components/CommentForm";
 import CommentSection from "../../../components/CommentSection";
-import Nav from "../../../components/Nav";
+import Layout from "../../../components/layout";
 import { trpc } from "../../utils/trpc";
 
 const SpecificLineup = () => {
@@ -26,11 +25,7 @@ const SpecificLineup = () => {
   }
 
   return (
-    <>
-      <Head>
-        <title>{lineupQuery.title}</title>
-      </Head>
-      <Nav />
+    <Layout title={`${lineupQuery.title}`}>
       <h1 className="text-center font-bold text-3xl pt-2">
         {lineupQuery.title}
       </h1>
@@ -88,7 +83,7 @@ const SpecificLineup = () => {
       <CommentForm />
       <hr className="my-4" />
       <CommentSection />
-    </>
+    </Layout>
   );
 };
 
