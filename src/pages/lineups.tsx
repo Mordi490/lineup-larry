@@ -26,16 +26,16 @@ const Lineups: NextPage = () => {
           data.map((lineup) => (
             <section key={lineup.id}>
               <Link href={`/lineup/${lineup.id}`}>
-                <h3>{lineup.title}</h3>
+                <a>{lineup.title}</a>
               </Link>
-              <Link href={`/user/${lineup.userId}`}>
-                <p>
-                  by:
+              <p>
+                by:
+                <Link href={`/user/${lineup.userId}`}>
                   <a className="underline text-sky-500 ml-1">
                     {lineup.creator}
                   </a>
-                </p>
-              </Link>
+                </Link>
+              </p>
 
               <Link href={`/lineup/${lineup.id}`}>
                 <a>
