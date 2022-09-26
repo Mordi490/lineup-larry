@@ -8,9 +8,10 @@ import Head from "next/head";
 
 type Props = {
   title?: string;
+  text?: string;
 };
 
-const Nav = ({ title }: Props) => {
+const Nav = ({ title, text }: Props) => {
   const { data: session } = useSession();
 
   return (
@@ -19,8 +20,8 @@ const Nav = ({ title }: Props) => {
         {title?.length ? <title>{title}</title> : <title>Lineup Larry</title>}
       </Head>
 
-      <nav className="flex min-h-0 flex-1 flex-col bg-gray-800">
-        <div className="flex items-center justify-between text-center py-4 space-x-4">
+      <nav className="bg-gray-800">
+        <div className="flex items-center justify-between text-center py-4 ">
           {/* left side */}
           <Link href={"/"}>
             <button>
@@ -34,7 +35,7 @@ const Nav = ({ title }: Props) => {
           <Link href={"/"}>
             <button>
               <h1 className="flex gap-2 text-4xl font-bold p-2">
-                Lineup Larry
+                {text?.length ? <p>{text}</p> : <p>Lineup Larry</p>}
               </h1>
             </button>
           </Link>
@@ -95,7 +96,6 @@ const Nav = ({ title }: Props) => {
           {/* End of top level flex container */}
         </div>
       </nav>
-      <hr className="py-4" />
     </>
   );
 };

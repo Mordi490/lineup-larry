@@ -1,38 +1,35 @@
 import type { NextPage } from "next";
-import Head from "next/head";
 import Link from "next/link";
 import Layout from "../../components/layout";
-import Nav from "../../components/nav";
-import Footer from "./footer";
 
 const Home: NextPage = () => {
   return (
     <Layout>
-      <div className="flex flex-col flex-grow justify-center items-center py-20 w-full">
+      <div className="flex flex-col justify-center items-center">
         <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold">
           Lineup Larry
         </h1>
         <p className="text-2xl text-gray-400">Become a nerd today</p>
-        <div className="grid gap-3 pt-3 mt-3 text-center md:grid-cols-2 lg:w-2/3 h-16">
+        <div className="grid gap-3 py-3 mu-3 text-center md:grid-cols-2 lg:w-2/3 ">
           <Link href="/lineups">
-            <button className="rounded-l-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-l-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
               View lineups
-            </button>
+            </a>
           </Link>
           <Link href="/api/auth/signin">
-            <button className="rounded-r-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-r-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
               Login
-            </button>
+            </a>
           </Link>
           <Link href="/create">
-            <button className="rounded-l-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-l-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
               Submit lineup
-            </button>
+            </a>
           </Link>
           <Link href="/api/auth/signout">
-            <button className="rounded-r-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-r-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
               Logout
-            </button>
+            </a>
           </Link>
         </div>
       </div>
