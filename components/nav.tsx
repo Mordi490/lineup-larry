@@ -24,20 +24,18 @@ const Nav = ({ title, text }: Props) => {
         <div className="flex items-center justify-between text-center py-4 ">
           {/* left side */}
           <Link href={"/"}>
-            <button>
               <a>
                 <GiBowArrow size={64} color="cyan" />
               </a>
-            </button>
           </Link>
 
           {/* center */}
           <Link href={"/"}>
-            <button>
+            <a>
               <h1 className="flex gap-2 text-4xl font-bold p-2">
                 {text?.length ? <p>{text}</p> : <p>Lineup Larry</p>}
               </h1>
-            </button>
+            </a>
           </Link>
 
           {/* right side */}
