@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { text } from "stream/consumers";
 import Footer from "../src/pages/footer";
 import Nav from "./nav";
 

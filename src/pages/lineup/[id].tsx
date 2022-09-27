@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import CommentForm from "../../../components/CommentForm";
-import CommentSection from "../../../components/CommentSection";
+import CommentForm from "../../../components/commentForm";
+import CommentSection from "../../../components/commentSection";
 import Layout from "../../../components/layout";
 import { trpc } from "../../utils/trpc";
 
