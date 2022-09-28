@@ -24,9 +24,9 @@ const Nav = ({ title, text }: Props) => {
         <div className="flex items-center justify-between text-center py-4 ">
           {/* left side */}
           <Link href={"/"}>
-              <a>
-                <GiBowArrow size={64} color="cyan" />
-              </a>
+            <a>
+              <GiBowArrow size={64} color="cyan" />
+            </a>
           </Link>
 
           {/* center */}
