@@ -1,14 +1,11 @@
-import Head from "next/head";
+import Layout from "../../components/layout";
 
 const TOS = () => {
   return (
-    <>
-      <Head>
-        <title>Terms of Service</title>
-      </Head>
+    <Layout title="Terms of Service">
       <h1>Yo, discord might like this</h1>
       <p>TODO: </p>
-    </>
+    </Layout>
   );
 };
 

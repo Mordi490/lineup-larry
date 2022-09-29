@@ -57,9 +57,6 @@ const EditLineup = () => {
   if (isLoading) {
     return (
       <>
-        <Head>
-          <title>Create a lineup</title>
-        </Head>
         <Loading />
       </>
     );
@@ -81,10 +78,10 @@ const EditLineup = () => {
 
   if (isError) {
     return (
-      <>
+      <Layout>
         <h1>Sorry Something went wrong</h1>
         <p>{JSON.stringify(error, null, 4)}</p>
-      </>
+      </Layout>
     );
   }
 

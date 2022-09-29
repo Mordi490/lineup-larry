@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Layout from "../../../components/layout";
@@ -22,7 +21,10 @@ const Lineups = () => {
 
   return (
     <>
-      <Layout text={`${userInfo?.name}`} title={`${userInfo?.name}`}>
+      <Layout
+        text={`${userInfo?.name}'s lineups`}
+        title={`${userInfo?.name}'s lineups`}
+      >
         <h1 className="text-center text-lg">
           Here are all the lineups for the user: {userInfo?.name}
         </h1>
@@ -47,9 +49,6 @@ const Lineups = () => {
         <hr className="my-8" />
         <pre className="block text-sm">{JSON.stringify(lineups, null, 4)}</pre>
       </Layout>
-      <Head>
-        <title>{`${userInfo?.name}'s lineups`}</title>
-      </Head>
     </>
   );
 };
