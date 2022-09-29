@@ -3,7 +3,6 @@ import Link from "next/link";
 const Footer = () => {
   return (
     <footer className="bg-gray-800 py-4 text-center">
-      <div className="grid grid-cols-3 gap-4">
         <Link href="/faq">
           <a>FAQ</a>
         </Link>
@@ -22,7 +21,6 @@ const Footer = () => {
         <Link href="https://github.com/Mordi490/lineup-larry">
           <a>GitHub</a>
         </Link>
-      </div>
     </footer>
   );
 };

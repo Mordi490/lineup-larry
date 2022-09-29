@@ -7,6 +7,22 @@ html {
 }
 
 body {
-  @apply bg-gray-700 text-gray-100;
   scrollbar-color: #000 #fff;
+}
+
+main {
+  @apply bg-gray-700 text-gray-100 flex-grow;
+}
+
+#layout_div {
+  @apply flex flex-col h-screen;
+}
+
+nav,
+footer {
+  @apply bg-gray-800 flex flex-col;
+}
+
+footer {
+  @apply grid grid-cols-3 gap-4 py-4 text-center;
 }
