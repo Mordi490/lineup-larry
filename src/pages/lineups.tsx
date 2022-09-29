@@ -21,7 +21,7 @@ const Lineups: NextPage = () => {
   return (
     <Layout>
       <h1 className="text-4xl text-center mb-4">Lineups</h1>
-      <main className="container ml-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="container ml-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {data?.length ? (
           data.map((lineup) => (
             <section key={lineup.id}>
@@ -52,7 +52,7 @@ const Lineups: NextPage = () => {
         ) : (
           <div>There are currently no lineups</div>
         )}
-      </main>
+      </div>
     </Layout>
   );
 };
