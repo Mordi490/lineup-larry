@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import { lineupRouter } from "../../../server/router/lineups";
+import Layout from "../../../../components/layout";
+import Loading from "../../../../components/loading";
 import { trpc } from "../../../utils/trpc";
 
 const UserLineups = () => {
@@ -15,18 +16,22 @@ const UserLineups = () => {
   ]);
 
   if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!userData) {
     return (
-      <div className="flex text-center text-4xl justify-center items-center">
-        Loading...
-      </div>
+      <Layout>
+        <div>No user found</div>
+      </Layout>
     );
   }
 
   return (
-    <>
-      <h1>All lineups from: {userData?.name}</h1>
+    <Layout title={`${userData.name}`} text={`${userData}`}>
+      <h1>All lineups from: {userData.name}</h1>
       <pre>{JSON.stringify(data, null, 4)}</pre>
-    </>
+    </Layout>
   );
 };
 

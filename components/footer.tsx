@@ -20,7 +20,7 @@ const Footer = () => {
           <a>Privacy Policy</a>
         </Link>
         <Link href="https://github.com/Mordi490/lineup-larry">
-          <a>GitHub</a> 
+          <a>GitHub</a>
         </Link>
       </div>
     </footer>

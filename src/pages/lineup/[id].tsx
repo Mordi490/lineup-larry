@@ -6,6 +6,7 @@ import { FaMinus, FaPlus } from "react-icons/fa";
 import CommentForm from "../../../components/commentForm";
 import CommentSection from "../../../components/commentSection";
 import Layout from "../../../components/layout";
+import Loading from "../../../components/loading";
 import { trpc } from "../../utils/trpc";
 
 const SpecificLineup = () => {
@@ -17,11 +18,17 @@ const SpecificLineup = () => {
   ]);
 
   if (isLoading) {
-    return "...Loading";
+    return <Loading />;
   }
 
   if (!lineupQuery) {
-    return "Somewting went wrong";
+    return (
+      <Layout>
+        <p className="text-red-500 text-4xl text-center">
+          SOMETHING WENT WRONG
+        </p>
+      </Layout>
+    );
   }
 
   return (
@@ -33,9 +40,9 @@ const SpecificLineup = () => {
         <div className="flex justify-start">
           <div>Created by: </div>
           <Link href={`/user/${lineupQuery.user.id}`}>
-            <span className="text-blue-400 underline ml-1 font-bold">
+            <a className="text-blue-400 underline ml-1 font-bold">
               {lineupQuery?.user.name}
-            </span>
+            </a>
           </Link>
         </div>
         <div className="flex space-x-4 mr-1">
@@ -55,9 +62,9 @@ const SpecificLineup = () => {
           {/* Conditional render of edit button */}
           {lineupQuery.user.id === data?.user?.id ? (
             <Link href={`/edit/${lineupQuery.id}`}>
-              <button className="rounded bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl w-12 h-8">
+              <a className="rounded bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl w-12 h-8">
                 Edit
-              </button>
+              </a>
             </Link>
           ) : null}
         </div>
