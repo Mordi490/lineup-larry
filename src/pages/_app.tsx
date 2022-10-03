@@ -16,7 +16,7 @@ const MyApp: AppType = ({
       <SessionProvider session={session}>
         <Component {...pageProps} />
       </SessionProvider>
-      <Toaster />
+      <Toaster position="bottom-right" />
     </>
   );
 };

@@ -6,9 +6,12 @@ import { Agent, Map, TypedKeys } from "../../utils/enums";
 import { lineupFormValues } from "../server/router/schemas/lineup.schema";
 import { trpc } from "../utils/trpc";
 import Layout from "../../components/layout";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 const Create = () => {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const agentList = TypedKeys(Agent);
   const mapList = TypedKeys(Map);
@@ -28,9 +31,21 @@ const Create = () => {
     "privateLineup.create-presigned-url",
   ]);
 
-  const { mutate: lineupData } = trpc.useMutation(["privateLineup.create"]);
+  const { mutate } = trpc.useMutation(["privateLineup.create"], {
+    onSuccess: (data) => {
+      toast.remove();
+      toast.success("Lineup created");
+      router.push(`lineup/${data.id}`);
+    },
+    onError: (err) => {
+      toast.remove();
+      toast.error("Something went wrong");
+      console.log(err);
+    },
+  });
 
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
+    toast.loading("Uploading lineup");
     const fileType: string = formInput.image?.[0].type;
     const file: File = formInput.image?.[0];
     const { url, fields } = await preSignedUrl();
@@ -72,7 +87,7 @@ const Create = () => {
     };
 
     try {
-      lineupData(createLineupObject);
+      mutate(createLineupObject);
     } catch (e) {
       console.log(e);
     }
