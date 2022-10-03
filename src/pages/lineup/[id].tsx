@@ -61,11 +61,17 @@ const SpecificLineup = () => {
 
           {/* Conditional render of edit button */}
           {lineupQuery.user.id === data?.user?.id ? (
-            <Link href={`/edit/${lineupQuery.id}`}>
-              <a className="rounded bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl w-12 h-8">
-                Edit
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <Link href={`/edit/${lineupQuery.id}`}>
+                <a className="rounded bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl w-auto h-8">
+                  Edit
+                </a>
+              </Link>
+              {/* TODO: implement delete */}
+              <a className="rounded bg-red-400 hover:bg-red-500 text-gray-700 text-xl w-auto h-8">
+                Delete
               </a>
-            </Link>
+            </div>
           ) : null}
         </div>
       </div>

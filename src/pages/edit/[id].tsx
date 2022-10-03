@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { PresignedPost } from "aws-sdk/clients/s3";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import Loading from "../../../components/loading";
 import Layout from "../../../components/layout";
 
@@ -44,15 +45,26 @@ const EditLineup = () => {
   ]);
 
   // delete prev s3 obj
-  const currLineupId = lineup?.id as string;
   const { mutate: deletedS3Obj } = trpc.useMutation([
     "privateLineup.delete-s3-object",
   ]);
 
   // persist the changes to db
-  const { mutate: updatedLineup } = trpc.useMutation([
-    "privateLineup.update-lineup",
-  ]);
+  const { mutate: updatedLineup } = trpc.useMutation(
+    ["privateLineup.update-lineup"],
+    {
+      onSuccess: (data) => {
+        toast.remove();
+        toast.success("Lineup edited");
+        router.replace(`edit/${id}`, `/lineup/${data.id}`);
+      },
+      onError: (err) => {
+        toast.remove();
+        toast.error("Something went wrong");
+        console.log(err);
+      },
+    }
+  );
 
   if (isLoading) {
     return (
@@ -86,6 +98,7 @@ const EditLineup = () => {
   }
 
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
+    toast.loading("Updating lineup");
     // NB! S3 objects cannot be updated, so steps should be: create new -> Delete prev -> update db
 
     // TODO: detect what changed and update only new data
