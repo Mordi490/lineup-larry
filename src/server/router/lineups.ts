@@ -95,7 +95,7 @@ export const proctedLineupRouter = createRouter()
       await ctx.prisma.lineup.delete({
         where: { id: lineup?.id },
       });
-      return lineup?.id;
+      return input.id;
     },
   })
   .mutation("update-lineup", {

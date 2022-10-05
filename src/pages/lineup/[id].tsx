@@ -8,14 +8,42 @@ import CommentSection from "../../../components/commentSection";
 import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
 import { trpc } from "../../utils/trpc";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { router } from "@trpc/server";
 
 const SpecificLineup = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const { data } = useSession();
+  const router = useRouter();
   const id = useRouter().query.id as string;
   const { data: lineupQuery, isLoading } = trpc.useQuery([
     "lineup.by-id",
     { id },
   ]);
+
+  const { mutate: delLineup } = trpc.useMutation(["privateLineup.delete"], {
+    onSuccess: () => {
+      toast.remove();
+      toast.success("lineup deleted");
+      router.replace(`/lineup/${id}`, `/lineups`);
+    },
+    onError: (err) => {
+      toast.remove();
+      toast.error("Something went wrong");
+      console.log(err);
+    },
+  });
+
+  const { mutate: delS3Data } = trpc.useMutation(
+    ["privateLineup.delete-s3-object"],
+    {
+      onError: (err) => {
+        console.log(err);
+      },
+    }
+  );
 
   if (isLoading) {
     return <Loading />;
@@ -30,6 +58,21 @@ const SpecificLineup = () => {
       </Layout>
     );
   }
+
+  const delProces = () => {
+    toast.loading("Deleting lineup");
+    // deleting the data in the S3
+    try {
+      delS3Data({ id });
+    } catch (err) {}
+
+    // deleting the lineup data in pscale
+    try {
+      delLineup({ id });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Layout title={`${lineupQuery.title}`}>
@@ -59,7 +102,7 @@ const SpecificLineup = () => {
             </span>
           </div>
 
-          {/* Conditional render of edit button */}
+          {/* Conditional render of extra options of the user created the linup */}
           {lineupQuery.user.id === data?.user?.id ? (
             <div className="grid grid-cols-2 gap-2 text-center">
               <Link href={`/edit/${lineupQuery.id}`}>
@@ -68,9 +111,41 @@ const SpecificLineup = () => {
                 </a>
               </Link>
               {/* TODO: implement delete */}
-              <a className="rounded bg-red-400 hover:bg-red-500 text-gray-700 text-xl w-auto h-8">
-                Delete
-              </a>
+              <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>
+                <AlertDialog.Trigger asChild>
+                  <a className="rounded bg-red-400 hover:bg-red-500 text-gray-700 text-xl w-auto h-8">
+                    Delete
+                  </a>
+                </AlertDialog.Trigger>
+                <AlertDialog.Portal>
+                  <AlertDialog.Overlay className="fixed inset-0 z-20 bg-black/50" />
+                  <AlertDialog.Content
+                    className="fixed z-50
+              w-[95vw] max-w-md rounded-lg p-4 md:w-full bg-gray-700
+              top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] 
+              focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
+                  >
+                    <AlertDialog.Title className="text-center text-2xl font-medium">
+                      Delete {lineupQuery.title}?
+                    </AlertDialog.Title>
+                    <AlertDialog.Description className="mt-4 font-normal">
+                      Are you sure you want to delete: {lineupQuery.title}? This
+                      will permanently delete the lineup
+                    </AlertDialog.Description>
+                    <div className="mt-4 flex justify-end space-x-2">
+                      <AlertDialog.Cancel className="inline-flex select-none justify-center rounded-md px-4 py-2 text-sm font-medium bg-slate-300 text-gray-900 hover:bg-slate-400 border border-gray-500 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
+                        Cancel
+                      </AlertDialog.Cancel>
+                      <AlertDialog.Action
+                        className="inline-flex select-none justify-center rounded-md px-4 py-2 text-sm font-medium bg-red-500 text-white hover:bg-red-600 border border-transparent focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
+                        onClick={delProces}
+                      >
+                        Confirm
+                      </AlertDialog.Action>
+                    </div>
+                  </AlertDialog.Content>
+                </AlertDialog.Portal>
+              </AlertDialog.Root>
             </div>
           ) : null}
         </div>
