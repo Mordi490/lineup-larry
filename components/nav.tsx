@@ -39,7 +39,7 @@ const Nav = ({ title, text }: Props) => {
           </Link>
 
           {/* right side */}
-          <div className="fixed inline-block text-left">
+          <div className="absoloute inline-block text-left">
             {/* Conditional render logged in vs login */}
             {session?.user?.image ? (
               <DropdownMenu.Root>
