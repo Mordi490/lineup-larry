@@ -52,7 +52,7 @@ const SpecificLineup = () => {
   if (!lineupQuery) {
     return (
       <Layout>
-        <p className="text-red-500 text-4xl text-center">
+        <p className="text-center text-4xl text-red-500">
           SOMETHING WENT WRONG
         </p>
       </Layout>
@@ -76,19 +76,19 @@ const SpecificLineup = () => {
 
   return (
     <Layout title={`${lineupQuery.title}`}>
-      <h1 className="text-center font-bold text-3xl pt-2">
+      <h1 className="pt-2 text-center text-3xl font-bold">
         {lineupQuery.title}
       </h1>
       <div className="flex justify-between py-4">
         <div className="flex justify-start">
           <div>Created by: </div>
           <Link href={`/user/${lineupQuery.user.id}`}>
-            <a className="text-blue-400 underline ml-1 font-bold">
+            <a className="ml-1 font-bold text-blue-400 underline">
               {lineupQuery?.user.name}
             </a>
           </Link>
         </div>
-        <div className="flex space-x-4 mr-1">
+        <div className="mr-1 flex space-x-4">
           <div>
             Created at:
             <span className="ml-1 font-semibold">
@@ -106,24 +106,24 @@ const SpecificLineup = () => {
           {lineupQuery.user.id === data?.user?.id ? (
             <div className="grid grid-cols-2 gap-2 text-center">
               <Link href={`/edit/${lineupQuery.id}`}>
-                <a className="rounded bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl w-auto h-8">
+                <a className="h-8 w-auto rounded bg-sky-400 text-xl text-gray-700 hover:bg-sky-500">
                   Edit
                 </a>
               </Link>
               {/* TODO: implement delete */}
               <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialog.Trigger asChild>
-                  <a className="rounded bg-red-400 hover:bg-red-500 text-gray-700 text-xl w-auto h-8">
+                  <a className="h-8 w-auto rounded bg-red-400 text-xl text-gray-700 hover:bg-red-500">
                     Delete
                   </a>
                 </AlertDialog.Trigger>
                 <AlertDialog.Portal>
                   <AlertDialog.Overlay className="fixed inset-0 z-20 bg-black/50" />
                   <AlertDialog.Content
-                    className="fixed z-50
-              w-[95vw] max-w-md rounded-lg p-4 md:w-full bg-gray-700
-              top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] 
-              focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
+                    className="fixed top-[50%]
+              left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%]
+              rounded-lg bg-gray-700 p-4 focus:outline-none 
+              focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75 md:w-full"
                   >
                     <AlertDialog.Title className="text-center text-2xl font-medium">
                       Delete {lineupQuery.title}?
@@ -133,11 +133,11 @@ const SpecificLineup = () => {
                       will permanently delete the lineup
                     </AlertDialog.Description>
                     <div className="mt-4 flex justify-end space-x-2">
-                      <AlertDialog.Cancel className="inline-flex select-none justify-center rounded-md px-4 py-2 text-sm font-medium bg-slate-300 text-gray-900 hover:bg-slate-400 border border-gray-500 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
+                      <AlertDialog.Cancel className="inline-flex select-none justify-center rounded-md border border-gray-500 bg-slate-300 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-slate-400 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
                         Cancel
                       </AlertDialog.Cancel>
                       <AlertDialog.Action
-                        className="inline-flex select-none justify-center rounded-md px-4 py-2 text-sm font-medium bg-red-500 text-white hover:bg-red-600 border border-transparent focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
+                        className="inline-flex select-none justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
                         onClick={delProces}
                       >
                         Confirm

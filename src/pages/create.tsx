@@ -105,7 +105,7 @@ const Create = () => {
 
   return (
     <Layout title="Create a lineup">
-      <h1 className="text-center text-2xl text-bold mt-2">
+      <h1 className="text-bold mt-2 text-center text-2xl">
         Please fill out the form below
       </h1>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -122,7 +122,7 @@ const Create = () => {
                 disabled={isSubmitting}
               />
               {errors.title && (
-                <p className="text-sm text-red-600 mt-1">
+                <p className="mt-1 text-sm text-red-600">
                   {errors.title.message}
                 </p>
               )}
@@ -142,7 +142,7 @@ const Create = () => {
                   ))}
                 </select>
                 {errors.agent && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.agent.message}
                   </p>
                 )}
@@ -163,7 +163,7 @@ const Create = () => {
                   ))}
                 </select>
                 {errors.map && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.map.message}
                   </p>
                 )}
@@ -180,7 +180,7 @@ const Create = () => {
                   disabled={isSubmitting}
                 />
                 {errors.text && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.text.message}
                   </p>
                 )}
@@ -195,7 +195,7 @@ const Create = () => {
 
             <button
               type="submit"
-              className="w-full px-8 py-4 flex items-center justify-center uppercase text-white font-semibold bg-blue-600 rounded-lg disabled:bg-gray-100 disabled:text-gray-400"
+              className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Uploading..." : "Submit"}

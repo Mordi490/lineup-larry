@@ -16,7 +16,7 @@ const UserDetails = () => {
   if (session?.user?.id === id) {
     return (
       <Layout>
-        <h1 className="text-center text-4xl mt-2">Welcome: {data?.name}</h1>
+        <h1 className="mt-2 text-center text-4xl">Welcome: {data?.name}</h1>
         <p>Data we have about your user:</p>
         <pre>{JSON.stringify(data, null, 4)}</pre>
       </Layout>
@@ -25,7 +25,7 @@ const UserDetails = () => {
 
   return (
     <Layout>
-      <h1 className="text-center text-4xl mt-2">User: {data?.name}</h1>
+      <h1 className="mt-2 text-center text-4xl">User: {data?.name}</h1>
       <p>Data we have about your user:</p>
       <pre>{JSON.stringify(data, null, 4)}</pre>
     </Layout>

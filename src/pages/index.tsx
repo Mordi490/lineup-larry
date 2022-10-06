@@ -5,29 +5,29 @@ import Layout from "../../components/layout";
 const Home: NextPage = () => {
   return (
     <Layout>
-      <div className="flex flex-col justify-center items-center">
-        <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold">
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-5xl font-extrabold leading-normal md:text-[5rem]">
           Lineup Larry
         </h1>
         <p className="text-2xl text-gray-400">Become a nerd today</p>
-        <div className="grid gap-3 py-3 mu-3 text-center md:grid-cols-2 lg:w-2/3 ">
+        <div className="mt-3 grid gap-3 py-3 text-center md:grid-cols-2 lg:w-2/3 ">
           <Link href="/lineups">
-            <a className="rounded-l-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-l-lg bg-sky-400 text-xl text-gray-700 hover:bg-sky-500">
               View lineups
             </a>
           </Link>
           <Link href="/api/auth/signin">
-            <a className="rounded-r-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-r-lg bg-sky-400 text-xl text-gray-700 hover:bg-sky-500">
               Login
             </a>
           </Link>
           <Link href="/create">
-            <a className="rounded-l-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-l-lg bg-sky-400 text-xl text-gray-700 hover:bg-sky-500">
               Submit lineup
             </a>
           </Link>
           <Link href="/api/auth/signout">
-            <a className="rounded-r-lg bg-sky-400 hover:bg-sky-500 text-gray-700 text-xl">
+            <a className="rounded-r-lg bg-sky-400 text-xl text-gray-700 hover:bg-sky-500">
               Logout
             </a>
           </Link>

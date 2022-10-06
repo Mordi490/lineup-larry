@@ -159,7 +159,7 @@ const EditLineup = () => {
 
   return (
     <Layout title={`${lineup?.title}`}>
-      <h1 className="text-center text-2xl text-bold mt-2">Editing Lineup</h1>
+      <h1 className="text-bold mt-2 text-center text-2xl">Editing Lineup</h1>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="py-8 px-6 sm:px-10">
@@ -173,7 +173,7 @@ const EditLineup = () => {
                 {...register("title")}
               />
               {errors.title && (
-                <p className="text-sm text-red-600 mt-1">
+                <p className="mt-1 text-sm text-red-600">
                   {errors.title.message}
                 </p>
               )}
@@ -193,7 +193,7 @@ const EditLineup = () => {
                   ))}
                 </select>
                 {errors.agent?.message && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.agent.message}
                   </p>
                 )}
@@ -212,7 +212,7 @@ const EditLineup = () => {
                   ))}
                 </select>
                 {errors.map?.message && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.map.message}
                   </p>
                 )}
@@ -231,7 +231,7 @@ const EditLineup = () => {
                   defaultValue={`${lineup?.text}`}
                 />
                 {errors.text?.message && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.text.message}
                   </p>
                 )}
@@ -251,7 +251,7 @@ const EditLineup = () => {
 
             <button
               type="submit"
-              className="w-full px-8 py-4 flex items-center justify-center uppercase text-white font-semibold bg-blue-600 rounded-lg disabled:bg-gray-100 disabled:text-gray-400"
+              className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Uploading..." : "Submit"}

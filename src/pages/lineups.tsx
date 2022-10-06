@@ -20,8 +20,8 @@ const Lineups: NextPage = () => {
 
   return (
     <Layout>
-      <h1 className="text-4xl text-center mb-4">Lineups</h1>
-      <div className="container ml-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <h1 className="my-2 text-center text-4xl">Lineups</h1>
+      <div className="mx-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {data?.length ? (
           data.map((lineup) => (
             <section key={lineup.id}>
@@ -31,7 +31,7 @@ const Lineups: NextPage = () => {
               <p>
                 by:
                 <Link href={`/user/${lineup.userId}`}>
-                  <a className="underline text-sky-500 ml-1">
+                  <a className="ml-1 text-sky-500 underline">
                     {lineup.creator}
                   </a>
                 </Link>
