@@ -21,7 +21,7 @@ const Nav = ({ title, text }: Props) => {
       </Head>
 
       <nav className="bg-gray-800">
-        <div className="flex items-center justify-between text-center py-4 ">
+        <div className="flex items-center justify-between py-4 text-center ">
           {/* left side */}
           <Link href={"/"}>
             <a>
@@ -32,14 +32,14 @@ const Nav = ({ title, text }: Props) => {
           {/* center */}
           <Link href={"/"}>
             <a>
-              <h1 className="flex gap-2 text-4xl font-bold p-2">
+              <h1 className="flex gap-2 p-2 text-4xl font-bold">
                 {text?.length ? <p>{text}</p> : <p>Lineup Larry</p>}
               </h1>
             </a>
           </Link>
 
           {/* right side */}
-          <div className="fixed inline-block text-left">
+          <div className="absoloute inline-block text-left">
             {/* Conditional render logged in vs login */}
             {session?.user?.image ? (
               <DropdownMenu.Root>
@@ -68,7 +68,7 @@ const Nav = ({ title, text }: Props) => {
                       <a>View Profile</a>
                     </Link>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Separator className="my-1 h-px fill-green-300 bg-green-300s" />
+                  <DropdownMenu.Separator className="bg-green-300s my-1 h-px fill-green-300" />
                   <DropdownMenu.Item>
                     <Link href={`/api/auth/signout`}>
                       <a>Logout</a>
