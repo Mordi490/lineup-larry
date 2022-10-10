@@ -35,6 +35,7 @@ export const lineupRouter = createRouter()
         where: {
           userId: input.id,
         },
+        orderBy: { updatedAt: "desc" },
       });
     },
   })
@@ -53,6 +54,13 @@ export const lineupRouter = createRouter()
       });
       const stats = { numOfLineup, netVotes };
       return stats;
+    },
+  })
+  .query("get-all-by-votes", {
+    async resolve({}) {
+      return await prisma.lineup.findMany({
+        orderBy: { votes: "desc" },
+      });
     },
   })
   // fetch all endpoint
