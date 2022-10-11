@@ -35,7 +35,7 @@ const Lineups = () => {
         text={`${userInfo?.name}'s lineups`}
         title={`${userInfo?.name}'s lineups`}
       >
-        <div className="container mx-auto mt-4 flex flex-col">
+        <div className="my-4 flex flex-col">
           {/* profile pic & profile name */}
           <div className="grid grid-cols-2">
             <div className="grid justify-items-center">
@@ -61,13 +61,13 @@ const Lineups = () => {
           </div>
 
           {/* card of recent lineups */}
-          <div className="my-2 ml-2">
-            <h1 className="flex text-xl font-medium">Recent lineups</h1>
-            <ul className="flex flex-col">
+          <div className="my-2 ml-2 flex flex-col">
+            <h1 className="text-center text-xl font-medium">Recent lineups</h1>
+            <ul className="mx-auto grid grid-cols-3">
               {lineups?.length ? (
                 lineups.map((lineup) => (
                   <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                    <a className="text-slate-300 underline">{lineup.title}</a>
+                    <a className="text-slate-300 underline truncate">{lineup.title}</a>
                   </Link>
                 ))
               ) : (
@@ -77,13 +77,15 @@ const Lineups = () => {
           </div>
 
           {/* card of most upvoted lineups */}
-          <div className="my-2 ml-2">
-            <h1 className="flex text-xl font-medium">Highest rated lineups</h1>
-            <ul className="flex flex-col">
+          <div className="my-2 ml-2 flex flex-col">
+            <h1 className="text-center text-xl font-medium">
+              Highest rated lineups
+            </h1>
+            <ul className="mx-auto grid grid-cols-3">
               {byVotes?.length ? (
                 byVotes.map((lineup) => (
                   <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                    <a className="text-slate-300 underline">{lineup.title}</a>
+                    <a className="text-slate-300 underline truncate">{lineup.title}</a>
                   </Link>
                 ))
               ) : (
