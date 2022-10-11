@@ -1,11 +1,11 @@
-import { prisma } from "../db/client";
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { s3 } from "../../utils/FileUpload";
+import { prisma } from "../db/client";
 import { createRouter } from "./context";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
-import { Prisma } from "@prisma/client";
 
 /**
  * Default selector for Lineup.
@@ -35,6 +35,31 @@ export const lineupRouter = createRouter()
         where: {
           userId: input.id,
         },
+        orderBy: { updatedAt: "desc" },
+      });
+    },
+  })
+  .query("user-stats", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input }) {
+      const numOfLineup = await prisma.lineup.aggregate({
+        where: { userId: input.id },
+        _count: { id: true },
+      });
+      const netVotes = await prisma.lineup.aggregate({
+        where: { userId: input.id },
+        _sum: { votes: true },
+      });
+      const stats = { numOfLineup, netVotes };
+      return stats;
+    },
+  })
+  .query("get-all-by-votes", {
+    async resolve({}) {
+      return await prisma.lineup.findMany({
+        orderBy: { votes: "desc" },
       });
     },
   })
@@ -166,7 +191,6 @@ export const proctedLineupRouter = createRouter()
       });
     },
   })
-  // TODO: confirm that this works
   .mutation("delete-s3-object", {
     input: z.object({
       id: z.string(), // lineup id
