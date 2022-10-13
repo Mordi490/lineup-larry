@@ -63,6 +63,35 @@ export const lineupRouter = createRouter()
       });
     },
   })
+  .query("infiniteLineups", {
+    input: z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+    }),
+    async resolve({ input }) {
+      const limit = input.limit ?? 12;
+      const { cursor } = input;
+      const items = await prisma.lineup.findMany({
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        where: {
+          // OPTIONAL FILTERS GOES HERE, EG. MAP X, AGENT Y
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          id: "desc",
+        },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
+    },
+  })
   // fetch all endpoint
   .query("get-all", {
     async resolve({}) {
