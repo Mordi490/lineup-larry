@@ -43,12 +43,12 @@ const CommentForm = () => {
         <div className="flex justify-center">
           <textarea
             placeholder="Write a comment..."
-            className="text-white bg-gray-600 w-1/3 h-32"
+            className="h-32 w-1/3 bg-gray-600 text-white"
             {...register("content")}
             disabled={isSubmitting}
           ></textarea>
           {errors.content && (
-            <p className="text-sm text-red-600 mt-1">
+            <p className="mt-1 text-sm text-red-600">
               {errors.content.message}
             </p>
           )}
@@ -56,7 +56,7 @@ const CommentForm = () => {
         <div className="mt-4 flex w-5/6 justify-end">
           <button
             type="submit"
-            className=" h-fit w-fit px-8 py-4 uppercase text-white font-semibold bg-blue-600 rounded-lg disabled:bg-gray-100 disabled:text-gray-400"
+            className="h-fit w-fit rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Uploading..." : "Submit"}
