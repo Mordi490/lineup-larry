@@ -78,7 +78,7 @@ export const lineupRouter = createRouter()
         },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
-          id: "desc",
+          updatedAt: "desc",
         },
       });
       let nextCursor: typeof cursor | undefined = undefined;
