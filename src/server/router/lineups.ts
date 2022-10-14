@@ -69,7 +69,7 @@ export const lineupRouter = createRouter()
       cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
     }),
     async resolve({ input }) {
-      const limit = input.limit ?? 12;
+      const limit = input.limit ?? 20;
       const { cursor } = input;
       const items = await prisma.lineup.findMany({
         take: limit + 1, // get an extra item at the end which we'll use as next cursor
@@ -264,18 +264,3 @@ export const proctedLineupRouter = createRouter()
       });
     },
   });
-
-/*
-      // Works sort of I think
-      const signedUrl = await s3.getSignedUrlPromise("putObject", params);
-      await axios.put(signedUrl, {
-        body: input.file,
-        headers: {
-          "Content-Type": input.fileType,
-        },
-      });
-
-      const imageUrl = signedUrl.split("?")[0];
-      console.log("imageUrl >>>>>>>>>>>>>>>", imageUrl);
-      return imageUrl;
-      */

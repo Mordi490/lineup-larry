@@ -21,7 +21,7 @@ const Lineups: NextPage = () => {
     [
       "lineup.infiniteLineups",
       {
-        limit: 12,
+        limit: 20,
       },
     ],
     {

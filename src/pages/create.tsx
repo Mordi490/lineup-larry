@@ -200,14 +200,6 @@ const Create = () => {
             >
               {isSubmitting ? "Uploading..." : "Submit"}
             </button>
-
-            <div className="hidden">
-              {/* TODO: confirm that these can be set via trpc endpoint*/}
-              {/* 
-          <input {...register("creator")} />
-          <input {...register("userId")} />
-                  */}
-            </div>
           </form>
         </div>
       </div>

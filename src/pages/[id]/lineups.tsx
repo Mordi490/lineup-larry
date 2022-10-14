@@ -76,7 +76,7 @@ const Lineups = () => {
             </ul>
           </div>
 
-          {/* card of most upvoted lineups */}
+          {/* card of most "liked" lineups */}
           <div className="my-2 ml-2 flex flex-col">
             <h1 className="text-center text-xl font-medium">
               Highest rated lineups
