@@ -20,7 +20,7 @@ const Select = (props: Props) => {
       onValueChange={props.onValueChangeFx}
     >
       <SelectPrimitive.Trigger asChild aria-label={props.ariaLabel}>
-        <button className="flex px-4 py-2">
+        <button className="flex rounded-lg px-4 py-2">
           <SelectPrimitive.Value />
           <SelectPrimitive.Icon className="ml-1 mt-1">
             <FaChevronUp size={14} />
@@ -31,7 +31,7 @@ const Select = (props: Props) => {
         <SelectPrimitive.ScrollUpButton className="flex items-center justify-center bg-slate-900 text-gray-700 ">
           <FaChevronUp />
         </SelectPrimitive.ScrollUpButton>
-        <SelectPrimitive.Viewport className="rounded-lg p-2 shadow-lg">
+        <SelectPrimitive.Viewport className="rounded-lg bg-gray-700 p-2 shadow-lg">
           <SelectPrimitive.Group>
             {props.values.map((string, idx) => (
               <SelectPrimitive.Item
