@@ -11,16 +11,16 @@ body {
 }
 
 main {
-  @apply bg-gray-700 text-gray-100 flex-grow;
+  @apply flex-grow bg-gray-700 text-gray-100;
 }
 
 #layout_div {
-  @apply flex flex-col h-screen;
+  @apply flex h-screen flex-col;
 }
 
 nav,
 footer {
-  @apply bg-gray-800 flex flex-col;
+  @apply flex flex-col bg-gray-800;
 }
 
 footer {
