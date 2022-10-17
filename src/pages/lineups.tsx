@@ -1,14 +1,18 @@
 // default page to showcase lineups
 
-import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import Loading from "../../components/loading";
 import Layout from "../../components/layout";
-import { Fragment } from "react";
+import { Fragment, SetStateAction, useState, Dispatch, useEffect } from "react";
+import Select from "../../components/select";
 
-const Lineups: NextPage = () => {
+export type FilterTypes = "recent" | "most-likes" | "oldest";
+
+const Lineups = () => {
+  const [filter, setFilter] = useState<FilterTypes>("recent");
+
   const {
     data: paginatedData,
     hasNextPage,
@@ -22,6 +26,7 @@ const Lineups: NextPage = () => {
       "lineup.infiniteLineups",
       {
         limit: 20,
+        filter: filter,
       },
     ],
     {
@@ -38,9 +43,29 @@ const Lineups: NextPage = () => {
     return <div>{JSON.stringify(error, null, 4)}</div>;
   }
 
+  const onValChangeTest = (val: FilterTypes) => {
+    setFilter(val);
+    console.log(`Select value change detected! ${val}`);
+  };
+
+  const onItemClickTest = (val: FilterTypes) => {
+    setFilter(val);
+    console.log(`Select ITEM value change detected! ${val}`);
+  };
+
   return (
     <Layout>
-      <h1 className="my-2 text-center text-4xl">Most Recent Lineups</h1>
+      <div className="flex flex-col border-lime-400">
+        <h1 className="my-2 justify-center text-center text-4xl">Lineups</h1>
+        <div className="m-2 flex justify-end">
+          <Select
+            onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
+            onItemClickFx={(val: FilterTypes) => onItemClickTest(val)}
+            defaultValue="recent"
+            values={["recent", "most-likes", "oldest"]}
+          />
+        </div>
+      </div>
       <div className="mx-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {paginatedData?.pages.map((page, index) => (
           <Fragment key={page.items[0]?.id || index}>

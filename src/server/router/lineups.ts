@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
+import { Lineup, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { v4 as uuidv4 } from "uuid";
-import { z } from "zod";
+import { string, z } from "zod";
 import { s3 } from "../../utils/FileUpload";
 import { prisma } from "../db/client";
 import { createRouter } from "./context";
@@ -67,20 +67,61 @@ export const lineupRouter = createRouter()
     input: z.object({
       limit: z.number().min(1).max(100).nullish(),
       cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+      filter: z.enum(["recent", "oldest", "most-likes"]).default("recent"),
     }),
     async resolve({ input }) {
       const limit = input.limit ?? 20;
       const { cursor } = input;
-      const items = await prisma.lineup.findMany({
-        take: limit + 1, // get an extra item at the end which we'll use as next cursor
-        where: {
-          // OPTIONAL FILTERS GOES HERE, EG. MAP X, AGENT Y
-        },
-        cursor: cursor ? { id: cursor } : undefined,
-        orderBy: {
-          updatedAt: "desc",
-        },
-      });
+      const filter = input.filter;
+
+      let items: Lineup[];
+
+      switch (filter) {
+        case "oldest":
+          items = await prisma.lineup.findMany({
+            take: limit + 1, // get an extra item at the end which we'll use as next cursor
+            where: {
+              // OPTIONAL FILTERS GOES HERE, EG. MAP X, AGENT Y
+            },
+            cursor: cursor ? { id: cursor } : undefined,
+            orderBy: {
+              updatedAt: "asc",
+            },
+          });
+          break;
+        case "most-likes":
+          items = await prisma.lineup.findMany({
+            take: limit + 1, // get an extra item at the end which we'll use as next cursor
+            where: {},
+            cursor: cursor ? { id: cursor } : undefined,
+            orderBy: {
+              votes: "desc",
+            },
+          });
+          break;
+        case "recent":
+          items = await prisma.lineup.findMany({
+            take: limit + 1, // get an extra item at the end which we'll use as next cursor
+            where: {},
+            cursor: cursor ? { id: cursor } : undefined,
+            orderBy: {
+              updatedAt: "desc",
+            },
+          });
+          break;
+        default:
+          // defaults to recent
+          items = await prisma.lineup.findMany({
+            take: limit + 1, // get an extra item at the end which we'll use as next cursor
+            where: {},
+            cursor: cursor ? { id: cursor } : undefined,
+            orderBy: {
+              updatedAt: "desc",
+            },
+          });
+          break;
+      }
+
       let nextCursor: typeof cursor | undefined = undefined;
       if (items.length > limit) {
         const nextItem = items.pop();
