@@ -71,17 +71,22 @@ const Lineups = () => {
           <Fragment key={page.items[0]?.id || index}>
             {page.items.map((lineup) => (
               <article key={lineup.id}>
-                <Link href={`/lineup/${lineup.id}`}>
-                  <a className="text-xl font-semibold">{lineup.title}</a>
-                </Link>
-                <p className="flex justify-end font-thin">
-                  by:
-                  <Link href={`/user/${lineup.userId}`}>
-                    <a className="ml-1 text-sky-500 underline">
-                      {lineup.creator}
+                <div className="grid grid-cols-4">
+                  <Link href={`/lineup/${lineup.id}`}>
+                    <a className="col-span-3 truncate text-xl">
+                      {lineup.title}
                     </a>
                   </Link>
-                </p>
+                  <p className="flex justify-end font-thin">
+                    by:
+                    <Link href={`/user/${lineup.userId}`}>
+                      <a className="ml-1 text-sky-500 underline">
+                        {lineup.creator}
+                      </a>
+                    </Link>
+                  </p>
+                </div>
+
                 <Link href={`/lineup/${lineup.id}`}>
                   <a>
                     <Image
