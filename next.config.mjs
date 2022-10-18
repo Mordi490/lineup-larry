@@ -1,5 +1,4 @@
 import { env } from "./src/env/server.mjs";
-const { withPlausibleProxy } = require("next-plausible");
 
 /**
  * Don't be scared of the generics here.
@@ -10,7 +9,7 @@ const { withPlausibleProxy } = require("next-plausible");
  * @constraint {{import('next').NextConfig}}
  */
 function defineNextConfig(config) {
-  return withPlausibleProxy(config);
+  return config;
 }
 
 export default defineNextConfig({
