@@ -5,6 +5,7 @@ import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
+import PlausibleProvider from "next-plausible";
 import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType = ({
@@ -13,10 +14,12 @@ const MyApp: AppType = ({
 }) => {
   return (
     <>
-      <SessionProvider session={session}>
-        <Component {...pageProps} />
-      </SessionProvider>
-      <Toaster position="bottom-right" />
+      <PlausibleProvider domain="lineuplarry.com">
+        <SessionProvider session={session}>
+          <Component {...pageProps} />
+        </SessionProvider>
+        <Toaster position="bottom-right" />
+      </PlausibleProvider>
     </>
   );
 };
