@@ -39,6 +39,10 @@ yarn-error.log*
 # vscode
 .vscode
 
+# Sensitive data for PLaywright
+storageState.json
+test_image.webp
+
 # typescript
 *.tsbuildinfo
 /test-results/
