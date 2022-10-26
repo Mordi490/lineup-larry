@@ -61,6 +61,7 @@ model Lineup {
     updatedAt DateTime  @updatedAt
     image     String
     text      String?
+    isSetup   Boolean   @default(false)
     votes     Int       @default(0)
     comments  Comment[]
 }

@@ -1,20 +1,30 @@
-import { signIn, useSession } from "next-auth/react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import * as z from "zod";
+import Layout from "../../components/layout";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
 import { lineupFormValues } from "../server/router/schemas/lineup.schema";
 import { trpc } from "../utils/trpc";
-import Layout from "../../components/layout";
-import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 
 const Create = () => {
+  const [isSetup, setIsSetup] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
 
   const agentList = TypedKeys(Agent);
   const mapList = TypedKeys(Map);
+
+  const str2Bool = (str: React.ChangeEvent<HTMLInputElement>) => {
+    if (str.target.value == "Setup") {
+      setIsSetup(true);
+    } else {
+      setIsSetup(false);
+    }
+  };
 
   type formSchemaType = z.infer<typeof lineupFormValues>;
 
@@ -22,6 +32,7 @@ const Create = () => {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<formSchemaType>({
     resolver: zodResolver(lineupFormValues),
@@ -76,6 +87,8 @@ const Create = () => {
       body: formData,
     });
 
+    console.log(isSetup);
+
     const createLineupObject = {
       title: formInput.title,
       creator: session?.user?.name as string,
@@ -83,6 +96,7 @@ const Create = () => {
       agent: formInput.agent,
       map: formInput.map,
       text: formInput.text,
+      isSetup: formInput.isSetup,
       image: fields.Key,
     };
 
@@ -91,7 +105,6 @@ const Create = () => {
     } catch (e) {
       console.log(e);
     }
-    // TODO: give user feedback on success and redirect?
   };
 
   if (!session)
@@ -184,6 +197,19 @@ const Create = () => {
                     {errors.text.message}
                   </p>
                 )}
+
+                <div className="my-4 flex gap-2">
+                  <input
+                    className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-600 ring-offset-gray-800 focus:ring-2 focus:ring-blue-600"
+                    {...register("isSetup")}
+                    type="checkbox"
+                    disabled={isSubmitting}
+                  />
+                  <label className="block text-sm font-medium">
+                    Is a setup
+                  </label>
+                </div>
+
                 {/* TODO: error validation for files */}
                 <input
                   type="file"

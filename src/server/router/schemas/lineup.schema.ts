@@ -27,6 +27,7 @@ export const lineupFormValues = z.object({
   agent: z.string().min(1, { message: "An Agent has to be selected" }),
   map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Required" }),
+  isSetup: z.boolean(),
   image: z.any(),
 });
 
@@ -38,6 +39,7 @@ export const createLineupSchema = z.object({
   agent: z.string().min(1, { message: "An Agent has to be selected" }),
   map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Text is required" }),
+  isSetup: z.boolean(),
   // TODO: force multiple files to be selected
   image: z.any(),
 });
@@ -47,6 +49,7 @@ export const editLineupSchema = z.object({
   agent: z.string().min(1, { message: "An Agent has to be selected" }),
   map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Text is required" }),
+  isSetup: z.boolean(),
   // TODO: force multiple files to be selected
   image: z.any(),
 });
