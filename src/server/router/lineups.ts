@@ -215,6 +215,41 @@ export const proctedLineupRouter = createRouter()
       return lineup;
     },
   })
+  .mutation("cast-vote", {
+    input: z.object({
+      id: z.string(), // lineupID
+      sentiment: z.string(), //
+    }),
+    async resolve({ input, ctx }) {
+      // Add to liked/disliked for user
+      // TODO: v2: ties the vote to user and lineup
+      // find the lineup
+      const lineup = await prisma.lineup.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!lineup) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `No lineup with ${input.id}`,
+        });
+      }
+      // increment votes
+      if (input.sentiment == "like") {
+        await prisma.lineup.update({
+          where: { id: input.id },
+          data: { votes: { increment: 1 } },
+        });
+      }
+
+      if (input.sentiment == "dislike") {
+        await prisma.lineup.update({
+          where: { id: input.id },
+          data: { votes: { increment: -1 } },
+        });
+      }
+    },
+  })
   .mutation("create", {
     input: createLineupSchema,
     async resolve({ input, ctx }) {

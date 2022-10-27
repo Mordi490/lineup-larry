@@ -36,6 +36,8 @@ const SpecificLineup = () => {
     },
   });
 
+  const { mutate: castVote } = trpc.useMutation(["privateLineup.cast-vote"]);
+
   const { mutate: delS3Data } = trpc.useMutation(
     ["privateLineup.delete-s3-object"],
     {
@@ -160,10 +162,10 @@ const SpecificLineup = () => {
       />
       <div className="flex">
         Votes: <span className="ml-1">{lineupQuery?.votes}</span>
-        <button onClick={() => console.log("+")}>
+        <button onClick={() => castVote({ id, sentiment: "like" })}>
           <FaPlus />
         </button>
-        <button onClick={() => console.log("-")}>
+        <button onClick={() => castVote({ id, sentiment: "dislike" })}>
           <FaMinus />
         </button>
       </div>
