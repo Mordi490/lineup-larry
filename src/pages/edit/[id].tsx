@@ -148,6 +148,7 @@ const EditLineup = () => {
       agent: formInput.agent,
       map: formInput.map,
       text: formInput.text,
+      isSetup: formInput.isSetup,
       image: fields.Key,
     };
 
@@ -236,6 +237,16 @@ const EditLineup = () => {
                   </p>
                 )}
               </div>
+            </div>
+
+            <div className="my-4 flex h-5 gap-2">
+              <input
+                className="texts-blue-600 h-4 w-4 rounded border-gray-600 bg-gray-700 ring-offset-gray-800 focus:ring-2 focus:ring-blue-600"
+                {...register("isSetup")}
+                type="checkbox"
+                disabled={isSubmitting}
+              />
+              <label className="block text-sm font-medium">Is a setup</label>
             </div>
 
             <div>

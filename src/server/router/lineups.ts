@@ -21,6 +21,7 @@ const defaultLineupSelect = Prisma.validator<Prisma.LineupSelect>()({
   image: true,
   text: true,
   votes: true,
+  isSetup: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -206,6 +207,7 @@ export const proctedLineupRouter = createRouter()
           title: updatedData.title,
           agent: updatedData.agent,
           map: updatedData.map,
+          isSetup: updatedData.isSetup,
           image: updatedData.image,
           text: updatedData.text,
         },
@@ -229,6 +231,7 @@ export const proctedLineupRouter = createRouter()
           image: input.image,
           agent: input.agent,
           map: input.map,
+          isSetup: input.isSetup,
           userId: input.userId,
           creator: ctx.session.user.name as string,
         },
