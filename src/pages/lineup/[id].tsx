@@ -15,13 +15,22 @@ import { router } from "@trpc/server";
 
 const SpecificLineup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasSentiment, setHasSentiment] = useState<string | null>(null);
   const { data } = useSession();
   const router = useRouter();
   const id = useRouter().query.id as string;
+
   const { data: lineupQuery, isLoading } = trpc.useQuery([
     "lineup.by-id",
     { id },
   ]);
+
+  const { data: userLike } = trpc.useQuery(
+    ["privateUserRouter.get-user-sentiment-by-id", { id }],
+    {
+      onSuccess: (res) => {},
+    }
+  );
 
   const { mutate: delLineup } = trpc.useMutation(["privateLineup.delete"], {
     onSuccess: () => {
@@ -35,6 +44,8 @@ const SpecificLineup = () => {
       console.log(err);
     },
   });
+
+  const { mutate: castVote } = trpc.useMutation(["privateLineup.cast-vote"]);
 
   const { mutate: delS3Data } = trpc.useMutation(
     ["privateLineup.delete-s3-object"],
@@ -160,11 +171,11 @@ const SpecificLineup = () => {
       />
       <div className="flex">
         Votes: <span className="ml-1">{lineupQuery?.votes}</span>
-        <button onClick={() => console.log("+")}>
-          <FaPlus />
+        <button onClick={() => castVote({ id, sentiment: "like" })}>
+          {hasSentiment == "like" ? <FaPlus color="cyan" /> : <FaPlus />}
         </button>
-        <button onClick={() => console.log("-")}>
-          <FaMinus />
+        <button onClick={() => castVote({ id, sentiment: "dislike" })}>
+          {hasSentiment == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
         </button>
       </div>
       <hr className="my-4" />

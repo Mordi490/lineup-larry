@@ -17,38 +17,6 @@ enum Role {
     ADMIN
 }
 
-enum Agent {
-    BRIMSTONE
-    VIPER
-    OMEN
-    KILLJOY
-    CYPHER
-    SOVA
-    SAGE
-    PHOENIX
-    JETT
-    REYNA
-    RAZE
-    BREACH
-    SKYE
-    YORU
-    ASTRA
-    CHAMBER
-    NEON
-    FADE
-}
-
-enum Map {
-    BIND
-    HAVEN
-    SPLIT
-    ASCENT
-    ICEBOX
-    BREEZE
-    FRACTURE
-    PEARL
-}
-
 model Lineup {
     id        String    @id @default(cuid())
     title     String
@@ -62,8 +30,10 @@ model Lineup {
     image     String
     text      String?
     isSetup   Boolean   @default(false)
-    votes     Int       @default(0)
+    votes     Int       @default(0) // TODO: consider removing once votes have been impl
     comments  Comment[]
+    vote      Vote[]
+    //VotesOnLineup VotesOnLineup[] // explicit many-to-many
 }
 
 model Comment {
@@ -114,6 +84,27 @@ model User {
     Role          Role      @default(USER)
     Lineups       Lineup[]
     Comment       Comment[]
+    Votes         Vote[]
+}
+
+// explicit many-to-many relationships 
+//model VotesOnLineup {
+//lineup   Lineup @relation(fields: [lineupId], references: [id])
+//lineupId String
+//Vote     Vote   @relation(fields: [voteId], references: [id])
+//voteId   String
+
+//@@id([lineupId, voteId])
+//}
+
+model Vote {
+    id        String @id @default(uuid())
+    sentiment String
+    user      User   @relation(fields: [userId], references: [id])
+    userId    String
+    lineup    Lineup @relation(fields: [lineupId], references: [id])
+    lineupId  String
+    //VotesOnLineup VotesOnLineup[] // explicit many-to-many
 }
 
 model VerificationToken {
