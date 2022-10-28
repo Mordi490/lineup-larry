@@ -86,7 +86,7 @@ export const lineupRouter = createRouter()
             },
             cursor: cursor ? { id: cursor } : undefined,
             orderBy: {
-              updatedAt: "asc",
+              createdAt: "asc",
             },
           });
           break;
@@ -106,7 +106,7 @@ export const lineupRouter = createRouter()
             where: {},
             cursor: cursor ? { id: cursor } : undefined,
             orderBy: {
-              updatedAt: "desc",
+              createdAt: "desc",
             },
           });
           break;
@@ -117,7 +117,7 @@ export const lineupRouter = createRouter()
             where: {},
             cursor: cursor ? { id: cursor } : undefined,
             orderBy: {
-              updatedAt: "desc",
+              createdAt: "desc",
             },
           });
           break;
@@ -215,39 +215,86 @@ export const proctedLineupRouter = createRouter()
       return lineup;
     },
   })
+  // TODO: impl a neutral-state
   .mutation("cast-vote", {
     input: z.object({
       id: z.string(), // lineupID
       sentiment: z.string(), //
     }),
     async resolve({ input, ctx }) {
-      // Add to liked/disliked for user
-      // TODO: v2: ties the vote to user and lineup
+      if (!ctx.session?.user?.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You have to be signed in to perform this action",
+        });
+      }
       // find the lineup
-      const lineup = await prisma.lineup.findUnique({
+      const lineup = await prisma.lineup.findFirstOrThrow({
         where: { id: input.id },
       });
 
-      if (!lineup) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `No lineup with ${input.id}`,
-        });
-      }
-      // increment votes
-      if (input.sentiment == "like") {
+      const sent = input.sentiment == "like" ? 1 : -1;
+
+      // see if a vote exists already exists
+      const vote = await prisma.vote.findFirst({
+        where: {
+          AND: [{ lineupId: lineup.id }, { userId: ctx.session?.user?.id }],
+        },
+      });
+
+      // if the user's sentiment is the same as current: interpret as "undo"
+      if (vote?.sentiment == input.sentiment) {
+        // adjust votes
         await prisma.lineup.update({
-          where: { id: input.id },
-          data: { votes: { increment: 1 } },
+          where: { id: lineup.id },
+          data: { votes: { decrement: sent } },
         });
+        // delete the vote record
+        await prisma.vote.delete({
+          where: { id: vote.id },
+        });
+        return "Vote undone";
       }
 
-      if (input.sentiment == "dislike") {
+      // no vote exists: create one
+      if (!vote) {
+        const vote = await prisma.vote.create({
+          data: {
+            sentiment: input.sentiment,
+            lineupId: lineup.id,
+            userId: ctx.session.user.id,
+          },
+        });
+
+        // NB! fails when "neutral" state gets added
+        console.log(`sentiment: ${input.sentiment} aka ${sent}`);
         await prisma.lineup.update({
           where: { id: input.id },
-          data: { votes: { increment: -1 } },
+          data: { votes: { increment: sent } },
         });
+
+        return `${vote.sentiment} registered`;
       }
+      console.log(`sentiment: ${input.sentiment} aka ${sent}`);
+      // Check if new sentiment and old sentiment are the same
+      if (input.sentiment == vote.sentiment) {
+        return input.sentiment == "like"
+          ? `You've already liked this lineup`
+          : `You've already disliked this lineup`;
+      }
+
+      // update Vote entity with new value
+      await prisma.vote.update({
+        where: { id: vote.id },
+        data: { sentiment: input.sentiment },
+      });
+
+      // update Votes for lineup
+      await prisma.lineup.update({
+        where: { id: input.id },
+        data: { votes: { increment: sent } },
+      });
+      return `${vote.sentiment} registered`;
     },
   })
   .mutation("create", {

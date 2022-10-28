@@ -33,6 +33,7 @@ model Lineup {
     votes     Int       @default(0) // TODO: consider removing once votes have been impl
     comments  Comment[]
     vote      Vote[]
+    //VotesOnLineup VotesOnLineup[] // explicit many-to-many
 }
 
 model Comment {
@@ -86,13 +87,24 @@ model User {
     Votes         Vote[]
 }
 
+// explicit many-to-many relationships 
+//model VotesOnLineup {
+//lineup   Lineup @relation(fields: [lineupId], references: [id])
+//lineupId String
+//Vote     Vote   @relation(fields: [voteId], references: [id])
+//voteId   String
+
+//@@id([lineupId, voteId])
+//}
+
 model Vote {
     id        String @id @default(uuid())
+    sentiment String
     user      User   @relation(fields: [userId], references: [id])
-    sentiment Int
+    userId    String
     lineup    Lineup @relation(fields: [lineupId], references: [id])
     lineupId  String
-    userId    String
+    //VotesOnLineup VotesOnLineup[] // explicit many-to-many
 }
 
 model VerificationToken {

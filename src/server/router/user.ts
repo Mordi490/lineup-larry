@@ -64,6 +64,23 @@ export const privateUserRouter = createProtectedRouter()
       };
     },
   })
+  .query("get-user-sentiment-by-id", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const res = await prisma.vote.findFirst({
+        where: {
+          AND: [{ lineupId: input.id }, { userId: ctx.session.user.id }],
+        },
+      });
+
+      if (!res) {
+        return "";
+      }
+      return res.sentiment;
+    },
+  })
   .query("protected-user-info", {
     input: z.object({
       id: z.string(),
