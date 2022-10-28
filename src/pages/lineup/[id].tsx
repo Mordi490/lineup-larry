@@ -11,11 +11,9 @@ import { trpc } from "../../utils/trpc";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { router } from "@trpc/server";
 
 const SpecificLineup = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasSentiment, setHasSentiment] = useState<string | null>(null);
   const { data } = useSession();
   const router = useRouter();
   const id = useRouter().query.id as string;
@@ -25,12 +23,10 @@ const SpecificLineup = () => {
     { id },
   ]);
 
-  const { data: userLike } = trpc.useQuery(
-    ["privateUserRouter.get-user-sentiment-by-id", { id }],
-    {
-      onSuccess: (res) => {},
-    }
-  );
+  const { data: userLike } = trpc.useQuery([
+    "privateUserRouter.get-user-sentiment-by-id",
+    { id },
+  ]);
 
   const { mutate: delLineup } = trpc.useMutation(["privateLineup.delete"], {
     onSuccess: () => {
@@ -70,7 +66,7 @@ const SpecificLineup = () => {
     );
   }
 
-  const delProces = () => {
+  const delProcess = () => {
     toast.loading("Deleting lineup");
     // deleting the data in the S3
     try {
@@ -113,7 +109,7 @@ const SpecificLineup = () => {
             </span>
           </div>
 
-          {/* Conditional render of extra options of the user created the linup */}
+          {/* Conditional render of extra options of the user created the lineup */}
           {lineupQuery.user.id === data?.user?.id ? (
             <div className="grid grid-cols-2 gap-2 text-center">
               <Link href={`/edit/${lineupQuery.id}`}>
@@ -149,7 +145,7 @@ const SpecificLineup = () => {
                       </AlertDialog.Cancel>
                       <AlertDialog.Action
                         className="inline-flex select-none justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
-                        onClick={delProces}
+                        onClick={delProcess}
                       >
                         Confirm
                       </AlertDialog.Action>
@@ -172,10 +168,10 @@ const SpecificLineup = () => {
       <div className="flex">
         Votes: <span className="ml-1">{lineupQuery?.votes}</span>
         <button onClick={() => castVote({ id, sentiment: "like" })}>
-          {hasSentiment == "like" ? <FaPlus color="cyan" /> : <FaPlus />}
+          {userLike == "like" ? <FaPlus color="cyan" /> : <FaPlus />}
         </button>
         <button onClick={() => castVote({ id, sentiment: "dislike" })}>
-          {hasSentiment == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
+          {userLike == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
         </button>
       </div>
       <hr className="my-4" />

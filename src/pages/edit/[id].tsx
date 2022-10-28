@@ -39,7 +39,7 @@ const EditLineup = () => {
     error,
   } = trpc.useQuery(["lineup.by-id", { id }]);
 
-  // gen new presigned url for the updatd lineup
+  // gen new presigned url for the updated lineup
   const { mutateAsync: preSignedUrl } = trpc.useMutation([
     "privateLineup.create-presigned-url",
   ]);

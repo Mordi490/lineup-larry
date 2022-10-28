@@ -165,7 +165,7 @@ export const lineupRouter = createRouter()
     },
   });
 
-export const proctedLineupRouter = createRouter()
+export const protectedLineupRouter = createRouter()
   .mutation("delete", {
     input: z.object({
       id: z.string(),
@@ -339,7 +339,7 @@ export const proctedLineupRouter = createRouter()
         Expires: 120, // time in seconds the user have to upload,
         Bucket: process.env.BUCKET_NAME,
         Conditions: [
-          // TODO: support video + mutliple files, consider uploading to a folder
+          // TODO: support video + multiple files, consider uploading to a folder
           ["starts-with", "$Content-Type", "image/"], // whitelist images for now
           ["content-length-range", 0, 1024 * 1024 * 18], // 18 mb (total) limit for now
         ],
