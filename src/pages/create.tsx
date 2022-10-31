@@ -18,14 +18,6 @@ const Create = () => {
   const agentList = TypedKeys(Agent);
   const mapList = TypedKeys(Map);
 
-  const str2Bool = (str: React.ChangeEvent<HTMLInputElement>) => {
-    if (str.target.value == "Setup") {
-      setIsSetup(true);
-    } else {
-      setIsSetup(false);
-    }
-  };
-
   type formSchemaType = z.infer<typeof lineupFormValues>;
 
   const {

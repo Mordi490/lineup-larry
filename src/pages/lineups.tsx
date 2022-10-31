@@ -5,7 +5,7 @@ import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import Loading from "../../components/loading";
 import Layout from "../../components/layout";
-import { Fragment, SetStateAction, useState, Dispatch, useEffect } from "react";
+import { Fragment, useState } from "react";
 import Select from "../../components/select";
 
 export type FilterTypes = "recent" | "most-likes" | "oldest";
