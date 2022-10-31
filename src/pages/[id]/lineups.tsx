@@ -55,7 +55,7 @@ const Lineups = () => {
               <div className="flex flex-col">
                 <h1 className="font-mediums text-2xl">{userInfo?.name}</h1>
                 <p>Number of lineups: {userData?.numOfLineup._count.id}</p>
-                <p>Total sum ofs votes: {userData?.netVotes._sum.votes}</p>
+                <p>Total sum of votes: {userData?.netVotes._sum.votes}</p>
               </div>
             </div>
           </div>
@@ -67,7 +67,9 @@ const Lineups = () => {
               {lineups?.length ? (
                 lineups.map((lineup) => (
                   <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                    <a className="text-slate-300 underline truncate">{lineup.title}</a>
+                    <a className="truncate text-slate-300 underline">
+                      {lineup.title}
+                    </a>
                   </Link>
                 ))
               ) : (
@@ -85,7 +87,9 @@ const Lineups = () => {
               {byVotes?.length ? (
                 byVotes.map((lineup) => (
                   <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                    <a className="text-slate-300 underline truncate">{lineup.title}</a>
+                    <a className="truncate text-slate-300 underline">
+                      {lineup.title}
+                    </a>
                   </Link>
                 ))
               ) : (
