@@ -53,7 +53,11 @@ export const lineupRouter = createRouter()
         where: { userId: input.id },
         _sum: { votes: true },
       });
-      const stats = { numOfLineup, netVotes };
+      const joinedAt = await prisma.user.findFirst({
+        where: { id: input.id },
+        select: { joinedAt: true },
+      });
+      const stats = { numOfLineup, netVotes, joinedAt };
       return stats;
     },
   })
@@ -330,7 +334,6 @@ export const protectedLineupRouter = createRouter()
         });
 
         // NB! fails when "neutral" state gets added
-        console.log(`sentiment: ${input.sentiment} aka ${sent}`);
         await prisma.lineup.update({
           where: { id: input.id },
           data: { votes: { increment: sent } },
@@ -338,7 +341,6 @@ export const protectedLineupRouter = createRouter()
 
         return `${vote.sentiment} registered`;
       }
-      console.log(`sentiment: ${input.sentiment} aka ${sent}`);
       // Check if new sentiment and old sentiment are the same
       if (input.sentiment == vote.sentiment) {
         return input.sentiment == "like"

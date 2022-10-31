@@ -5,6 +5,7 @@ import Loading from "../../../components/loading";
 import Link from "next/link";
 import { trpc } from "../../utils/trpc";
 import { Fragment } from "react";
+import { date } from "zod";
 
 const Lineups = () => {
   const router = useRouter();
@@ -16,10 +17,6 @@ const Lineups = () => {
   const { data: userData, isLoading: userDataIsLoading } = trpc.useQuery([
     "lineup.user-stats",
     { id },
-  ]);
-
-  const { data: byVotes, isLoading: byVotesIsLoading } = trpc.useQuery([
-    "lineup.get-all-by-votes",
   ]);
 
   const {
@@ -77,6 +74,9 @@ const Lineups = () => {
                 <h1 className="font-mediums text-2xl">{userInfo?.name}</h1>
                 <p>Number of lineups: {userData?.numOfLineup._count.id}</p>
                 <p>Total sum of votes: {userData?.netVotes._sum.votes}</p>
+                <p>
+                  Joined at: {userData?.joinedAt?.joinedAt.toLocaleDateString()}
+                </p>
               </div>
             </div>
           </div>

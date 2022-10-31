@@ -85,6 +85,7 @@ model User {
     Lineups       Lineup[]
     Comment       Comment[]
     Votes         Vote[]
+    joinedAt      DateTime  @default(now())
 }
 
 // explicit many-to-many relationships 
