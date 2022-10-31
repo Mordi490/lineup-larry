@@ -4,17 +4,14 @@ import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
 import Link from "next/link";
 import { trpc } from "../../utils/trpc";
+import { Fragment } from "react";
 
 const Lineups = () => {
-  const id = useRouter().query.id as string;
+  const router = useRouter();
+  const id = router.query.id as string;
 
   const { data: userInfo } = trpc.useQuery(["user.get-user", { id }]);
 
-  // fetch the user's lineups
-  const { data: lineups, isLoading } = trpc.useQuery([
-    "lineup.by-author",
-    { id },
-  ]);
   // Consider adding a endpoint for #lineups, #votes, etc.
   const { data: userData, isLoading: userDataIsLoading } = trpc.useQuery([
     "lineup.user-stats",
@@ -25,7 +22,31 @@ const Lineups = () => {
     "lineup.get-all-by-votes",
   ]);
 
-  if (isLoading || userDataIsLoading) {
+  const {
+    data: ratedLineups,
+    hasNextPage: ratedHasNextPage,
+    isFetchingNextPage: ratedIsFetchingNextPage,
+    fetchNextPage: ratedFetchNextPage,
+    isLoading: ratedIsLoading,
+  } = trpc.useInfiniteQuery(
+    ["lineup.inf-highest-rated-lineups-user", { limit: 21, userID: id }],
+    { getNextPageParam: (lastPage, pages) => lastPage.nextCursor }
+  );
+
+  const {
+    data: paginatedData,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isLoading: recentIsLoading,
+    isError,
+    error,
+  } = trpc.useInfiniteQuery(
+    ["lineup.inf-recent-lineups-user", { limit: 21, userID: id }],
+    { getNextPageParam: (lastPage, pages) => lastPage.nextCursor }
+  );
+
+  if (recentIsLoading || userDataIsLoading) {
     return <Loading />;
   }
 
@@ -64,38 +85,72 @@ const Lineups = () => {
           <div className="my-2 ml-2 flex flex-col">
             <h1 className="text-center text-xl font-medium">Recent lineups</h1>
             <ul className="mx-auto grid grid-cols-3">
-              {lineups?.length ? (
-                lineups.map((lineup) => (
-                  <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                    <a className="truncate text-slate-300 underline">
-                      {lineup.title}
-                    </a>
-                  </Link>
-                ))
-              ) : (
-                <p>no lineups</p>
-              )}
+              {paginatedData?.pages.map((page, index) => (
+                <Fragment key={page.items[0]?.id || index}>
+                  {page.items.length ? (
+                    page.items.map((lineup) => (
+                      <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
+                        <a className="truncate text-slate-300 underline">
+                          {lineup.title}
+                        </a>
+                      </Link>
+                    ))
+                  ) : (
+                    <p>This user has no lineups</p>
+                  )}
+                </Fragment>
+              ))}
             </ul>
           </div>
+          <div className="flex justify-end">
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
+              className="my-4 mx-4 rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
+            >
+              {isFetchingNextPage
+                ? "Loading more..."
+                : hasNextPage
+                ? "Load More"
+                : "Nothing more to load"}
+            </button>
+          </div>
 
-          {/* card of most "liked" lineups */}
+          {/*new: card of most "liked" lineups */}
           <div className="my-2 ml-2 flex flex-col">
             <h1 className="text-center text-xl font-medium">
               Highest rated lineups
             </h1>
             <ul className="mx-auto grid grid-cols-3">
-              {byVotes?.length ? (
-                byVotes.map((lineup) => (
-                  <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                    <a className="truncate text-slate-300 underline">
-                      {lineup.title}
-                    </a>
-                  </Link>
-                ))
-              ) : (
-                <p>no lineups</p>
-              )}
+              {ratedLineups?.pages.map((page, index) => (
+                <Fragment key={page.items[0]?.id || index}>
+                  {page.items.length ? (
+                    page.items.map((lineup) => (
+                      <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
+                        <a className="truncate text-slate-300 underline">
+                          {lineup.title}
+                        </a>
+                      </Link>
+                    ))
+                  ) : (
+                    <p>This user has no lineups</p>
+                  )}
+                </Fragment>
+              ))}
             </ul>
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={() => ratedFetchNextPage()}
+              disabled={!ratedHasNextPage || ratedIsFetchingNextPage}
+              className="my-4 mx-4 rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
+            >
+              {ratedIsFetchingNextPage
+                ? "Loading more..."
+                : ratedHasNextPage
+                ? "Load More"
+                : "Nothing more to load"}
+            </button>
           </div>
         </div>
       </Layout>

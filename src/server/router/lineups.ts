@@ -1,7 +1,7 @@
 import { Lineup, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { v4 as uuidv4 } from "uuid";
-import { string, z } from "zod";
+import { z } from "zod";
 import { s3 } from "../../utils/FileUpload";
 import { prisma } from "../db/client";
 import { createRouter } from "./context";
@@ -62,6 +62,70 @@ export const lineupRouter = createRouter()
       return await prisma.lineup.findMany({
         orderBy: { votes: "desc" },
       });
+    },
+  })
+  // inf recent lineup for a user
+  .query("inf-recent-lineups-user", {
+    input: z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+      userID: z.string(),
+    }),
+    async resolve({ input }) {
+      const limit = input.limit ?? 21;
+      const { cursor } = input;
+      const items = await prisma.lineup.findMany({
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        where: {
+          userId: input.userID,
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: { title: true, id: true },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
+    },
+  })
+  // inf highest rated lineup for a user
+  .query("inf-highest-rated-lineups-user", {
+    input: z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+      userID: z.string(),
+    }),
+    async resolve({ input }) {
+      const limit = input.limit ?? 21;
+      const { cursor } = input;
+      const items = await prisma.lineup.findMany({
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        where: {
+          userId: input.userID,
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          votes: "desc",
+        },
+        select: { title: true, id: true },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
     },
   })
   .query("infiniteLineups", {
@@ -215,7 +279,6 @@ export const protectedLineupRouter = createRouter()
       return lineup;
     },
   })
-  // TODO: impl a neutral-state
   .mutation("cast-vote", {
     input: z.object({
       id: z.string(), // lineupID
