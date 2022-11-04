@@ -18,21 +18,22 @@ enum Role {
 }
 
 model Lineup {
-    id        String    @id @default(cuid())
-    title     String
-    creator   String
-    userId    String
-    user      User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-    agent     String
-    map       String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    image     String
-    text      String?
-    isSetup   Boolean   @default(false)
-    votes     Int       @default(0) // TODO: consider removing once votes have been impl
-    comments  Comment[]
-    vote      Vote[]
+    id         String    @id @default(cuid())
+    title      String
+    creator    String
+    userId     String
+    user       User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+    agent      String
+    map        String
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+    previewImg Int       @default(1) // select 2nd img if user doesnt explicitly select a preview img
+    image      String
+    text       String?
+    isSetup    Boolean   @default(false)
+    votes      Int       @default(0) // TODO: consider removing once votes have been impl
+    comments   Comment[]
+    vote       Vote[]
     //VotesOnLineup VotesOnLineup[] // explicit many-to-many
 }
 

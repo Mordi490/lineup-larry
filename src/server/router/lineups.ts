@@ -18,6 +18,7 @@ const defaultLineupSelect = Prisma.validator<Prisma.LineupSelect>()({
   user: true,
   agent: true,
   map: true,
+  previewImg: true,
   image: true,
   text: true,
   votes: true,

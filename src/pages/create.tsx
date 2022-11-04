@@ -1,17 +1,35 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { GiConsoleController } from "react-icons/gi";
 import * as z from "zod";
 import Layout from "../../components/layout";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
-import { lineupFormValues } from "../server/router/schemas/lineup.schema";
 import { trpc } from "../utils/trpc";
 
+// moving this one here since using the File API fucks over the import
+// describes the form object for creating & editing lineups
+
+type imageFile = Record<string, any>;
+
+export const MAX_FILE_SIZE = 1024 * 1024 * 4; // 4MB
+
+export const lineupFormValues = z.object({
+  title: z.string().min(1, { message: "Required" }),
+  agent: z.string().min(1, { message: "An Agent has to be selected" }),
+  map: z.string().min(1, { message: "A Map has to be selected" }),
+  text: z.string().min(1, { message: "Required" }),
+  isSetup: z.boolean(),
+  previewImg: z.number().nonnegative().default(2),
+  image: z.preprocess(
+    (val) => Object.values(val as Array<imageFile>),
+    z.array(z.any())
+  ),
+});
+
 const Create = () => {
-  const [isSetup, setIsSetup] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -24,7 +42,6 @@ const Create = () => {
     register,
     handleSubmit,
     watch,
-    control,
     formState: { errors, isSubmitting },
   } = useForm<formSchemaType>({
     resolver: zodResolver(lineupFormValues),
@@ -47,40 +64,68 @@ const Create = () => {
     },
   });
 
+  // helper func for validation
+  const getFileSize = (props: any[]): number => {
+    let res: number = 0;
+    Object.values(props).forEach((val) => (res += val.size));
+    return res;
+  };
+
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
     toast.loading("Uploading lineup");
-    const fileType: string = formInput.image?.[0].type;
-    const file: File = formInput.image?.[0];
-    const { url, fields } = await preSignedUrl();
 
-    interface S3ImageData {
-      "Content-Type": string;
-      file: File;
-      Policy: string;
-      "X-Amz-Signature": string;
+    // how much validation is possible on the frontend??? A LOT IT SEEMS
+
+    if (getFileSize(formInput.image) > MAX_FILE_SIZE * 5) {
+      // TODO: better feedback
+      alert("Your files are too large!");
     }
 
-    // marshall the data we want to send to s3
-    const s3Data: S3ImageData = {
-      ...fields,
-      "Content-Type": fileType,
-      file,
-    };
+    // create a presignedURL for each of the images
+    let presigendUrls = "";
+    const len = formInput.image.length;
+    let curr = 1;
+    for (let file of formInput.image) {
+      const { url, fields } = await preSignedUrl();
 
-    const formData = new FormData();
-    for (const name in s3Data) {
-      formData.append(name, s3Data[name as keyof S3ImageData]);
+      interface S3ImageData {
+        "Content-Type": string;
+        file: File;
+        Policy: string;
+        "X-Amz-Signature": string;
+      }
+
+      const s3Data: S3ImageData = {
+        ...fields,
+        "Content-Type": file.type,
+        file,
+      };
+
+      const formData = new FormData();
+      for (const name in s3Data) {
+        formData.append(name, s3Data[name as keyof S3ImageData]);
+      }
+
+      await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log(`File number ${curr} is ${file.name}`);
+      console.log("Added a url: " + fields.Key);
+      if (curr == len) {
+        presigendUrls += fields.Key;
+      } else {
+        presigendUrls += fields.Key + ",";
+      }
+      curr++;
     }
-
-    // send image to s3
-    // TODO: error handling, make sure this only conts if successful
-    const s3Res = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log(isSetup);
-
+    console.log("raw list:");
+    console.log(presigendUrls);
+    const splitImgData = presigendUrls.split(",");
+    console.log("array rep of prev list:");
+    console.log(splitImgData);
+    console.log("2n img element is : " + splitImgData[1]?.replace(",", ""));
     const createLineupObject = {
       title: formInput.title,
       creator: session?.user?.name as string,
@@ -89,7 +134,8 @@ const Create = () => {
       map: formInput.map,
       text: formInput.text,
       isSetup: formInput.isSetup,
-      image: fields.Key,
+      previewImg: 2, // defaults to 2nd element
+      image: presigendUrls, // for now set it to be the 2nd element
     };
 
     try {
@@ -202,14 +248,22 @@ const Create = () => {
                   </label>
                 </div>
 
-                {/* TODO: error validation for files */}
                 <input
                   type="file"
+                  multiple
                   {...register("image")}
                   disabled={isSubmitting}
+                  accept="image/*, video/*"
                 />
+                {errors.image && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.image.message}
+                  </p>
+                )}
               </div>
             </div>
+
+            {/* TODO: prompt user with which img to use for preview */}
 
             <button
               type="submit"
@@ -221,6 +275,8 @@ const Create = () => {
           </form>
         </div>
       </div>
+
+      <pre>{JSON.stringify(watch(), null, 4)}</pre>
     </Layout>
   );
 };

@@ -65,7 +65,6 @@ export const MapArr: string[] = [
 ];
 
 // helper function to help map over values in JSX componentes
-// remember DB uses names IN ALL CAPS (EG. "SOVA", not "Sova")
 export const TypedKeys = <T extends {}>(object: T): (keyof T)[] => {
   return Object.keys(object) as (keyof T)[];
 };
