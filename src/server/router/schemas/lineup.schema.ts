@@ -39,7 +39,7 @@ export const editLineupSchema = z.object({
   map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Text is required" }),
   isSetup: z.boolean(),
-  // TODO: force multiple files to be selected
+  previewImg: z.number().nonnegative(),
   image: z.any(),
 });
 

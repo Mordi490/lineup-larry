@@ -277,6 +277,7 @@ export const protectedLineupRouter = createRouter()
           agent: updatedData.agent,
           map: updatedData.map,
           isSetup: updatedData.isSetup,
+          previewImg: updatedData.previewImg,
           image: updatedData.image,
           text: updatedData.text,
         },

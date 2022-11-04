@@ -3,7 +3,6 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { GiConsoleController } from "react-icons/gi";
 import * as z from "zod";
 import Layout from "../../components/layout";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
@@ -16,7 +15,7 @@ type imageFile = Record<string, any>;
 
 export const MAX_FILE_SIZE = 1024 * 1024 * 4; // 4MB
 
-export const lineupFormValues = z.object({
+export const createLineupForm = z.object({
   title: z.string().min(1, { message: "Required" }),
   agent: z.string().min(1, { message: "An Agent has to be selected" }),
   map: z.string().min(1, { message: "A Map has to be selected" }),
@@ -29,6 +28,13 @@ export const lineupFormValues = z.object({
   ),
 });
 
+// helper func for validation
+export const getFileSize = (props: any[]): number => {
+  let res: number = 0;
+  Object.values(props).forEach((val) => (res += val.size));
+  return res;
+};
+
 const Create = () => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -36,7 +42,7 @@ const Create = () => {
   const agentList = TypedKeys(Agent);
   const mapList = TypedKeys(Map);
 
-  type formSchemaType = z.infer<typeof lineupFormValues>;
+  type formSchemaType = z.infer<typeof createLineupForm>;
 
   const {
     register,
@@ -44,7 +50,7 @@ const Create = () => {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<formSchemaType>({
-    resolver: zodResolver(lineupFormValues),
+    resolver: zodResolver(createLineupForm),
   });
 
   const { mutateAsync: preSignedUrl } = trpc.useMutation([
@@ -63,13 +69,6 @@ const Create = () => {
       console.log(err);
     },
   });
-
-  // helper func for validation
-  const getFileSize = (props: any[]): number => {
-    let res: number = 0;
-    Object.values(props).forEach((val) => (res += val.size));
-    return res;
-  };
 
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
     toast.loading("Uploading lineup");
@@ -120,12 +119,7 @@ const Create = () => {
       }
       curr++;
     }
-    console.log("raw list:");
-    console.log(presigendUrls);
-    const splitImgData = presigendUrls.split(",");
-    console.log("array rep of prev list:");
-    console.log(splitImgData);
-    console.log("2n img element is : " + splitImgData[1]?.replace(",", ""));
+
     const createLineupObject = {
       title: formInput.title,
       creator: session?.user?.name as string,
