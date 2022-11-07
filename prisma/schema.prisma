@@ -42,7 +42,7 @@ model Comment {
     user     User     @relation(fields: [userId], references: [id])
     content  String
     date     DateTime @default(now())
-    lineup   Lineup   @relation(fields: [lineupId], references: [id])
+    lineup   Lineup   @relation(fields: [lineupId], references: [id], onDelete: Cascade)
     lineupId String
     userId   String
 }
