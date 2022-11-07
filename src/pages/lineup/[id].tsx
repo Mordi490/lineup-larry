@@ -68,12 +68,14 @@ const SpecificLineup = () => {
 
   const delProcess = () => {
     toast.loading("Deleting lineup");
-    // deleting the data in the S3
+    // deleting S3-data
     try {
       delS3Data({ id });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
 
-    // deleting the lineup data in pscale
+    // deleting non-S3data
     try {
       delLineup({ id });
     } catch (err) {
