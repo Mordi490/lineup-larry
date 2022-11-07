@@ -136,8 +136,6 @@ const EditLineup = () => {
         body: formData,
       });
 
-      console.log(`File number ${curr} is ${file.name}`);
-      console.log("Added a url: " + fields.Key);
       if (curr == len) {
         presigendUrls += fields.Key;
       } else {
