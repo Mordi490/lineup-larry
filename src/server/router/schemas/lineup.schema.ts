@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Agent, Map } from "../../../../utils/enums";
 
 /**
  * notes on how to handle file sizes
@@ -11,36 +10,26 @@ import { Agent, Map } from "../../../../utils/enums";
  *
  * If not: assume worst case scen: around 5 img and 1 vid, 180 MB w/wiggle room
  */
-const MAX_FILE_SIZE = 1024 * 1024 * 4; // 4MB
+export const MAX_FILE_SIZE = 1024 * 1024 * 4; // 4MB
 
-const ACCEPTED_IMAGE_TYPES = [
+export const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
   "image/png",
   "image/gif",
   "image/webp",
+  "video/mp4",
 ];
-
-// describes the form object for creating & editing lineups
-export const lineupFormValues = z.object({
-  title: z.string().min(1, { message: "Required" }),
-  agent: z.string().min(1, { message: "An Agent has to be selected" }),
-  map: z.string().min(1, { message: "A Map has to be selected" }),
-  text: z.string().min(1, { message: "Required" }),
-  isSetup: z.boolean(),
-  image: z.any(),
-});
 
 export const createLineupSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   creator: z.string(),
   userId: z.string(),
-  // TODO: double chek the refine behavior
   agent: z.string().min(1, { message: "An Agent has to be selected" }),
   map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Text is required" }),
   isSetup: z.boolean(),
-  // TODO: force multiple files to be selected
+  previewImg: z.number().nonnegative(), // >= 0
   image: z.any(),
 });
 
@@ -50,7 +39,7 @@ export const editLineupSchema = z.object({
   map: z.string().min(1, { message: "A Map has to be selected" }),
   text: z.string().min(1, { message: "Text is required" }),
   isSetup: z.boolean(),
-  // TODO: force multiple files to be selected
+  previewImg: z.number().nonnegative(),
   image: z.any(),
 });
 

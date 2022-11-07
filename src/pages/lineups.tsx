@@ -90,7 +90,9 @@ const Lineups = () => {
                 <Link href={`/lineup/${lineup.id}`}>
                   <a>
                     <Image
-                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${lineup.image}`}
+                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                        lineup.image.split(",")[lineup.previewImg]
+                      }`}
                       alt="lineup"
                       width={1280}
                       height={720}

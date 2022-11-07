@@ -68,12 +68,14 @@ const SpecificLineup = () => {
 
   const delProcess = () => {
     toast.loading("Deleting lineup");
-    // deleting the data in the S3
+    // deleting S3-data
     try {
       delS3Data({ id });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
 
-    // deleting the lineup data in pscale
+    // deleting non-S3data
     try {
       delLineup({ id });
     } catch (err) {
@@ -158,13 +160,17 @@ const SpecificLineup = () => {
         </div>
       </div>
       <hr />
-      <p className="py-4">{lineupQuery.text}</p>
-      <Image
-        src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${lineupQuery.image}`}
-        alt="Valorant screenshot"
-        width={1080}
-        height={600}
-      />
+      <p className="pt-4">{lineupQuery.text}</p>
+      {lineupQuery.image.split(",").map((urlId) => (
+        <div className="my-4" key={urlId}>
+          <Image
+            src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+            alt="Valorant screenshot"
+            width={1080}
+            height={600}
+          />
+        </div>
+      ))}
       <div className="flex">
         Votes: <span className="ml-1">{lineupQuery?.votes}</span>
         <button onClick={() => castVote({ id, sentiment: "like" })}>

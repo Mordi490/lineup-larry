@@ -5,7 +5,6 @@ import Loading from "../../../components/loading";
 import Link from "next/link";
 import { trpc } from "../../utils/trpc";
 import { Fragment } from "react";
-import { date } from "zod";
 
 const Lineups = () => {
   const router = useRouter();

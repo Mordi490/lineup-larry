@@ -1,17 +1,16 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Agent, Map, TypedKeys } from "../../../utils/enums";
-import { lineupFormValues } from "../../server/router/schemas/lineup.schema";
-import { trpc } from "../../utils/trpc";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { PresignedPost } from "aws-sdk/clients/s3";
-import Image from "next/image";
 import toast from "react-hot-toast";
-import Loading from "../../../components/loading";
+import { z } from "zod";
 import Layout from "../../../components/layout";
+import Loading from "../../../components/loading";
+import { Agent, Map, TypedKeys } from "../../../utils/enums";
+import { trpc } from "../../utils/trpc";
+import { createLineupForm, getFileSize, MAX_FILE_SIZE } from "../create";
 
 const EditLineup = () => {
   const { data: session } = useSession();
@@ -21,14 +20,14 @@ const EditLineup = () => {
   const agentList = TypedKeys(Agent);
   const mapList = TypedKeys(Map);
 
-  type formSchemaType = z.infer<typeof lineupFormValues>;
+  type formSchemaType = z.infer<typeof createLineupForm>;
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<formSchemaType>({
-    resolver: zodResolver(lineupFormValues),
+    resolver: zodResolver(createLineupForm),
   });
 
   // fetch the specific lineup data
@@ -36,7 +35,6 @@ const EditLineup = () => {
     data: lineup,
     isLoading,
     isError,
-    error,
   } = trpc.useQuery(["lineup.by-id", { id }]);
 
   // gen new presigned url for the updated lineup
@@ -88,11 +86,10 @@ const EditLineup = () => {
     );
   }
 
-  if (isError) {
+  if (isError || !lineup) {
     return (
       <Layout>
         <h1>Sorry Something went wrong</h1>
-        <p>{JSON.stringify(error, null, 4)}</p>
       </Layout>
     );
   }
@@ -101,43 +98,61 @@ const EditLineup = () => {
     toast.loading("Updating lineup");
     // NB! S3 objects cannot be updated, so steps should be: create new -> Delete prev -> update db
 
-    // TODO: detect what changed and update only new data
+    // QoL for future?: detect what changed and update only new data
 
     // create a new S3 object
     // HAS TO BE DONE FIRST IN ORDER TO OBTAIN THE IMAGE URL
-    const fileType: string = formInput.image?.[0].type;
-    const file: File = formInput.image[0];
-
-    const { url, fields }: { url: string; fields: PresignedPost.Fields } =
-      await preSignedUrl();
-
-    interface S3ImageData {
-      "Content-Type": string;
-      file: File;
-      Policy: string;
-      "X-Amz-Signature": string;
-    }
-    const s3Data: S3ImageData = {
-      ...fields,
-      "Content-Type": fileType,
-      file,
-    };
-
-    const formData = new FormData();
-    for (const name in s3Data) {
-      formData.append(name, s3Data[name as keyof S3ImageData]);
+    if (getFileSize(formInput.image) > MAX_FILE_SIZE * 5) {
+      alert("Your files are too large!");
     }
 
-    // send updated image to s3
-    // TODO: error handling, make sure this only conts if successful
-    const s3Res = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
+    // create a presignedURL for each of the images
+    let presigendUrls = "";
+    const len = formInput.image.length;
+    let curr = 1;
+    for (let file of formInput.image) {
+      const { url, fields } = await preSignedUrl();
 
-    // delete prev obj
+      interface S3ImageData {
+        "Content-Type": string;
+        file: File;
+        Policy: string;
+        "X-Amz-Signature": string;
+      }
+
+      const s3Data: S3ImageData = {
+        ...fields,
+        "Content-Type": file.type,
+        file,
+      };
+
+      const formData = new FormData();
+      for (const name in s3Data) {
+        formData.append(name, s3Data[name as keyof S3ImageData]);
+      }
+
+      await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log(`File number ${curr} is ${file.name}`);
+      console.log("Added a url: " + fields.Key);
+      if (curr == len) {
+        presigendUrls += fields.Key;
+      } else {
+        presigendUrls += fields.Key + ",";
+      }
+      curr++;
+    }
+    // delete prev obj(s) they are stored in lineup as: "presignedA, presignedB, presignedC"
+    const oldImgs = lineup.image.split(",");
+    for (let i = 0; i > oldImgs.length; i++) {
+      console.log("trynna del: " + oldImgs[i]);
+      deletedS3Obj({ id: oldImgs[i] as string });
+    }
+    // old del process
     const currS3Key = lineup?.id as string;
-    const delRes = deletedS3Obj({ id: currS3Key });
 
     // update db
     const updatedLineupObject = {
@@ -149,9 +164,11 @@ const EditLineup = () => {
       map: formInput.map,
       text: formInput.text,
       isSetup: formInput.isSetup,
-      image: fields.Key,
+      previewImg: 2, // Hardcoded, for now
+      image: presigendUrls,
     };
 
+    console.log(currS3Key == id);
     const updateRes = updatedLineup({
       id: currS3Key,
       updatedData: updatedLineupObject,
@@ -258,7 +275,18 @@ const EditLineup = () => {
                 height={600}
               />
             </div>
-            <input type="file" {...register("image")} disabled={isSubmitting} />
+            <input
+              type="file"
+              {...register("image")}
+              disabled={isSubmitting}
+              multiple
+              accept="image/*, video/*"
+            />
+            {errors.image && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.image.message}
+              </p>
+            )}
 
             <button
               type="submit"

@@ -1,5 +1,6 @@
 import { Lineup, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { ObjectIdentifierList } from "aws-sdk/clients/s3";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { s3 } from "../../utils/FileUpload";
@@ -18,6 +19,7 @@ const defaultLineupSelect = Prisma.validator<Prisma.LineupSelect>()({
   user: true,
   agent: true,
   map: true,
+  previewImg: true,
   image: true,
   text: true,
   votes: true,
@@ -276,6 +278,7 @@ export const protectedLineupRouter = createRouter()
           agent: updatedData.agent,
           map: updatedData.map,
           isSetup: updatedData.isSetup,
+          previewImg: updatedData.previewImg,
           image: updatedData.image,
           text: updatedData.text,
         },
@@ -413,7 +416,7 @@ export const protectedLineupRouter = createRouter()
   })
   .mutation("delete-s3-object", {
     input: z.object({
-      id: z.string(), // lineup id
+      id: z.string(), // The lineup id with
     }),
     async resolve({ input, ctx }) {
       if (!ctx.session) {
@@ -422,23 +425,29 @@ export const protectedLineupRouter = createRouter()
           message: "You need to be logged in to perform this action",
         });
       }
-      // fetch current lineup date
+      // fetch current lineup
       const lineup = await ctx.prisma.lineup.findUnique({
         where: { id: input.id },
       });
+
       if (!lineup) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: `No lineup with id: ${input.id}`,
         });
       }
+      // bulk del all the img associated with the lineup
+      const imgUrls = lineup.image.split(",");
+      const list: ObjectIdentifierList = [];
+      for (let img of imgUrls) {
+        list.push({ Key: img });
+      }
 
-      // deletion process
       return new Promise((resolve, reject) => {
-        s3.deleteObject(
+        s3.deleteObjects(
           {
             Bucket: process.env.BUCKET_NAME as string,
-            Key: lineup?.image,
+            Delete: { Objects: list },
           },
           (err, success) => {
             if (err) {
