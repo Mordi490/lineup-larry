@@ -45,12 +45,10 @@ const Lineups = () => {
 
   const onValChangeTest = (val: FilterTypes) => {
     setFilter(val);
-    console.log(`Select value change detected! ${val}`);
   };
 
   const onItemClickTest = (val: FilterTypes) => {
     setFilter(val);
-    console.log(`Select ITEM value change detected! ${val}`);
   };
 
   return (
