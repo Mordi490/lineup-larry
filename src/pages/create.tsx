@@ -13,7 +13,7 @@ import { trpc } from "../utils/trpc";
 
 type imageFile = Record<string, any>;
 
-export const MAX_FILE_SIZE = 1024 * 1024 * 4; // 4MB
+export const MAX_FILE_SIZE = 1024 * 1024 * 80; // 80MB, for now
 
 export const createLineupForm = z.object({
   title: z.string().min(1, { message: "Required" }),
@@ -85,7 +85,9 @@ const Create = () => {
     const len = formInput.image.length;
     let curr = 1;
     for (let file of formInput.image) {
-      const { url, fields } = await preSignedUrl();
+      const { url, fields } = await preSignedUrl({
+        fileType: file.type as string,
+      });
 
       interface S3ImageData {
         "Content-Type": string;
@@ -110,8 +112,6 @@ const Create = () => {
         body: formData,
       });
 
-      console.log(`File number ${curr} is ${file.name}`);
-      console.log("Added a url: " + fields.Key);
       if (curr == len) {
         presigendUrls += fields.Key;
       } else {
@@ -269,8 +269,6 @@ const Create = () => {
           </form>
         </div>
       </div>
-
-      <pre>{JSON.stringify(watch(), null, 4)}</pre>
     </Layout>
   );
 };

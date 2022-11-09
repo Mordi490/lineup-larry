@@ -163,12 +163,19 @@ const SpecificLineup = () => {
       <p className="pt-4">{lineupQuery.text}</p>
       {lineupQuery.image.split(",").map((urlId) => (
         <div className="my-4" key={urlId}>
-          <Image
-            src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
-            alt="Valorant screenshot"
-            width={1080}
-            height={600}
-          />
+          {urlId.includes("video") ? (
+            <video
+              controls
+              src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+            />
+          ) : (
+            <Image
+              src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+              alt="Valorant screenshot"
+              width={1080}
+              height={600}
+            />
+          )}
         </div>
       ))}
       <div className="flex">

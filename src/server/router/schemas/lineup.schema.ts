@@ -10,16 +10,6 @@ import { z } from "zod";
  *
  * If not: assume worst case scen: around 5 img and 1 vid, 180 MB w/wiggle room
  */
-export const MAX_FILE_SIZE = 1024 * 1024 * 4; // 4MB
-
-export const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "video/mp4",
-];
 
 export const createLineupSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),

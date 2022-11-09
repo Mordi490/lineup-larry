@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { ObjectIdentifierList } from "aws-sdk/clients/s3";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { MAX_FILE_SIZE } from "../../pages/create";
 import { s3 } from "../../utils/FileUpload";
 import { prisma } from "../db/client";
 import { createRouter } from "./context";
@@ -391,7 +392,11 @@ export const protectedLineupRouter = createRouter()
     },
   })
   .mutation("create-presigned-url", {
-    async resolve({ ctx }) {
+    input: z.object({
+      fileType: z.string(),
+    }),
+    // TODO: pass a flag to determine if its a image file or video file
+    async resolve({ input, ctx }) {
       if (!ctx.session) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -402,14 +407,15 @@ export const protectedLineupRouter = createRouter()
 
       return s3.createPresignedPost({
         Fields: {
-          Key: rndKey,
+          // if the file is a video prefix it with "video", eg. "video-<UUID>"
+          Key: input.fileType.includes("video") ? `video-${rndKey}` : rndKey,
         },
-        Expires: 120, // time in seconds the user have to upload,
+        Expires: 90, // time in seconds the user have to upload,
         Bucket: process.env.BUCKET_NAME,
         Conditions: [
           // TODO: support video + multiple files, consider uploading to a folder
-          ["starts-with", "$Content-Type", "image/"], // whitelist images for now
-          ["content-length-range", 0, 1024 * 1024 * 18], // 18 mb (total) limit for now
+          ["starts-with", "$Content-Type", input.fileType], // whitelist images for now
+          ["content-length-range", 0, MAX_FILE_SIZE],
         ],
       });
     },
