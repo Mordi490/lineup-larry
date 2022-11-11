@@ -22,7 +22,7 @@ model Lineup {
     title      String
     creator    String
     userId     String
-    user       User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+    user       User      @relation(fields: [userId], references: [id], onUpdate: Cascade)
     agent      String
     map        String
     createdAt  DateTime  @default(now())
@@ -35,6 +35,8 @@ model Lineup {
     comments   Comment[]
     vote       Vote[]
     //VotesOnLineup VotesOnLineup[] // explicit many-to-many
+    Group      Group?    @relation(fields: [groupId], references: [id])
+    groupId    String?
 }
 
 model Comment {
@@ -87,6 +89,17 @@ model User {
     Comment       Comment[]
     Votes         Vote[]
     joinedAt      DateTime  @default(now())
+    // a user can have many groups, 1-m
+    groups        Group[]
+}
+
+model Group {
+    id       String   @id @default(uuid())
+    name     String
+    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId   String
+    Lineup   Lineup[]
+    isPublic Boolean  @default(false)
 }
 
 // explicit many-to-many relationships 
