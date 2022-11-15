@@ -29,9 +29,17 @@ const SpecificLineup = () => {
     { id },
   ]);
 
-  const { data: allGrps } = trpc.useQuery([
-    "protectedGroupRouter.get-all-groups",
-  ]);
+  const {
+    data: allGrps,
+    refetch: fetchGroups,
+    isFetching,
+  } = trpc.useQuery(["protectedGroupRouter.get-all-groups"], {
+    // use this flag to NOT run query on page load, instead run when user clicks "add to group btn"
+    enabled: false,
+    onSuccess: (res) => {
+      console.log(res);
+    },
+  });
 
   const { mutate: addToGrp } = trpc.useMutation(
     ["protectedGroupRouter.add-to-group"],
@@ -208,7 +216,7 @@ const SpecificLineup = () => {
           <Dialog.Trigger asChild>
             <button
               className="rounded-lg bg-neutral-600 px-6 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
-              onClick={() => console.log("load grps now, given this id")}
+              onClick={() => fetchGroups()}
             >
               Add to group
             </button>
@@ -226,7 +234,7 @@ const SpecificLineup = () => {
                 allGrps.map((grp) => (
                   <Fragment key={grp.id}>
                     <Dialog.Description
-                      className="mx-1 w-fit px-2 py-1 shadow-lg hover:bg-gray-600"
+                      className="mx-1 w-fit px-2 py-1 shadow-lg hover:cursor-pointer hover:bg-gray-600"
                       onClick={() =>
                         addToGrp({ groupId: grp.id, lineupId: id })
                       }
@@ -235,10 +243,12 @@ const SpecificLineup = () => {
                     </Dialog.Description>
                   </Fragment>
                 ))
+              ) : { isFetching } ? (
+                <p>...loading</p>
               ) : (
                 <p>You do not have any groups</p>
               )}
-              <Dialog.Close className="absolute bottom-0 right-0 mb-1 mr-1 inline-flex select-none justify-center rounded-md border border-gray-500 bg-slate-300 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-slate-400 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
+              <Dialog.Close className="absolute bottom-0 right-0 mb-1 mr-1 inline-flex select-none justify-center rounded-md border border-gray-500 bg-slate-300 px-4 py-2 text-sm font-medium uppercase text-gray-900 hover:bg-slate-400 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
                 Cancel
               </Dialog.Close>
             </Dialog.Content>
