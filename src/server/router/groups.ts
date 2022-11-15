@@ -96,19 +96,35 @@ export const protectedGroupRouter = createRouter()
     async resolve({ ctx }) {
       return await ctx.prisma.group.findMany({
         where: { userId: ctx.session?.user?.id },
+        select: { id: true, name: true, Lineup: true },
       });
     },
   })
+  // TODO: double check that updates changes work as intended
+  // used for large changes
   .mutation("update-group", {
     input: updateGroupInput,
     async resolve({ input, ctx }) {
-      await ctx.prisma.group.update({
+      return await ctx.prisma.group.update({
         where: { id: input.id },
         data: {
           isPublic: input.isPublic,
           Lineup: { connect: { id: input.lineupId } },
           name: input.name,
         },
+      });
+    },
+  })
+  // minute changes
+  .mutation("add-to-group", {
+    input: z.object({
+      groupId: z.string(),
+      lineupId: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.group.update({
+        where: { id: input.groupId },
+        data: { Lineup: { connect: { id: input.lineupId } } },
       });
     },
   });
