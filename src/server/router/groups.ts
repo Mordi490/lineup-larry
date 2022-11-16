@@ -25,7 +25,14 @@ export const groupRouter = createRouter()
     }),
     async resolve({ input }) {
       const groups = await prisma.group.findMany({
-        where: { userId: input.id },
+        where: { AND: [{ userId: input.id }, { isPublic: true }] },
+        select: {
+          name: true,
+          id: true,
+          Lineup: {
+            select: { id: true, title: true, image: true, previewImg: true },
+          },
+        },
       });
       return groups;
     },
@@ -96,7 +103,11 @@ export const protectedGroupRouter = createRouter()
     async resolve({ ctx }) {
       return await ctx.prisma.group.findMany({
         where: { userId: ctx.session?.user?.id },
-        select: { id: true, name: true, Lineup: true },
+        select: {
+          id: true,
+          name: true,
+          Lineup: { select: { id: true, title: true } },
+        },
       });
     },
   })

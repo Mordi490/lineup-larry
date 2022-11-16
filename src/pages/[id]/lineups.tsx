@@ -5,6 +5,7 @@ import Loading from "../../../components/loading";
 import Link from "next/link";
 import { trpc } from "../../utils/trpc";
 import { Fragment } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 
 const Lineups = () => {
   const router = useRouter();
@@ -15,6 +16,12 @@ const Lineups = () => {
   // Consider adding a endpoint for #lineups, #votes, etc.
   const { data: userData, isLoading: userDataIsLoading } = trpc.useQuery([
     "lineup.user-stats",
+    { id },
+  ]);
+
+  // fetch groups, std for now, impl inf l8er
+  const { data: groups } = trpc.useQuery([
+    "groupRouter.get-public-groups",
     { id },
   ]);
 
@@ -83,7 +90,7 @@ const Lineups = () => {
           {/* card of recent lineups */}
           <div className="my-2 ml-2 flex flex-col">
             <h1 className="text-center text-xl font-medium">Recent lineups</h1>
-            <ul className="mx-auto grid grid-cols-3">
+            <ul className="mx-auto mt-2 grid grid-cols-3">
               {paginatedData?.pages.map((page, index) => (
                 <Fragment key={page.items[0]?.id || index}>
                   {page.items.length ? (
@@ -120,7 +127,7 @@ const Lineups = () => {
             <h1 className="text-center text-xl font-medium">
               Highest rated lineups
             </h1>
-            <ul className="mx-auto grid grid-cols-3">
+            <ul className="mx-auto mt-2 grid grid-cols-3">
               {ratedLineups?.pages.map((page, index) => (
                 <Fragment key={page.items[0]?.id || index}>
                   {page.items.length ? (
@@ -152,6 +159,49 @@ const Lineups = () => {
             </button>
           </div>
         </div>
+
+        {/* showcase public groups */}
+        <h1 className="text-center text-xl font-medium">Groups</h1>
+        {groups?.length ? (
+          groups.map((gr) => (
+            <Dialog.Root key={gr.id}>
+              <Dialog.Trigger asChild className="grid grid-cols-3">
+                <button className="text-slate-300s underline">{gr.name}</button>
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 z-20 grid items-center overflow-y-auto bg-black/50">
+                  <Dialog.Content className="z-50 mx-auto w-[95vw] max-w-2xl flex-col rounded-lg bg-gray-800 p-8 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
+                    <Dialog.Title className="text-center text-lg font-semibold">
+                      {gr.name}
+                    </Dialog.Title>
+                    {gr.Lineup.map((ln) => (
+                      <div key={ln.id} className="my-4 shadow-2xl">
+                        <Link href={`/lineup/${ln.id}`}>
+                          <div className="">
+                            <a className="text-lg font-medium hover:cursor-pointer">
+                              {ln.title}
+                            </a>
+                            <Image
+                              className="hover:cursor-pointer"
+                              width={900}
+                              height={600}
+                              alt="Valorant screenshot"
+                              src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                                ln.image.split(",")[ln.previewImg]
+                              }`}
+                            ></Image>
+                          </div>
+                        </Link>
+                      </div>
+                    ))}
+                  </Dialog.Content>
+                </Dialog.Overlay>
+              </Dialog.Portal>
+            </Dialog.Root>
+          ))
+        ) : (
+          <p className="mt-1 text-center">This user has no groups</p>
+        )}
       </Layout>
     </>
   );
