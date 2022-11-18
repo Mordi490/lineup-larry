@@ -146,7 +146,6 @@ const EditLineup = () => {
     // delete prev obj(s) they are stored in lineup as: "presignedA, presignedB, presignedC"
     const oldImgs = lineup.image.split(",");
     for (let i = 0; i > oldImgs.length; i++) {
-      console.log("trynna del: " + oldImgs[i]);
       deletedS3Obj({ id: oldImgs[i] as string });
     }
     // old del process
