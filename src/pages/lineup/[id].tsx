@@ -9,9 +9,9 @@ import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
 import { trpc } from "../../utils/trpc";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import { Fragment, useState } from "react";
 import toast from "react-hot-toast";
-import * as Dialog from "@radix-ui/react-dialog";
+import { useState } from "react";
+import { GroupDialog } from "../../../components/groupDialog";
 
 const SpecificLineup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,27 +28,6 @@ const SpecificLineup = () => {
     "privateUserRouter.get-user-sentiment-by-id",
     { id },
   ]);
-
-  const {
-    data: allGrps,
-    refetch: fetchGroups,
-    isFetching,
-  } = trpc.useQuery(["protectedGroupRouter.get-all-groups"], {
-    // use this flag to NOT run query on page load, instead run when user clicks "add to group btn"
-    enabled: false,
-    onSuccess: (res) => {
-      console.log(res);
-    },
-  });
-
-  const { mutate: addToGrp } = trpc.useMutation(
-    ["protectedGroupRouter.add-to-group"],
-    {
-      onSuccess: () => {
-        toast.success(`Lineup: ${lineupQuery?.title} was added to group`);
-      },
-    }
-  );
 
   const { mutate: delLineup } = trpc.useMutation(["privateLineup.delete"], {
     onSuccess: () => {
@@ -69,6 +48,7 @@ const SpecificLineup = () => {
     ["privateLineup.delete-s3-object"],
     {
       onError: (err) => {
+        toast.error("Something went wrong uploading images/videos");
         console.log(err);
       },
     }
@@ -212,48 +192,7 @@ const SpecificLineup = () => {
         </div>
 
         {/* This should just be a button that opens a modal or something */}
-        <Dialog.Root>
-          <Dialog.Trigger asChild>
-            <button
-              className="rounded-lg bg-neutral-600 px-6 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
-              onClick={() => fetchGroups()}
-            >
-              Add to group
-            </button>
-          </Dialog.Trigger>
-          <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-20 bg-black/50">
-              what is overlay
-            </Dialog.Overlay>
-            <Dialog.Content className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] flex-col rounded-lg bg-gray-800 p-4 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
-              <Dialog.Title className="text-center text-lg font-semibold">
-                Select which group to add
-              </Dialog.Title>
-              {/* populate with all of the users groups w/onClick that appends. Ideally show which ones the lineup already is in w/remove option(?) */}
-              {allGrps?.length ? (
-                allGrps.map((grp) => (
-                  <Fragment key={grp.id}>
-                    <Dialog.Description
-                      className="mx-1 w-fit px-2 py-1 shadow-lg hover:cursor-pointer hover:bg-gray-600"
-                      onClick={() =>
-                        addToGrp({ groupId: grp.id, lineupId: id })
-                      }
-                    >
-                      {grp.name}
-                    </Dialog.Description>
-                  </Fragment>
-                ))
-              ) : { isFetching } ? (
-                <p>...loading</p>
-              ) : (
-                <p>You do not have any groups</p>
-              )}
-              <Dialog.Close className="absolute bottom-0 right-0 mb-1 mr-1 inline-flex select-none justify-center rounded-md border border-gray-500 bg-slate-300 px-4 py-2 text-sm font-medium uppercase text-gray-900 hover:bg-slate-400 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
-                Cancel
-              </Dialog.Close>
-            </Dialog.Content>
-          </Dialog.Portal>
-        </Dialog.Root>
+        <GroupDialog />
       </div>
       <hr className="my-4" />
       <CommentForm />
