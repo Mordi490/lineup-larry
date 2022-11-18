@@ -7,7 +7,7 @@ export const createGroupInput = z.object({
   name: z.string(),
   userId: z.string(),
   lineupId: z.string(),
-  isPublic: z.boolean(),
+  isPublic: z.boolean().default(false),
 });
 
 export const updateGroupInput = z.object({
@@ -136,6 +136,16 @@ export const protectedGroupRouter = createRouter()
       return await ctx.prisma.group.update({
         where: { id: input.groupId },
         data: { Lineup: { connect: { id: input.lineupId } } },
+      });
+    },
+  })
+  .mutation("delete-group", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.group.delete({
+        where: { id: input.id },
       });
     },
   });
