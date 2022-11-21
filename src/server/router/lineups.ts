@@ -271,17 +271,16 @@ export const protectedLineupRouter = createRouter()
       updatedData: editLineupSchema,
     }),
     async resolve({ input, ctx }) {
-      const { id, updatedData } = input;
       const lineup = await ctx.prisma.lineup.update({
         where: { id: input.id },
         data: {
-          title: updatedData.title,
-          agent: updatedData.agent,
-          map: updatedData.map,
-          isSetup: updatedData.isSetup,
-          previewImg: updatedData.previewImg,
-          image: updatedData.image,
-          text: updatedData.text,
+          title: input.updatedData.title,
+          agent: input.updatedData.agent,
+          map: input.updatedData.map,
+          isSetup: input.updatedData.isSetup,
+          previewImg: input.updatedData.previewImg,
+          image: input.updatedData.image,
+          text: input.updatedData.text,
         },
       });
       return lineup;
