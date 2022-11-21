@@ -111,7 +111,7 @@ const EditLineup = () => {
     const len = formInput.image.length;
     let curr = 1;
     for (let file of formInput.image) {
-      const { url, fields } = await preSignedUrl();
+      const { url, fields } = await preSignedUrl({ fileType: file.type });
 
       interface S3ImageData {
         "Content-Type": string;
