@@ -64,6 +64,10 @@ export const GroupDialog = () => {
       onSuccess: (res) => {
         toast.success(`Lineup added to ${res.name}`);
       },
+      onError: (err) => {
+        console.log(err);
+        toast.error("Something went wrong");
+      },
     }
   );
 
@@ -71,21 +75,20 @@ export const GroupDialog = () => {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <button
-          className="rounded-lg bg-neutral-600 px-6 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
+          id="tailwind_fail_2"
+          className="rounded-lg bg-neutral-600 px-6 py-4 font-semibold uppercase text-white"
           onClick={() => fetchGroups()}
         >
           Add to group
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-20 bg-black/50">
-          what is overlay
-        </Dialog.Overlay>
+        <Dialog.Overlay className="fixed inset-0 z-20 bg-black/50" />
         <Dialog.Content className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] flex-col rounded-lg bg-gray-800 p-4 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
           <Dialog.Title className="text-center text-lg font-semibold">
             Select which group to add
           </Dialog.Title>
-          {/* populate with all of the users groups w/onClick that appends. Ideally show which ones the lineup already is in w/remove option(?) */}
+          {/* Future QoL: show if the lineup already is in a groups, clicking on one of them removes it etc.  */}
           <form
             onSubmit={onSubmit}
             className="mx-1 grid grid-cols-3 gap-2 px-2 py-1 shadow-lg"
@@ -107,7 +110,10 @@ export const GroupDialog = () => {
                   <Dialog.Description
                     className="mx-1 w-fit px-2 py-1 shadow-lg hover:cursor-pointer hover:bg-gray-600"
                     onClick={() =>
-                      addToGrp({ groupId: grp.id, lineupId: router.query.id })
+                      addToGrp({
+                        groupId: grp.id,
+                        lineupId: router.query.id as string,
+                      })
                     }
                   >
                     {grp.name}

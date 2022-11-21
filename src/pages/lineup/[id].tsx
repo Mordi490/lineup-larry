@@ -124,7 +124,7 @@ const SpecificLineup = () => {
               {/* TODO: implement delete */}
               <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialog.Trigger asChild>
-                  <a className="h-8 w-auto rounded bg-red-400 text-xl text-gray-700 hover:bg-red-500">
+                  <a className="rounded-md bg-red-500 p-1 font-medium capitalize">
                     Delete
                   </a>
                 </AlertDialog.Trigger>
@@ -190,9 +190,8 @@ const SpecificLineup = () => {
             {userLike == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
           </button>
         </div>
-
         {/* This should just be a button that opens a modal or something */}
-        <GroupDialog />
+        {data?.user ? <GroupDialog /> : null}
       </div>
       <hr className="my-4" />
       <CommentForm />

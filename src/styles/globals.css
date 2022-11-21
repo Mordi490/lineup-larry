@@ -18,6 +18,10 @@ main {
   @apply flex h-screen flex-col;
 }
 
+#tailwind_fail_2 {
+  @apply bg-neutral-600;
+}
+
 nav,
 footer {
   @apply flex flex-col bg-gray-800;

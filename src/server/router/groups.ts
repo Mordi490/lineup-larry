@@ -139,6 +139,18 @@ export const protectedGroupRouter = createRouter()
       });
     },
   })
+  .mutation("remove-from-group", {
+    input: z.object({
+      lineupId: z.string(),
+      groupId: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.group.update({
+        data: { Lineup: { disconnect: { id: input.lineupId } } },
+        where: { id: input.groupId },
+      });
+    },
+  })
   .mutation("delete-group", {
     input: z.object({
       id: z.string(),
