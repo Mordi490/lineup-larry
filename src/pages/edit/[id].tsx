@@ -111,7 +111,7 @@ const EditLineup = () => {
     const len = formInput.image.length;
     let curr = 1;
     for (let file of formInput.image) {
-      const { url, fields } = await preSignedUrl();
+      const { url, fields } = await preSignedUrl({ fileType: file.type });
 
       interface S3ImageData {
         "Content-Type": string;
@@ -146,7 +146,6 @@ const EditLineup = () => {
     // delete prev obj(s) they are stored in lineup as: "presignedA, presignedB, presignedC"
     const oldImgs = lineup.image.split(",");
     for (let i = 0; i > oldImgs.length; i++) {
-      console.log("trynna del: " + oldImgs[i]);
       deletedS3Obj({ id: oldImgs[i] as string });
     }
     // old del process

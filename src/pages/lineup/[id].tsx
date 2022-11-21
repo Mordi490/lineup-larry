@@ -9,8 +9,9 @@ import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
 import { trpc } from "../../utils/trpc";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import { useState } from "react";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import { GroupDialog } from "../../../components/groupDialog";
 
 const SpecificLineup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +48,7 @@ const SpecificLineup = () => {
     ["privateLineup.delete-s3-object"],
     {
       onError: (err) => {
+        toast.error("Something went wrong uploading images/videos");
         console.log(err);
       },
     }
@@ -122,7 +124,7 @@ const SpecificLineup = () => {
               {/* TODO: implement delete */}
               <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialog.Trigger asChild>
-                  <a className="h-8 w-auto rounded bg-red-400 text-xl text-gray-700 hover:bg-red-500">
+                  <a className="rounded-md bg-red-500 p-1 font-medium capitalize">
                     Delete
                   </a>
                 </AlertDialog.Trigger>
@@ -178,14 +180,18 @@ const SpecificLineup = () => {
           )}
         </div>
       ))}
-      <div className="flex">
-        Votes: <span className="ml-1">{lineupQuery?.votes}</span>
-        <button onClick={() => castVote({ id, sentiment: "like" })}>
-          {userLike == "like" ? <FaPlus color="cyan" /> : <FaPlus />}
-        </button>
-        <button onClick={() => castVote({ id, sentiment: "dislike" })}>
-          {userLike == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
-        </button>
+      <div className="flex justify-between">
+        <div>
+          Votes: <span className="ml-1">{lineupQuery?.votes}</span>
+          <button onClick={() => castVote({ id, sentiment: "like" })}>
+            {userLike == "like" ? <FaPlus color="cyan" /> : <FaPlus />}
+          </button>
+          <button onClick={() => castVote({ id, sentiment: "dislike" })}>
+            {userLike == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
+          </button>
+        </div>
+        {/* This should just be a button that opens a modal or something */}
+        {data?.user ? <GroupDialog /> : null}
       </div>
       <hr className="my-4" />
       <CommentForm />

@@ -9,25 +9,30 @@ const UserDetails = () => {
 
   const id = router.query.id as string;
 
-  const { data } = trpc.useQuery(["user.get-user", { id }]);
+  const { data: userData } = trpc.useQuery(["user.get-user", { id }]);
 
-  console.log("userData: " + data);
+  const { data: allGroups } = trpc.useQuery([
+    "protectedGroupRouter.get-all-groups",
+  ]);
 
   if (session?.user?.id === id) {
     return (
       <Layout>
-        <h1 className="mt-2 text-center text-4xl">Welcome: {data?.name}</h1>
-        <p>Data we have about your user:</p>
-        <pre>{JSON.stringify(data, null, 4)}</pre>
+        <h1 className="mt-2 text-center text-4xl">Welcome: {userData?.name}</h1>
+        <p>Data we have:</p>
+        <pre>{JSON.stringify(userData, null, 4)}</pre>
+        <hr className="my-4" />
+        <h1 className="mt-2 text-center text-4xl">group data test</h1>
+        <pre>{JSON.stringify(allGroups, null, 4)}</pre>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <h1 className="mt-2 text-center text-4xl">User: {data?.name}</h1>
-      <p>Data we have about your user:</p>
-      <pre>{JSON.stringify(data, null, 4)}</pre>
+      <h1 className="mt-2 text-center text-4xl">User: {userData?.name}</h1>
+      <p>Data we have about this user:</p>
+      <pre>{JSON.stringify(userData, null, 4)}</pre>
     </Layout>
   );
 };
