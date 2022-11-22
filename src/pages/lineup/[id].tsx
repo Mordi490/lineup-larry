@@ -1,17 +1,17 @@
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import CommentForm from "../../../components/commentForm";
 import CommentSection from "../../../components/commentSection";
+import { GroupDialog } from "../../../components/groupDialog";
 import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
+import { Votes } from "../../../components/Votes";
 import { trpc } from "../../utils/trpc";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import toast from "react-hot-toast";
-import { useState } from "react";
-import { GroupDialog } from "../../../components/groupDialog";
 
 const SpecificLineup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,11 +21,6 @@ const SpecificLineup = () => {
 
   const { data: lineupQuery, isLoading } = trpc.useQuery([
     "lineup.by-id",
-    { id },
-  ]);
-
-  const { data: userLike } = trpc.useQuery([
-    "privateUserRouter.get-user-sentiment-by-id",
     { id },
   ]);
 
@@ -41,8 +36,6 @@ const SpecificLineup = () => {
       console.log(err);
     },
   });
-
-  const { mutate: castVote } = trpc.useMutation(["privateLineup.cast-vote"]);
 
   const { mutate: delS3Data } = trpc.useMutation(
     ["privateLineup.delete-s3-object"],
@@ -181,15 +174,7 @@ const SpecificLineup = () => {
         </div>
       ))}
       <div className="flex justify-between">
-        <div>
-          Votes: <span className="ml-1">{lineupQuery?.votes}</span>
-          <button onClick={() => castVote({ id, sentiment: "like" })}>
-            {userLike == "like" ? <FaPlus color="cyan" /> : <FaPlus />}
-          </button>
-          <button onClick={() => castVote({ id, sentiment: "dislike" })}>
-            {userLike == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
-          </button>
-        </div>
+        <Votes id={id} votes={lineupQuery.votes} />
         {/* This should just be a button that opens a modal or something */}
         {data?.user ? <GroupDialog /> : null}
       </div>
