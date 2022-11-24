@@ -48,11 +48,13 @@ const NavbarProfileDropdown = () => {
       ) : (
         <Link href="/api/auth/signin">
           <a>
-            <button className="flex gap-2 rounded-full bg-gray-200 p-4 font-bold text-gray-800 hover:bg-gray-100">
-              Login via Discord
-              {/* TODO: center the discord icon */}
+            <button
+              id="tailwind_crack_pipe_fix"
+              className="inline-flex items-center justify-center gap-2 font-bold text-black"
+            >
+              Login
               <span>
-                <FaDiscord />
+                <FaDiscord className="mt-1" />
               </span>
             </button>
           </a>
