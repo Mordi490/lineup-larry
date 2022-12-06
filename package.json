@@ -10,7 +10,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.9.7",
     "@next-auth/prisma-adapter": "^1.0.4",
     "@prisma/client": "^4.6.1",

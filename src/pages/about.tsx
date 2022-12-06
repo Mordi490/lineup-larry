@@ -11,7 +11,7 @@ const About = () => {
           or other video based platforms. This site will be primarily be picture
           based. There are a few reasons for this, but the biggest one is that
           it&apos;s faster than jumping between timelines on a video. Once you
-          know ~s80% of a lineup, you only need a picture or two to confirm
+          know ~80% of a lineup, you only need a picture or two to confirm
           placement of character and crosshair placement.
         </p>
       </div>

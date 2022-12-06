@@ -76,7 +76,7 @@ export const GroupDialog = () => {
       <Dialog.Trigger asChild>
         <button
           id="tailwind_fail_2"
-          className="rounded-lg bg-neutral-600 px-6 py-4 font-semibold uppercase text-white"
+          className="h-fit w-fit rounded-lg bg-neutral-600 px-2 py-2 font-semibold uppercase text-white hover:bg-neutral-500"
           onClick={() => fetchGroups()}
         >
           Add to group

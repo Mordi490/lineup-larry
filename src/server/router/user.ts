@@ -3,12 +3,31 @@ import { prisma } from "../db/client";
 import { z } from "zod";
 import { createRouter } from "./context";
 import { createProtectedRouter } from "./protected-router";
+import { Prisma } from "@prisma/client";
 
 /**
  * Default selector for Users.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
  * @see https://github.com/prisma/prisma/issues/9353
  */
+// NB! groups will be handled in separate calls, most likely
+export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
+  id: true,
+  name: true,
+  image: true,
+  Role: true,
+  joinedAt: true,
+});
+
+// default + email
+export const privateUserSelect = Prisma.validator<Prisma.UserSelect>()({
+  id: true,
+  name: true,
+  image: true,
+  Role: true,
+  joinedAt: true,
+  email: true,
+});
 
 export const userRouter = createRouter().query("get-user", {
   input: z.object({
@@ -19,6 +38,7 @@ export const userRouter = createRouter().query("get-user", {
       where: {
         id: input.id,
       },
+      select: defaultUserSelect,
     });
 
     if (!user) {
@@ -88,6 +108,7 @@ export const privateUserRouter = createProtectedRouter()
     async resolve({ input, ctx }) {
       const user = await ctx.prisma.user.findUnique({
         where: { id: input.id },
+        select: privateUserSelect,
       });
 
       if (!user) {

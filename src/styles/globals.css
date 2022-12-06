@@ -18,13 +18,52 @@ main {
   @apply flex h-screen flex-col;
 }
 
-#tailwind_fail_2 {
-  @apply bg-neutral-600;
+#tailwind_sucks {
+  @apply mx-auto max-w-7xl;
 }
 
-nav,
+#tailwind_crack_pipe_fix {
+  @apply rounded-lg bg-gray-300 p-2 text-slate-800 hover:bg-gray-200;
+}
+
+#tailwind_smile {
+  @apply text-neutral-400;
+}
+
+#why {
+  @apply hover:fill-red-400;
+}
+
+#tailwind_fail_2 {
+  @apply bg-neutral-600 hover:bg-neutral-500;
+}
+
+#dropdown_bg_color {
+  @apply rounded-xl bg-gray-800 p-2;
+}
+
+#dropdown_hover_effect {
+  @apply hover:bg-gray-700;
+}
+
 footer {
   @apply flex flex-col bg-gray-800;
+}
+
+#curr_test {
+  @apply justify-between;
+}
+
+#test {
+  @apply shadow-lg;
+}
+
+#testtest {
+  @apply justify-end;
+}
+
+#tw_shit {
+  @apply mb-1 mr-1;
 }
 
 footer {

@@ -6,6 +6,10 @@ const FAQ = () => {
   return (
     <Layout title="FAQ">
       <div className="container mx-auto mt-4 text-center">
+        <h1 className="my-4 text-2xl font-bold">
+          Why does this exist? (TLDR version)
+        </h1>
+        <p className="my-4">For fun</p>
         <h1 className="my-4 text-2xl font-bold">Why does this exist?</h1>
         <p className="my-4">
           This site/project aims to be a hub for Valorant lineups. This site
@@ -13,7 +17,7 @@ const FAQ = () => {
           or other video based platforms. This site will be primarily be picture
           based. There are a few reasons for this, but the biggest one is that
           its's faster than jumping between timelines on a video. Once you know
-          ~s80% of a lineup, you only need a picture or two to confirm placement
+          ~80% of a lineup, you only need a picture or two to confirm placement
           of character and crosshair placement.
         </p>
 
@@ -35,8 +39,7 @@ const FAQ = () => {
           <Link href="https://create.t3.gg/">
             <a className="ml-1 font-medium underline">T3-stack</a>
           </Link>{" "}
-          was starting to gain some traction. The stack uses TS on both frontend
-          and backend and the DX is the best I've ever seen.
+          was starting to gain some traction, leading me to try it
         </p>
       </div>
     </Layout>
