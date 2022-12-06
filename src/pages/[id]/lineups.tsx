@@ -203,9 +203,12 @@ const Lineups = () => {
                 </Dialog.Trigger>
                 <button
                   onClick={() => delGroup({ id: gr.id as string })}
-                  className="ml-2 rounded-md bg-red-500 py-1 px-2 font-medium uppercase text-stone-200 hover:bg-red-600"
+                  className="ml-2 flex items-center rounded-md bg-red-500 py-1 px-2 font-medium uppercase text-neutral-700 hover:bg-red-400"
                 >
-                  Delete
+                  Delete{" "}
+                  <span className="ml-1">
+                    <FaTrashAlt size={14} color="black" />
+                  </span>
                 </button>
                 <Dialog.Portal>
                   <Dialog.Overlay className="fixed inset-0 z-20 grid items-center overflow-y-auto bg-black/50">

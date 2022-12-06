@@ -3,13 +3,14 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { FaDiscord } from "react-icons/fa";
 import * as z from "zod";
 import Layout from "../../components/layout";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
 import { trpc } from "../utils/trpc";
 
 // moving this one here since using the File API fucks over the import
-// describes the form object for creating & editing lineups
+// describes the form object for creating & editing lineupsF
 
 type imageFile = Record<string, any>;
 
@@ -142,132 +143,133 @@ const Create = () => {
   if (!session)
     return (
       <Layout title="Create a lineup">
-        <h1>You have to be logged in to create a lineup</h1>
-        <h1>Please log in</h1>
-        <button onClick={() => signIn("discord")}>Sign in with Discord</button>
+        <h1 className="my-2 text-center text-3xl text-red-300">
+          You have to be logged in to create a lineup
+        </h1>
+        <div className="flex justify-center">
+          <button
+            className="my-2 inline-flex items-center justify-center rounded-md border border-transparent  bg-gray-300 p-2 px-2 py-2 text-lg font-bold text-slate-800 hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
+            onClick={() => signIn("discord")}
+          >
+            Sign in with Discord{" "}
+            <span className="ml-2">
+              <FaDiscord size={24} />
+            </span>
+          </button>
+        </div>
       </Layout>
     );
 
   return (
-    <Layout title="Create a lineup">
-      <h1 className="text-bold mt-2 text-center text-2xl">
+    <Layout title="Submit a Lineup" text="Submit a Lineup">
+      <h1 className="text-bold my-2 text-center text-2xl font-bold">
         Please fill out the form below
       </h1>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="py-8 px-6 sm:px-10">
-          <form className="mb-0 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <label form="title" className="block text-sm font-medium">
+
+      <div className="mx-4">
+        <form
+          className="flex flex-col items-baseline justify-center space-y-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="flex flex-col space-y-1">
+            <label form="title" className="text-sm font-medium">
               Title
             </label>
-            <div className="mt-1">
-              <input
-                placeholder="Lineup Title"
-                className="text-white"
-                {...register("title")}
-                disabled={isSubmitting}
-              />
-              {errors.title && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Agent</label>
-              <div className="mt-1">
-                <select className="text-white" {...register("agent")}>
-                  <option placeholder="select Map" disabled={true}>
-                    Select agent
-                  </option>
-                  {agentList.map((agent) => (
-                    <option value={agent} key={agent} disabled={isSubmitting}>
-                      {agent.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-                {errors.agent && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.agent.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Map</label>
-              <div className="mt-1">
-                <select className="text-white" {...register("map")}>
-                  <option placeholder="select Map" disabled={true}>
-                    Select Map
-                  </option>
-                  {mapList.map((map) => (
-                    <option key={map} value={map} disabled={isSubmitting}>
-                      {map.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-                {errors.map && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.map.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Text</label>
-              <div className="mt-1">
-                <textarea
-                  placeholder="a few words about the lineup"
-                  className="text-white"
-                  {...register("text")}
-                  disabled={isSubmitting}
-                />
-                {errors.text && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.text.message}
-                  </p>
-                )}
-
-                <div className="my-4 flex gap-2">
-                  <input
-                    className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-600 ring-offset-gray-800 focus:ring-2 focus:ring-blue-600"
-                    {...register("isSetup")}
-                    type="checkbox"
-                    disabled={isSubmitting}
-                  />
-                  <label className="block text-sm font-medium">
-                    Is a setup
-                  </label>
-                </div>
-
-                <input
-                  type="file"
-                  multiple
-                  {...register("image")}
-                  disabled={isSubmitting}
-                  accept="image/*, video/*"
-                />
-                {errors.image && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.image.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* TODO: prompt user with which img to use for preview */}
-
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
+            <input
+              placeholder="Lineup Title"
+              className="text-white"
+              {...register("title")}
               disabled={isSubmitting}
-            >
-              {isSubmitting ? "Uploading..." : "Submit"}
-            </button>
-          </form>
-        </div>
+            />
+            {errors.title && (
+              <p className="text-sm text-red-600">{errors.title.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col space-y-1">
+            <label className="text-sm font-medium">Agent</label>
+            <select className="text-white" {...register("agent")}>
+              <option placeholder="select Map" disabled={true}>
+                Select agent
+              </option>
+              {agentList.map((agent) => (
+                <option value={agent} key={agent} disabled={isSubmitting}>
+                  {agent.toUpperCase()}
+                </option>
+              ))}
+            </select>
+            {errors.agent && (
+              <p className="text-sm text-red-600">{errors.agent.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col space-y-1">
+            <label className="text-sm font-medium">Map</label>
+            <select className="text-white" {...register("map")}>
+              <option placeholder="select Map" disabled={true}>
+                Select Map
+              </option>
+              {mapList.map((map) => (
+                <option key={map} value={map} disabled={isSubmitting}>
+                  {map.toUpperCase()}
+                </option>
+              ))}
+            </select>
+            {errors.map && (
+              <p className="text-sm text-red-600">{errors.map.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col space-y-1">
+            <label className="text-sm font-medium">Text</label>
+            <textarea
+              placeholder="a few words about the lineup"
+              className="text-white"
+              rows={3}
+              cols={40}
+              {...register("text")}
+              disabled={isSubmitting}
+            />
+            {errors.text && (
+              <p className="text-sm text-red-600">{errors.text.message}</p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1">
+            <input
+              className="items-centers inline-flex rounded border-gray-600 bg-gray-700 text-blue-600 ring-offset-gray-800 focus:ring-2 focus:ring-blue-600"
+              {...register("isSetup")}
+              type="checkbox"
+              disabled={isSubmitting}
+            />
+            <label className="inline-flex items-center font-medium">
+              Is a setup
+            </label>
+          </div>
+
+          <div>
+            <input
+              type="file"
+              multiple
+              {...register("image")}
+              disabled={isSubmitting}
+              accept="image/*, video/*"
+            />
+            {errors.image && (
+              <p className=" text-sm text-red-600">{errors.image.message}</p>
+            )}
+          </div>
+
+          {/* TODO: prompt user with which img to use for preview */}
+
+          <button
+            type="submit"
+            className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white hover:bg-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Uploading..." : "Submit"}
+          </button>
+        </form>
       </div>
     </Layout>
   );

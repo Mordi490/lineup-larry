@@ -2,10 +2,10 @@ import { useRouter } from "next/router";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { trpc } from "../src/utils/trpc";
 
-interface voteProps {
+type voteProps = {
   votes: number;
   id: string; // queryParam
-}
+};
 
 export const Votes = (props: voteProps) => {
   const id = useRouter().query.id as string;
@@ -16,13 +16,21 @@ export const Votes = (props: voteProps) => {
   const { mutate: castVote } = trpc.useMutation(["privateLineup.cast-vote"]);
 
   return (
-    <div>
-      Votes: <span className="ml-1">{props.votes}</span>
+    <div className="inline-flex items-center gap-2 text-lg font-medium">
+      Votes: <span>{props.votes}</span>
       <button onClick={() => castVote({ id, sentiment: "like" })}>
-        {userLike == "like" ? <FaPlus color="cyan" /> : <FaPlus />}
+        {userLike == "like" ? (
+          <FaPlus color="cyan" id="why" />
+        ) : (
+          <FaPlus id="why" />
+        )}
       </button>
       <button onClick={() => castVote({ id, sentiment: "dislike" })}>
-        {userLike == "dislike" ? <FaMinus color="cyan" /> : <FaMinus />}
+        {userLike == "dislike" ? (
+          <FaMinus color="cyan" id="why" />
+        ) : (
+          <FaMinus id="why" />
+        )}
       </button>
     </div>
   );

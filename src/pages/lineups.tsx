@@ -53,9 +53,9 @@ const Lineups = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col border-lime-400">
+      <div className="flex flex-col">
         <h1 className="my-2 justify-center text-center text-4xl">Lineups</h1>
-        <div className="m-2 flex justify-end">
+        <div className="mr-2 mb-2 flex items-center justify-end">
           <Select
             onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
             onItemClickFx={(val: FilterTypes) => onItemClickTest(val)}
@@ -64,7 +64,7 @@ const Lineups = () => {
           />
         </div>
       </div>
-      <div className="mx-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="mx-2 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {paginatedData?.pages.map((page, index) => (
           <Fragment key={page.items[0]?.id || index}>
             {page.items.map((lineup) => (
@@ -77,7 +77,7 @@ const Lineups = () => {
                   </Link>
                   <p className="flex justify-end font-thin">
                     by:
-                    <Link href={`/user/${lineup.userId}`}>
+                    <Link href={`/${lineup.userId}/lineups`}>
                       <a className="ml-1 text-sky-500 underline">
                         {lineup.creator}
                       </a>
