@@ -1,5 +1,4 @@
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { useState } from "react";
 import { FaChevronUp, FaChevronDown, FaCheck } from "react-icons/fa";
 import { z } from "zod";
 
@@ -20,15 +19,15 @@ const Select = (props: Props) => {
       onValueChange={props.onValueChangeFx}
     >
       <SelectPrimitive.Trigger asChild aria-label={props.ariaLabel}>
-        <button className="flex rounded-lg px-4 py-2">
+        <button className="mx-2 inline-flex items-center rounded-md bg-gray-800 px-2 py-2">
           <SelectPrimitive.Value />
-          <SelectPrimitive.Icon className="ml-1 mt-1">
+          <SelectPrimitive.Icon className="ml-2">
             <FaChevronUp size={14} />
           </SelectPrimitive.Icon>
         </button>
       </SelectPrimitive.Trigger>
       <SelectPrimitive.Content>
-        <SelectPrimitive.ScrollUpButton className="flex items-center justify-center bg-slate-900 text-gray-700 ">
+        <SelectPrimitive.ScrollUpButton className="inline-flex items-center justify-center bg-slate-900 text-gray-700 ">
           <FaChevronUp />
         </SelectPrimitive.ScrollUpButton>
         <SelectPrimitive.Viewport className="rounded-lg bg-gray-700 p-2 shadow-lg">
