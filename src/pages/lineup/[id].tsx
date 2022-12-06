@@ -1,12 +1,11 @@
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import CommentForm from "../../../components/commentForm";
 import CommentSection from "../../../components/commentSection";
+import DelLineupModal from "../../../components/delLineupModal";
 import { GroupDialog } from "../../../components/groupDialog";
 import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
@@ -14,7 +13,6 @@ import { Votes } from "../../../components/Votes";
 import { trpc } from "../../utils/trpc";
 
 const SpecificLineup = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { data } = useSession();
   const router = useRouter();
   const id = useRouter().query.id as string;
@@ -83,102 +81,107 @@ const SpecificLineup = () => {
       <h1 className="pt-2 text-center text-3xl font-bold">
         {lineupQuery.title}
       </h1>
-      <div className="flex justify-between py-4">
-        <div className="flex justify-start">
-          <div>Created by: </div>
-          <Link href={`/user/${lineupQuery.user.id}`}>
-            <a className="ml-1 font-bold text-blue-400 underline">
-              {lineupQuery?.user.name}
-            </a>
-          </Link>
+      {/* mobile thingy */}
+      <div className="hidden sm:my-2 sm:flex sm:justify-between">
+        {/* start of creation details */}
+        {/* left side */}
+        <div className="ml-2 flex justify-start">
+          {/* "Created by: <name>" */}
+          <p className="justify-start">
+            Created by:
+            <span>
+              <Link href={`/user/${lineupQuery.user.id}`}>
+                <a className="ml-1 font-bold text-blue-400 underline">
+                  {lineupQuery.user.name}
+                </a>
+              </Link>
+            </span>
+          </p>
         </div>
-        <div className="mr-1 flex space-x-4">
-          <div>
-            Created at:
-            <span className="ml-1 font-semibold">
-              {lineupQuery.createdAt.toDateString()}
-            </span>
-          </div>
-          <div>
-            Last edit:
-            <span className="ml-1 font-semibold">
-              {lineupQuery.updatedAt.toDateString()}
-            </span>
+
+        {/* right side*/}
+        <div className="mr-2 flex justify-end">
+          {/* Dates 'n' stuff */}
+          <div className="flex justify-between italic">
+            <div>
+              created at: <span>{lineupQuery.createdAt.toDateString()}</span>
+            </div>
+            <div className="mx-2">
+              Last edit: <span>{lineupQuery.updatedAt.toDateString()}</span>
+            </div>
           </div>
 
           {/* Conditional render of extra options of the user created the lineup */}
           {lineupQuery.user.id === data?.user?.id ? (
             <div className="grid grid-cols-2 gap-2 text-center">
               <Link href={`/edit/${lineupQuery.id}`}>
-                <a className="h-8 w-auto rounded bg-sky-400 text-xl text-gray-700 hover:bg-sky-500">
+                <a className="rounded bg-sky-400 py-1 px-2 text-xl font-medium capitalize text-gray-700 hover:bg-sky-500">
                   Edit
                 </a>
               </Link>
-              {/* TODO: implement delete */}
-              <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>
-                <AlertDialog.Trigger asChild>
-                  <a className="rounded-md bg-red-500 p-1 font-medium capitalize">
-                    Delete
-                  </a>
-                </AlertDialog.Trigger>
-                <AlertDialog.Portal>
-                  <AlertDialog.Overlay className="fixed inset-0 z-20 bg-black/50" />
-                  <AlertDialog.Content
-                    className="fixed top-[50%]
-              left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%]
-              rounded-lg bg-gray-700 p-4 focus:outline-none 
-              focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75 md:w-full"
-                  >
-                    <AlertDialog.Title className="text-center text-2xl font-medium">
-                      Delete {lineupQuery.title}?
-                    </AlertDialog.Title>
-                    <AlertDialog.Description className="mt-4 font-normal">
-                      Are you sure you want to delete: {lineupQuery.title}? This
-                      will permanently delete the lineup
-                    </AlertDialog.Description>
-                    <div className="mt-4 flex justify-end space-x-2">
-                      <AlertDialog.Cancel className="inline-flex select-none justify-center rounded-md border border-gray-500 bg-slate-300 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-slate-400 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
-                        Cancel
-                      </AlertDialog.Cancel>
-                      <AlertDialog.Action
-                        className="inline-flex select-none justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
-                        onClick={delProcess}
-                      >
-                        Confirm
-                      </AlertDialog.Action>
-                    </div>
-                  </AlertDialog.Content>
-                </AlertDialog.Portal>
-              </AlertDialog.Root>
+              <DelLineupModal
+                id={lineupQuery.id}
+                title={lineupQuery.title}
+                key={lineupQuery.id}
+              />
             </div>
           ) : null}
         </div>
       </div>
       <hr />
-      <p className="pt-4">{lineupQuery.text}</p>
-      {lineupQuery.image.split(",").map((urlId) => (
-        <div className="my-4" key={urlId}>
-          {urlId.includes("video") ? (
-            <video
-              controls
-              src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+      <div className="flex flex-col">
+        <p className="ml-1 pt-4 text-xl font-medium lg:text-center">
+          {lineupQuery.text}
+        </p>
+        {/* For mobile view the edit/del buttons underneath the desc/text */}
+        {lineupQuery.user.id === data?.user?.id ? (
+          <div className="mx-2 flex justify-end gap-4 sm:hidden">
+            <Link href={`/edit/${lineupQuery.id}`}>
+              <a className="rounded bg-sky-400 py-1 px-2 text-xl font-medium capitalize text-gray-700 hover:bg-sky-500">
+                Edit
+              </a>
+            </Link>
+            <DelLineupModal
+              id={lineupQuery.id}
+              title={lineupQuery.title}
+              key={lineupQuery.id}
             />
-          ) : (
-            <Image
-              src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
-              alt="Valorant screenshot"
-              width={1080}
-              height={600}
-            />
-          )}
-        </div>
-      ))}
-      <div className="flex justify-between">
-        <Votes id={id} votes={lineupQuery.votes} />
-        {/* This should just be a button that opens a modal or something */}
-        {data?.user ? <GroupDialog /> : null}
+          </div>
+        ) : null}
+        {lineupQuery.image.split(",").map((urlId) => (
+          <div className="my-4 mx-auto" key={urlId}>
+            {urlId.includes("video") ? (
+              <video
+                controls
+                src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+              />
+            ) : (
+              <Image
+                src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+                alt="Valorant screenshot"
+                width={1080}
+                height={600}
+              />
+            )}
+          </div>
+        ))}
       </div>
-      <hr className="my-4" />
+      {/* This is for mobile*/}
+      <div className="sm:hidden">
+        <div className="flex flex-col items-center">
+          <div className="my-2">
+            <Votes id={id} votes={lineupQuery.votes} />
+          </div>
+          <div className="my-2">{data?.user ? <GroupDialog /> : null}</div>
+        </div>
+      </div>
+      {/* This is for non-mobile*/}
+      <div className="hidden items-center justify-between sm:flex lg:justify-around">
+        <div className="my-2 mx-4">
+          <Votes id={id} votes={lineupQuery.votes} />
+        </div>
+        <div className="my-2 mx-4">{data?.user ? <GroupDialog /> : null}</div>
+      </div>
       <CommentForm />
       <hr className="my-4" />
       <CommentSection />
