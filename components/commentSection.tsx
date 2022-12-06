@@ -71,7 +71,7 @@ const CommentSection = () => {
           </div>
         ))
       ) : (
-        <p className="font-light italic" id="tailwind_smile">
+        <p className="text-center font-light italic" id="tailwind_smile">
           There currently are no comments
         </p>
       )}
