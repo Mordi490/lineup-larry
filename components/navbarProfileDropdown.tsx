@@ -20,7 +20,12 @@ const NavbarProfileDropdown = () => {
               alt="Discord profile picture"
             />
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content loop sideOffset={6} className="text-lg">
+          <DropdownMenu.Content
+            loop
+            sideOffset={4}
+            id="dropdown_bg_color"
+            className="text-lg"
+          >
             <DropdownMenu.Item className="bg-yellow-300">
               <Link href={`/${session.user?.id}/lineups`}>
                 <a>Your Lineups</a>
@@ -54,7 +59,7 @@ const NavbarProfileDropdown = () => {
             >
               Login
               <span>
-                <FaDiscord className="mt-1" />
+                <FaDiscord className="mt-1" size={18} />
               </span>
             </button>
           </a>
