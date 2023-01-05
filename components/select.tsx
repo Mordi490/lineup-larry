@@ -26,7 +26,7 @@ const Select = (props: Props) => {
           </SelectPrimitive.Icon>
         </button>
       </SelectPrimitive.Trigger>
-      <SelectPrimitive.Content>
+      <SelectPrimitive.Content className="z-20">
         <SelectPrimitive.ScrollUpButton className="inline-flex items-center justify-center bg-slate-900 text-gray-700 ">
           <FaChevronUp />
         </SelectPrimitive.ScrollUpButton>
