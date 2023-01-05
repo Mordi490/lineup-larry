@@ -26,7 +26,7 @@ const Nav = ({ title, text }: Props) => {
             {/* left side */}
             <Link href={"/"}>
               <a>
-                <GiBowArrow size={48} color="cyan" />
+                <GiBowArrow size={48} color="cyan" aria-label="Lineup Larry logo"/>
               </a>
             </Link>
 

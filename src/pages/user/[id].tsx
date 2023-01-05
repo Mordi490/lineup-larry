@@ -14,10 +14,6 @@ const UserDetails = () => {
 
   const { data: userData } = trpc.useQuery(["user.get-user", { id }]);
 
-  const { data: allGroups } = trpc.useQuery([
-    "protectedGroupRouter.get-all-groups",
-  ]);
-
   if (session?.user?.id === id) {
     return (
       <Layout>

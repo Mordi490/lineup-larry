@@ -13,6 +13,7 @@ export const Votes = (props: voteProps) => {
     "privateUserRouter.get-user-sentiment-by-id",
     { id },
   ]);
+
   const { mutate: castVote } = trpc.useMutation(["privateLineup.cast-vote"]);
 
   return (

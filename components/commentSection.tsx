@@ -1,8 +1,6 @@
-import { router } from "@trpc/server";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { z } from "zod";
 import { trpc } from "../src/utils/trpc";
 import Loading from "./loading";
 

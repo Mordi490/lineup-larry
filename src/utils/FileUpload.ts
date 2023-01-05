@@ -1,5 +1,4 @@
 import { S3 } from "aws-sdk/";
-import { MAX_FILE_SIZE } from "../pages/create";
 
 // init && conf s3 client
 export const s3 = new S3({
