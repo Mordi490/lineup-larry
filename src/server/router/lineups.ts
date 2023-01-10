@@ -29,6 +29,12 @@ const defaultLineupSelect = Prisma.validator<Prisma.LineupSelect>()({
   updatedAt: true,
 });
 
+const filterOptions = ["recent", "most-likes", "oldest"] as const
+  type FilterTypes = typeof filterOptions[number]
+  const plsWork: [FilterTypes, ...FilterTypes[]] = [
+    filterOptions[0], ...filterOptions.slice(1).map((val) => val)
+  ];
+
 export const lineupRouter = createRouter()
   .query("by-author", {
     input: z.object({
@@ -139,9 +145,10 @@ export const lineupRouter = createRouter()
     input: z.object({
       limit: z.number().min(1).max(100).nullish(),
       cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
-      filter: z.enum(["recent", "oldest", "most-likes"]).default("recent"),
+      filter: z.enum(plsWork),
     }),
     async resolve({ input }) {
+      //console.log("Dont mind me, I'm just debugging\n", input)
       const limit = input.limit ?? 20;
       const { cursor } = input;
       const filter = input.filter;
