@@ -19,6 +19,9 @@ TODO.md
 /.next/
 /out/
 
+# Next bundle analyzer output
+node.html
+
 # production
 /build
 
