@@ -8,8 +8,8 @@ const NavbarHamburgerMenu = () => {
   return (
     <div className="h-12">
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <AiOutlineMenu size={48} />
+        <DropdownMenu.Trigger aria-label="Menu button">
+          <AiOutlineMenu size={48}/>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content
           className="flex flex-col rounded-lg text-lg"

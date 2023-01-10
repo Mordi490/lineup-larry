@@ -147,7 +147,7 @@ const Create = () => {
           You have to be logged in to create a lineup
         </h1>
         <div className="flex justify-center">
-          <button
+          <button aria-label="Login button"
             className="my-2 inline-flex items-center justify-center rounded-md border border-transparent  bg-gray-300 p-2 px-2 py-2 text-lg font-bold text-slate-800 hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
             onClick={() => signIn("discord")}
           >

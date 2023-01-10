@@ -5,7 +5,7 @@ import { z } from "zod";
 const PropsZod = z.object({
   defaultValue: z.string(),
   ariaLabel: z.string().optional(),
-  values: z.string().array().nonempty(),
+  values: z.array(z.string()),
   onValueChangeFx: z.function().args(z.any()),
   onItemClickFx: z.function().args(z.any()),
 });
@@ -18,8 +18,8 @@ const Select = (props: Props) => {
       defaultValue={props.defaultValue}
       onValueChange={props.onValueChangeFx}
     >
-      <SelectPrimitive.Trigger asChild aria-label={props.ariaLabel}>
-        <button className="mx-2 inline-flex items-center rounded-md bg-gray-800 px-2 py-2">
+      <SelectPrimitive.Trigger asChild>
+        <button aria-label={props.ariaLabel} className="mx-2 inline-flex items-center rounded-md bg-gray-800 px-2 py-2">
           <SelectPrimitive.Value />
           <SelectPrimitive.Icon className="ml-2">
             <FaChevronUp size={14} />

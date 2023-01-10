@@ -54,6 +54,7 @@ const NavbarProfileDropdown = () => {
         <Link href="/api/auth/signin">
           <a>
             <button
+            aria-label="Login"
               id="tailwind_crack_pipe_fix"
               className="inline-flex items-center justify-center gap-2 font-bold text-black"
             >

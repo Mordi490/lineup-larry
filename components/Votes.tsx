@@ -19,14 +19,14 @@ export const Votes = (props: voteProps) => {
   return (
     <div className="inline-flex items-center gap-2 text-lg font-medium">
       Votes: <span>{props.votes}</span>
-      <button onClick={() => castVote({ id, sentiment: "like" })}>
+      <button aria-label="Like button" onClick={() => castVote({ id, sentiment: "like" })}>
         {userLike == "like" ? (
           <FaPlus color="cyan" id="why" />
         ) : (
           <FaPlus id="why" />
         )}
       </button>
-      <button onClick={() => castVote({ id, sentiment: "dislike" })}>
+      <button aria-label="Dislike button" onClick={() => castVote({ id, sentiment: "dislike" })}>
         {userLike == "dislike" ? (
           <FaMinus color="cyan" id="why" />
         ) : (

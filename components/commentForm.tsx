@@ -73,6 +73,7 @@ const CommentForm = () => {
             </div>
             <div className="mt-4 flex w-5/6 justify-end">
               <button
+              aria-label="Submit form"
                 type="submit"
                 className="h-fit w-fit rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white hover:bg-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
                 disabled={isSubmitting}

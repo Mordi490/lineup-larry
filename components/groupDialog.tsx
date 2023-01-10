@@ -75,6 +75,7 @@ export const GroupDialog = () => {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <button
+        aria-label="Add to group"
           id="tailwind_fail_2"
           className="h-fit w-fit rounded-lg bg-neutral-600 px-2 py-2 font-semibold uppercase text-white hover:bg-neutral-500"
           onClick={() => fetchGroups()}

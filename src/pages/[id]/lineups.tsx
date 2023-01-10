@@ -142,6 +142,7 @@ const Lineups = () => {
           </div>
           <div className="flex justify-end">
             <button
+              aria-label="Load more"
               onClick={() => fetchNextPage()}
               disabled={!hasNextPage || isFetchingNextPage}
               className="my-4 mx-4 rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
@@ -180,6 +181,7 @@ const Lineups = () => {
           <div className="flex justify-end">
             <button
               onClick={() => ratedFetchNextPage()}
+              aria-label="Load more"
               disabled={!ratedHasNextPage || ratedIsFetchingNextPage}
               className="my-4 mx-4 rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
             >
@@ -199,10 +201,11 @@ const Lineups = () => {
             <div key={gr.id} className="flex py-2">
               <Dialog.Root>
                 <Dialog.Trigger asChild className="ml-2">
-                  <button className="underline">{gr.name}</button>
+                  <button aria-label="Open group" className="underline">{gr.name}</button>
                 </Dialog.Trigger>
                 <button
                   onClick={() => delGroup({ id: gr.id as string })}
+                  aria-label="Delete group"
                   className="ml-2 flex items-center rounded-md bg-red-500 py-1 px-2 font-medium uppercase text-neutral-700 hover:bg-red-400"
                 >
                   Delete{" "}
@@ -229,6 +232,7 @@ const Lineups = () => {
                               {/* TODO/QoL: optimistic UI here */}
                               <button
                                 className="rounded-md bg-red-500 p-1 font-medium capitalize"
+                                aria-label="Remove from group"
                                 onClick={() =>
                                   removeFromGroup({
                                     groupId: gr.id,

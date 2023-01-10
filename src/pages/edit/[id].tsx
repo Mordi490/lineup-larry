@@ -81,7 +81,7 @@ const EditLineup = () => {
 
         <h1>You have to be logged in to create a lineup</h1>
         <h1>Please log in</h1>
-        <button onClick={() => signIn("discord")}>Sign in with Discord</button>
+        <button aria-label="Login" onClick={() => signIn("discord")}>Sign in with Discord</button>
       </>
     );
   }
@@ -287,6 +287,7 @@ const EditLineup = () => {
 
             <button
               type="submit"
+              aria-label="submit"
               className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
               disabled={isSubmitting}
             >
