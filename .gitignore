@@ -20,7 +20,7 @@ TODO.md
 /out/
 
 # Next bundle analyzer output
-node.html
+nodejs.html
 
 # production
 /build
