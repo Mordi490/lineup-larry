@@ -1,4 +1,5 @@
 import { env } from "./src/env/server.mjs";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 /**
  * Don't be scared of the generics here.
@@ -12,19 +13,26 @@ function defineNextConfig(config) {
   return config;
 }
 
-export default defineNextConfig({
-  reactStrictMode: true,
-  swcMinify: true,
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
-  images: {
-    domains: [
-      "cdn.discordapp.com", // URL for discord profile pics
-      "lh3.googleusercontent.com", // URL for google profile pics
-      "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)F
-      "t3-larry-bucket.s3.eu-west-2.amazonaws.com",
-    ],
-  },
+const bundleAnalyzer = withBundleAnalyzer({
+  // change string to enable debugging, PS issues, soz4hacky sol
+  enabled: process.env.ANALYZE === "false",
 });
+
+export default bundleAnalyzer(
+  defineNextConfig({
+    reactStrictMode: true,
+    swcMinify: true,
+    i18n: {
+      locales: ["en"],
+      defaultLocale: "en",
+    },
+    images: {
+      domains: [
+        "cdn.discordapp.com", // URL for discord profile pics
+        "lh3.googleusercontent.com", // URL for google profile pics
+        "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)F
+        "t3-larry-bucket.s3.eu-west-2.amazonaws.com",
+      ],
+    },
+  }),
+);
