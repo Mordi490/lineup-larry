@@ -7,7 +7,7 @@ import { FaDiscord } from "react-icons/fa";
 import * as z from "zod";
 import Layout from "../../components/layout";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
-import { trpc } from "../utils/trpc";
+import { api } from "../utils/api";
 
 // moving this one here since using the File API fucks over the import
 // describes the form object for creating & editing lineupsF
@@ -54,11 +54,10 @@ const Create = () => {
     resolver: zodResolver(createLineupForm),
   });
 
-  const { mutateAsync: preSignedUrl } = trpc.useMutation([
-    "privateLineup.create-presigned-url",
-  ]);
+  const { mutateAsync: preSignedUrl } =
+    api.lineup.createPresignedUrl.useMutation();
 
-  const { mutate } = trpc.useMutation(["privateLineup.create"], {
+  const { mutate } = api.lineup.create.useMutation({
     onSuccess: (data) => {
       toast.remove();
       toast.success("Lineup created");
@@ -147,7 +146,8 @@ const Create = () => {
           You have to be logged in to create a lineup
         </h1>
         <div className="flex justify-center">
-          <button aria-label="Login button"
+          <button
+            aria-label="Login button"
             className="my-2 inline-flex items-center justify-center rounded-md border border-transparent  bg-gray-300 p-2 px-2 py-2 text-lg font-bold text-slate-800 hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
             onClick={() => signIn("discord")}
           >

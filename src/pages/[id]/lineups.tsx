@@ -3,44 +3,36 @@ import { useRouter } from "next/router";
 import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
 import Link from "next/link";
-import { trpc } from "../../utils/trpc";
 import { Fragment } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { FaTrashAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { api } from "../../utils/api";
 
 const Lineups = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
   // TODO or consider making this a popup/alert
-  const { mutate: delGroup } = trpc.useMutation(
-    ["protectedGroupRouter.delete-group"],
-    {
-      onSuccess: (res) => {
-        toast.remove();
-        toast.success(`${res.name} has been deleted`);
-      },
-      onError: (err) => {
-        console.log(err);
-        toast.error(`Something went wrong`);
-      },
-    }
-  );
+  const { mutate: delGroup } = api.group.deleteGroup.useMutation({
+    onSuccess: (res) => {
+      toast.remove();
+      toast.success(`${res.name} has been deleted`);
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.error(`Something went wrong`);
+    },
+  });
 
-  const { data: userInfo } = trpc.useQuery(["user.get-user", { id }]);
+  const { data: userInfo } = api.user.getUser.useQuery({ id });
 
   // Consider adding a endpoint for #lineups, #votes, etc.
-  const { data: userData, isLoading: userDataIsLoading } = trpc.useQuery([
-    "lineup.user-stats",
-    { id },
-  ]);
+  const { data: userData, isLoading: userDataIsLoading } =
+    api.lineup.userStats.useQuery({ id });
 
   // fetch groups, std for now, impl inf l8er
-  const { data: groups } = trpc.useQuery([
-    "groupRouter.get-public-groups",
-    { id },
-  ]);
+  const { data: groups } = api.group.publicGroupsFromUser.useQuery({ id });
 
   const {
     data: ratedLineups,
@@ -48,25 +40,22 @@ const Lineups = () => {
     isFetchingNextPage: ratedIsFetchingNextPage,
     fetchNextPage: ratedFetchNextPage,
     isLoading: ratedIsLoading,
-  } = trpc.useInfiniteQuery(
-    ["lineup.inf-highest-rated-lineups-user", { limit: 21, userID: id }],
+  } = api.lineup.highestRatedLineupsFromUser.useInfiniteQuery(
+    { limit: 21, userID: id },
     { getNextPageParam: (lastPage, pages) => lastPage.nextCursor }
   );
 
-  const { mutate: removeFromGroup } = trpc.useMutation(
-    ["protectedGroupRouter.remove-from-group"],
-    {
-      onSuccess: (res) => {
-        toast.remove();
-        toast.success(`${res.name} was removed from group`);
-      },
-      onError: (err) => {
-        console.log(err);
-        toast.remove();
-        toast.error("Something went wrong");
-      },
-    }
-  );
+  const { mutate: removeFromGroup } = api.group.removeFromGroup.useMutation({
+    onSuccess: (res) => {
+      toast.remove();
+      toast.success(`${res.name} was removed from group`);
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.remove();
+      toast.error("Something went wrong");
+    },
+  });
 
   const {
     data: paginatedData,
@@ -76,8 +65,8 @@ const Lineups = () => {
     isLoading: recentIsLoading,
     isError,
     error,
-  } = trpc.useInfiniteQuery(
-    ["lineup.inf-recent-lineups-user", { limit: 21, userID: id }],
+  } = api.lineup.recentLineupsFromUser.useInfiniteQuery(
+    { limit: 21, userID: id },
     { getNextPageParam: (lastPage, pages) => lastPage.nextCursor }
   );
 
@@ -201,7 +190,9 @@ const Lineups = () => {
             <div key={gr.id} className="flex py-2">
               <Dialog.Root>
                 <Dialog.Trigger asChild className="ml-2">
-                  <button aria-label="Open group" className="underline">{gr.name}</button>
+                  <button aria-label="Open group" className="underline">
+                    {gr.name}
+                  </button>
                 </Dialog.Trigger>
                 <button
                   onClick={() => delGroup({ id: gr.id as string })}

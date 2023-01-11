@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import { trpc } from "../../utils/trpc";
 import { useSession } from "next-auth/react";
 import Layout from "../../../components/layout";
+import { api } from "../../utils/api";
 
 /**
  * This page is for ???????
@@ -12,7 +12,7 @@ const UserDetails = () => {
 
   const id = router.query.id as string;
 
-  const { data: userData } = trpc.useQuery(["user.get-user", { id }]);
+  const { data: userData } = api.user.getUser.useQuery({ id });
 
   if (session?.user?.id === id) {
     return (

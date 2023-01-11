@@ -3,10 +3,10 @@ import { TRPCError } from "@trpc/server";
 import { ObjectIdentifierList } from "aws-sdk/clients/s3";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { MAX_FILE_SIZE } from "../../pages/create";
-import { s3 } from "../../utils/FileUpload";
-import { prisma } from "../db/client";
-import { createRouter } from "./context";
+import { MAX_FILE_SIZE } from "../../../pages/create";
+import { s3 } from "../../../utils/FileUpload";
+import { prisma } from "../../db";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 
 /**
@@ -29,31 +29,52 @@ const defaultLineupSelect = Prisma.validator<Prisma.LineupSelect>()({
   updatedAt: true,
 });
 
-const filterOptions = ["recent", "most-likes", "oldest"] as const
-  type FilterTypes = typeof filterOptions[number]
-  const plsWork: [FilterTypes, ...FilterTypes[]] = [
-    filterOptions[0], ...filterOptions.slice(1).map((val) => val)
-  ];
+const filterOptions = ["recent", "most-likes", "oldest"] as const;
+type FilterTypes = (typeof filterOptions)[number];
+const plsWork: [FilterTypes, ...FilterTypes[]] = [
+  filterOptions[0],
+  ...filterOptions.slice(1).map((val) => val),
+];
 
-export const lineupRouter = createRouter()
-  .query("by-author", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ input }) {
-      return prisma.lineup.findMany({
+// that new new
+export const lineupRouter = createTRPCRouter({
+  byId: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const lineup = await prisma.lineup.findUnique({
         where: {
-          userId: input.id,
+          id: input.id,
         },
-        orderBy: { updatedAt: "desc" },
+        select: defaultLineupSelect,
       });
-    },
-  })
-  .query("user-stats", {
-    input: z.object({
-      id: z.string(),
+      if (!lineup) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `No lineup with id ${input.id}`,
+        });
+      }
+      return lineup;
     }),
-    async resolve({ input }) {
+  byAuthor: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const lineup = await prisma.lineup.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: defaultLineupSelect,
+      });
+      if (!lineup) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `No lineup with id ${input.id}`,
+        });
+      }
+      return lineup;
+    }),
+  userStats: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
       const numOfLineup = await prisma.lineup.aggregate({
         where: { userId: input.id },
         _count: { id: true },
@@ -68,23 +89,17 @@ export const lineupRouter = createRouter()
       });
       const stats = { numOfLineup, netVotes, joinedAt };
       return stats;
-    },
-  })
-  .query("get-all-by-votes", {
-    async resolve({}) {
-      return await prisma.lineup.findMany({
-        orderBy: { votes: "desc" },
-      });
-    },
-  })
-  // inf recent lineup for a user
-  .query("inf-recent-lineups-user", {
-    input: z.object({
-      limit: z.number().min(1).max(100).nullish(),
-      cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
-      userID: z.string(),
     }),
-    async resolve({ input }) {
+  // This was prev: inf-recent-lineups-user
+  recentLineupsFromUser: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+        userID: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
       const limit = input.limit ?? 21;
       const { cursor } = input;
       const items = await prisma.lineup.findMany({
@@ -107,16 +122,16 @@ export const lineupRouter = createRouter()
         items,
         nextCursor,
       };
-    },
-  })
-  // inf highest rated lineup for a user
-  .query("inf-highest-rated-lineups-user", {
-    input: z.object({
-      limit: z.number().min(1).max(100).nullish(),
-      cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
-      userID: z.string(),
     }),
-    async resolve({ input }) {
+  highestRatedLineupsFromUser: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+        userID: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
       const limit = input.limit ?? 21;
       const { cursor } = input;
       const items = await prisma.lineup.findMany({
@@ -139,15 +154,16 @@ export const lineupRouter = createRouter()
         items,
         nextCursor,
       };
-    },
-  })
-  .query("infiniteLineups", {
-    input: z.object({
-      limit: z.number().min(1).max(100).nullish(),
-      cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
-      filter: z.enum(plsWork),
     }),
-    async resolve({ input }) {
+  infiniteLineups: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+        filter: z.enum(plsWork),
+      })
+    )
+    .query(async ({ input }) => {
       //console.log("Dont mind me, I'm just debugging\n", input)
       const limit = input.limit ?? 20;
       const { cursor } = input;
@@ -210,45 +226,16 @@ export const lineupRouter = createRouter()
         items,
         nextCursor,
       };
-    },
-  })
-  // fetch all endpoint
-  .query("get-all", {
-    async resolve({}) {
-      const lineups = await prisma.lineup.findMany({
-        orderBy: { votes: "asc" },
-      });
-      return lineups;
-    },
-  })
-  // fetch byId
-  .query("by-id", {
-    input: z.object({
-      id: z.string(),
     }),
-    async resolve({ input }) {
-      const lineup = await prisma.lineup.findUnique({
-        where: {
-          id: input.id,
-        },
-        select: defaultLineupSelect,
-      });
-      if (!lineup) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `No lineup with id ${input.id}`,
-        });
-      }
-      return lineup;
-    },
-  });
-
-export const protectedLineupRouter = createRouter()
-  .mutation("delete", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ input, ctx }) {
+  // doesn't get used but
+  getAllLineups: publicProcedure.query(async () => {
+    return await prisma.lineup.findMany({
+      orderBy: { votes: "asc" },
+    });
+  }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const lineup = await ctx.prisma.lineup.findUnique({
         where: { id: input.id },
       });
@@ -270,14 +257,10 @@ export const protectedLineupRouter = createRouter()
         where: { id: lineup?.id },
       });
       return input.id;
-    },
-  })
-  .mutation("update-lineup", {
-    input: z.object({
-      id: z.string(),
-      updatedData: editLineupSchema,
     }),
-    async resolve({ input, ctx }) {
+  updateLineup: protectedProcedure
+    .input(z.object({ id: z.string(), updatedData: editLineupSchema }))
+    .mutation(async ({ ctx, input }) => {
       const lineup = await ctx.prisma.lineup.update({
         where: { id: input.id },
         data: {
@@ -291,14 +274,10 @@ export const protectedLineupRouter = createRouter()
         },
       });
       return lineup;
-    },
-  })
-  .mutation("cast-vote", {
-    input: z.object({
-      id: z.string(), // lineupID
-      sentiment: z.string(), //
     }),
-    async resolve({ input, ctx }) {
+  castVote: protectedProcedure
+    .input(z.object({ id: z.string(), sentiment: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       if (!ctx.session?.user?.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -370,11 +349,10 @@ export const protectedLineupRouter = createRouter()
         data: { votes: { increment: sent } },
       });
       return `${vote.sentiment} registered`;
-    },
-  })
-  .mutation("create", {
-    input: createLineupSchema,
-    async resolve({ input, ctx }) {
+    }),
+  create: protectedProcedure
+    .input(createLineupSchema)
+    .mutation(async ({ ctx, input }) => {
       if (!ctx.session?.user) {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -395,14 +373,10 @@ export const protectedLineupRouter = createRouter()
       });
 
       return lineup;
-    },
-  })
-  .mutation("create-presigned-url", {
-    input: z.object({
-      fileType: z.string(),
     }),
-    // TODO: pass a flag to determine if its a image file or video file
-    async resolve({ input, ctx }) {
+  createPresignedUrl: protectedProcedure
+    .input(z.object({ fileType: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       if (!ctx.session) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -424,13 +398,10 @@ export const protectedLineupRouter = createRouter()
           ["content-length-range", 0, MAX_FILE_SIZE],
         ],
       });
-    },
-  })
-  .mutation("delete-s3-object", {
-    input: z.object({
-      id: z.string(), // The lineup id with
     }),
-    async resolve({ input, ctx }) {
+  deleteS3Object: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       if (!ctx.session) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -474,5 +445,5 @@ export const protectedLineupRouter = createRouter()
           }
         );
       });
-    },
-  });
+    }),
+});

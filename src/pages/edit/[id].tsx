@@ -9,7 +9,7 @@ import { z } from "zod";
 import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
 import { Agent, Map, TypedKeys } from "../../../utils/enums";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../utils/api";
 import { createLineupForm, getFileSize, MAX_FILE_SIZE } from "../create";
 
 const EditLineup = () => {
@@ -31,38 +31,28 @@ const EditLineup = () => {
   });
 
   // fetch the specific lineup data
-  const {
-    data: lineup,
-    isLoading,
-    isError,
-  } = trpc.useQuery(["lineup.by-id", { id }]);
+  const { data: lineup, isLoading, isError } = api.lineup.byId.useQuery({ id });
 
   // gen new presigned url for the updated lineup
-  const { mutateAsync: preSignedUrl } = trpc.useMutation([
-    "privateLineup.create-presigned-url",
-  ]);
+  const { mutateAsync: preSignedUrl } =
+    api.lineup.createPresignedUrl.useMutation();
 
   // delete prev s3 obj
-  const { mutate: deletedS3Obj } = trpc.useMutation([
-    "privateLineup.delete-s3-object",
-  ]);
+  const { mutate: deletedS3Obj } = api.lineup.deleteS3Object.useMutation();
 
   // persist the changes to db
-  const { mutate: updatedLineup } = trpc.useMutation(
-    ["privateLineup.update-lineup"],
-    {
-      onSuccess: (data) => {
-        toast.remove();
-        toast.success("Lineup edited");
-        router.replace(`edit/${id}`, `/lineup/${data.id}`);
-      },
-      onError: (err) => {
-        toast.remove();
-        toast.error("Something went wrong");
-        console.log(err);
-      },
-    }
-  );
+  const { mutate: updatedLineup } = api.lineup.updateLineup.useMutation({
+    onSuccess: (data) => {
+      toast.remove();
+      toast.success("Lineup edited");
+      router.replace(`edit/${id}`, `/lineup/${data.id}`);
+    },
+    onError: (err) => {
+      toast.remove();
+      toast.error("Something went wrong");
+      console.log(err);
+    },
+  });
 
   if (isLoading) {
     return (
@@ -81,7 +71,9 @@ const EditLineup = () => {
 
         <h1>You have to be logged in to create a lineup</h1>
         <h1>Please log in</h1>
-        <button aria-label="Login" onClick={() => signIn("discord")}>Sign in with Discord</button>
+        <button aria-label="Login" onClick={() => signIn("discord")}>
+          Sign in with Discord
+        </button>
       </>
     );
   }

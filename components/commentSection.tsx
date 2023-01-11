@@ -1,17 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { trpc } from "../src/utils/trpc";
+import { api } from "../src/utils/api";
 import Loading from "./loading";
 
 const CommentSection = () => {
   const router = useRouter();
   const id = useRouter().query.id as string;
 
-  const { data: comments, isLoading } = trpc.useQuery([
-    "commentRouter.get-lineup-comments",
-    { id },
-  ]);
+  const { data: comments, isLoading } = api.comment.getLineupComments.useQuery({
+    id,
+  });
 
   if (isLoading) {
     return <Loading />;

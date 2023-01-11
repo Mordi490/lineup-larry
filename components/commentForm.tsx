@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import { commentForm } from "../src/server/router/schemas/comment.schema";
-import { trpc } from "../src/utils/trpc";
+import { commentForm } from "../src/server/api/router/schemas/comment.schema";
+import { api } from "../src/utils/api";
 
 const CommentForm = () => {
   const { data: session } = useSession();
@@ -19,18 +19,15 @@ const CommentForm = () => {
     resolver: zodResolver(commentForm),
   });
 
-  const { mutate: createComment } = trpc.useMutation(
-    ["protectedCommentRouter.create-comment"],
-    {
-      onSuccess: () => {
-        toast.success(`Comment Created!`);
-      },
-      onError: (err) => {
-        toast.error(`Something went wrong!`);
-        console.log(err);
-      },
-    }
-  );
+  const { mutate: createComment } = api.comment.createComment.useMutation({
+    onSuccess: () => {
+      toast.success(`Comment Created!`);
+    },
+    onError: (err) => {
+      toast.error(`Something went wrong!`);
+      console.log(err);
+    },
+  });
 
   const id = useRouter().query.id as string;
 
@@ -73,7 +70,7 @@ const CommentForm = () => {
             </div>
             <div className="mt-4 flex w-5/6 justify-end">
               <button
-              aria-label="Submit form"
+                aria-label="Submit form"
                 type="submit"
                 className="h-fit w-fit rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white hover:bg-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
                 disabled={isSubmitting}

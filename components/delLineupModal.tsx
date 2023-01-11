@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { trpc } from "../src/utils/trpc";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import { api } from "../src/utils/api";
 
 type props = {
   title: string;
@@ -11,7 +11,7 @@ type props = {
 const DelLineupModal = (data: props) => {
   const router = useRouter();
 
-  const { mutate: delLineup } = trpc.useMutation(["privateLineup.delete"], {
+  const { mutate: delLineup } = api.lineup.delete.useMutation({
     onSuccess: () => {
       toast.remove();
       toast.success("lineup deleted");
@@ -24,15 +24,12 @@ const DelLineupModal = (data: props) => {
     },
   });
 
-  const { mutate: delS3Data } = trpc.useMutation(
-    ["privateLineup.delete-s3-object"],
-    {
-      onError: (err) => {
-        toast.error("Something went wrong uploading images/videos");
-        console.log(err);
-      },
-    }
-  );
+  const { mutate: delS3Data } = api.lineup.deleteS3Object.useMutation({
+    onError: (err) => {
+      toast.error("Something went wrong uploading images/videos");
+      console.log(err);
+    },
+  });
 
   const delProcess = (id: string) => {
     toast.loading("Deleting lineup");

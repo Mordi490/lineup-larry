@@ -10,19 +10,16 @@ import { GroupDialog } from "../../../components/groupDialog";
 import Layout from "../../../components/layout";
 import Loading from "../../../components/loading";
 import { Votes } from "../../../components/Votes";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../utils/api";
 
 const SpecificLineup = () => {
   const { data } = useSession();
   const router = useRouter();
   const id = useRouter().query.id as string;
 
-  const { data: lineupQuery, isLoading } = trpc.useQuery([
-    "lineup.by-id",
-    { id },
-  ]);
+  const { data: lineupQuery, isLoading } = api.lineup.byId.useQuery({ id });
 
-  const { mutate: delLineup } = trpc.useMutation(["privateLineup.delete"], {
+  const { mutate: delLineup } = api.lineup.delete.useMutation({
     onSuccess: () => {
       toast.remove();
       toast.success("lineup deleted");
@@ -35,15 +32,12 @@ const SpecificLineup = () => {
     },
   });
 
-  const { mutate: delS3Data } = trpc.useMutation(
-    ["privateLineup.delete-s3-object"],
-    {
-      onError: (err) => {
-        toast.error("Something went wrong uploading images/videos");
-        console.log(err);
-      },
-    }
-  );
+  const { mutate: delS3Data } = api.lineup.deleteS3Object.useMutation({
+    onError: (err) => {
+      toast.error("Something went wrong uploading images/videos");
+      console.log(err);
+    },
+  });
 
   if (isLoading) {
     return <Loading />;

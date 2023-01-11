@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { trpc } from "../src/utils/trpc";
+import { api } from "../src/utils/api";
 
 // new component for the create group input
 export type FormValues = {
@@ -16,7 +16,7 @@ export const GroupDialog = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const { mutate } = trpc.useMutation(["protectedGroupRouter.create-group"], {
+  const { mutate } = api.group.createGroup.useMutation({
     onSuccess: (res) => {
       toast.remove();
       toast.success(`${res.name} has been created`);
@@ -53,29 +53,26 @@ export const GroupDialog = () => {
     data: allGrps,
     refetch: fetchGroups,
     isFetching,
-  } = trpc.useQuery(["protectedGroupRouter.get-all-groups"], {
+  } = api.group.getAllGroups.useQuery(undefined, {
     // use this flag to NOT run query on page load, instead run when user clicks "add to group btn"
     enabled: false,
   });
 
-  const { mutate: addToGrp } = trpc.useMutation(
-    ["protectedGroupRouter.add-to-group"],
-    {
-      onSuccess: (res) => {
-        toast.success(`Lineup added to ${res.name}`);
-      },
-      onError: (err) => {
-        console.log(err);
-        toast.error("Something went wrong");
-      },
-    }
-  );
+  const { mutate: addToGrp } = api.group.addToGroup.useMutation({
+    onSuccess: (res) => {
+      toast.success(`Lineup added to ${res.name}`);
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.error("Something went wrong");
+    },
+  });
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <button
-        aria-label="Add to group"
+          aria-label="Add to group"
           id="tailwind_fail_2"
           className="h-fit w-fit rounded-lg bg-neutral-600 px-2 py-2 font-semibold uppercase text-white hover:bg-neutral-500"
           onClick={() => fetchGroups()}
