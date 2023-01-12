@@ -7,7 +7,8 @@ import toast from "react-hot-toast";
 import { api } from "../src/utils/api";
 
 // new component for the create group input
-export type FormValues = {
+
+type FormValues = {
   newGroupName: string;
 };
 
@@ -29,11 +30,11 @@ export const GroupDialog = () => {
       console.log(err);
     },
   });
+
   const {
     register,
     handleSubmit,
-    control,
-    // remember to add err msgs
+    // TODO: add err msgs
     formState: { errors },
   } = useForm<FormValues>();
   const onSubmit = handleSubmit((data) => {
