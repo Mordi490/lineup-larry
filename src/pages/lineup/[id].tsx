@@ -53,23 +53,6 @@ const SpecificLineup = () => {
     );
   }
 
-  const delProcess = () => {
-    toast.loading("Deleting lineup");
-    // deleting S3-data
-    try {
-      delS3Data({ id });
-    } catch (err) {
-      console.log(err);
-    }
-
-    // deleting non-S3data
-    try {
-      delLineup({ id });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <Layout title={`${lineupQuery.title}`}>
       <h1 className="pt-2 text-center text-3xl font-bold">
