@@ -32,17 +32,17 @@ export const commentRouter = createTRPCRouter({
       return comments;
     }),
   createComment: protectedProcedure
-    .input(z.object({ createCommentSchema }))
+    .input(createCommentSchema)
     .mutation(async ({ ctx, input }) => {
       // find the lineup first
       const lineup = await ctx.prisma.lineup.findUnique({
-        where: { id: input.createCommentSchema.lineupId },
+        where: { id: input.lineupId },
       });
 
       if (!lineup) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: `No lineup with id: ${input.createCommentSchema.lineupId}`,
+          message: `No lineup with id: ${input.lineupId}`,
         });
       }
 
@@ -57,7 +57,7 @@ export const commentRouter = createTRPCRouter({
 
       const comment = await ctx.prisma.comment.create({
         data: {
-          content: input.createCommentSchema.content,
+          content: input.content,
           userId: user.id as string,
           lineupId: lineup.id as string,
         },
