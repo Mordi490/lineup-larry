@@ -44,37 +44,37 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
   createGroup: protectedProcedure
-    .input(z.object({ createGroupInput }))
+    .input(createGroupInput)
     .mutation(async ({ ctx, input }) => {
       const lineup = await ctx.prisma.lineup.findUnique({
-        where: { id: input.createGroupInput.lineupId },
+        where: { id: input.lineupId },
       });
 
       if (!lineup) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: `Failed to find lineup with id: ${input.createGroupInput.lineupId}`,
+          message: `Failed to find lineup with id: ${input.lineupId}`,
         });
       }
 
       const user = await ctx.prisma.user.findUnique({
-        where: { id: input.createGroupInput.userId },
+        where: { id: input.userId },
       });
 
       if (!user) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: `No user found with id: ${input.createGroupInput.userId}`,
+          message: `No user found with id: ${input.userId}`,
         });
       }
 
       const group = await ctx.prisma.group.create({
         data: {
-          name: input.createGroupInput.name,
-          isPublic: input.createGroupInput.isPublic,
-          userId: input.createGroupInput.userId,
+          name: input.name,
+          isPublic: input.isPublic,
+          userId: input.userId,
           // TODO: IFF working, refactor old cases
-          Lineup: { connect: { id: input.createGroupInput.lineupId } },
+          Lineup: { connect: { id: input.lineupId } },
         },
       });
 
