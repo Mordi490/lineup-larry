@@ -1,7 +1,7 @@
-import { createRouter } from "./context";
 import { z } from "zod";
-import { prisma } from "../db/client";
+import { prisma } from "../../db";
 import { TRPCError } from "@trpc/server";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const createGroupInput = z.object({
   name: z.string(),
@@ -17,13 +17,12 @@ export const updateGroupInput = z.object({
   isPublic: z.boolean(),
 });
 
-// public endpoints: get public groups given a userId
-export const groupRouter = createRouter()
-  .query("get-public-groups", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ input }) {
+// that new new router
+export const groupRouter = createTRPCRouter({
+  // This was prev named "get-public-groups"
+  publicGroupsFromUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
       const groups = await prisma.group.findMany({
         where: { AND: [{ userId: input.id }, { isPublic: true }] },
         select: {
@@ -35,26 +34,18 @@ export const groupRouter = createRouter()
         },
       });
       return groups;
-    },
-  })
-  // Could be used for copying a pre-existing group and append your
-  .query("get-specific-group", {
-    input: z.object({
-      id: z.string(),
     }),
-    async resolve({ input }) {
+  getSpecificGroup: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
       const group = await prisma.group.findUniqueOrThrow({
         where: { id: input.id },
       });
       return group;
-    },
-  });
-
-// protected endpoints: create group, edit/update, delete
-export const protectedGroupRouter = createRouter()
-  .mutation("create-group", {
-    input: createGroupInput,
-    async resolve({ input, ctx }) {
+    }),
+  createGroup: protectedProcedure
+    .input(createGroupInput)
+    .mutation(async ({ ctx, input }) => {
       const lineup = await ctx.prisma.lineup.findUnique({
         where: { id: input.lineupId },
       });
@@ -88,34 +79,27 @@ export const protectedGroupRouter = createRouter()
       });
 
       return group;
-    },
-  })
-  .query("get-private-groups", {
-    async resolve({ ctx }) {
-      return await ctx.prisma.group.findMany({
-        where: {
-          AND: [{ userId: ctx.session?.user?.id }, { isPublic: false }],
-        },
-      });
-    },
-  })
-  .query("get-all-groups", {
-    async resolve({ ctx }) {
-      return await ctx.prisma.group.findMany({
-        where: { userId: ctx.session?.user?.id },
-        select: {
-          id: true,
-          name: true,
-          Lineup: { select: { id: true, title: true } },
-        },
-      });
-    },
-  })
-  // TODO: double check that updates changes work as intended
-  // used for large changes
-  .mutation("update-group", {
-    input: updateGroupInput,
-    async resolve({ input, ctx }) {
+    }),
+  getPrivateGroups: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.group.findMany({
+      where: {
+        AND: [{ userId: ctx.session?.user?.id }, { isPublic: false }],
+      },
+    });
+  }),
+  getAllGroups: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.group.findMany({
+      where: { userId: ctx.session?.user?.id },
+      select: {
+        id: true,
+        name: true,
+        Lineup: { select: { id: true, title: true } },
+      },
+    });
+  }),
+  updateGroup: protectedProcedure
+    .input(updateGroupInput)
+    .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.group.update({
         where: { id: input.id },
         data: {
@@ -124,40 +108,28 @@ export const protectedGroupRouter = createRouter()
           name: input.name,
         },
       });
-    },
-  })
-  // minute changes
-  .mutation("add-to-group", {
-    input: z.object({
-      groupId: z.string(),
-      lineupId: z.string(),
     }),
-    async resolve({ input, ctx }) {
+  addToGroup: protectedProcedure
+    .input(z.object({ groupId: z.string(), lineupId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.group.update({
         where: { id: input.groupId },
         data: { Lineup: { connect: { id: input.lineupId } } },
       });
-    },
-  })
-  .mutation("remove-from-group", {
-    input: z.object({
-      lineupId: z.string(),
-      groupId: z.string(),
     }),
-    async resolve({ input, ctx }) {
+  removeFromGroup: protectedProcedure
+    .input(z.object({ lineupId: z.string(), groupId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.group.update({
         data: { Lineup: { disconnect: { id: input.lineupId } } },
         where: { id: input.groupId },
       });
-    },
-  })
-  .mutation("delete-group", {
-    input: z.object({
-      id: z.string(),
     }),
-    async resolve({ input, ctx }) {
+  deleteGroup: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.group.delete({
         where: { id: input.id },
       });
-    },
-  });
+    }),
+});

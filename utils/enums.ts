@@ -48,7 +48,7 @@ export enum Map {
   Split = "SPLIT",
   Ascent = "ASCENT",
   Icebox = "ICEBOX",
-  Breeze = "BREEZ",
+  Breeze = "BREEZE",
   Pearl = "PEARL",
   Fracture = "FRACTURE",
 }

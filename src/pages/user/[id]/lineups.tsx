@@ -1,19 +1,17 @@
 import { useRouter } from "next/router";
 import Layout from "../../../../components/layout";
 import Loading from "../../../../components/loading";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../utils/api";
 
 const UserLineups = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
-  const { data, isLoading } = trpc.useQuery(["lineup.by-author", { id }]);
+  const { data, isLoading } = api.lineup.byAuthor.useQuery({ id });
 
   // consider adding the "creator" field to the lineup schema
-  const { data: userData, isLoading: UserIsLoading } = trpc.useQuery([
-    "user.get-user",
-    { id },
-  ]);
+  const { data: userData, isLoading: UserIsLoading } =
+    api.user.getUser.useQuery({ id });
 
   if (isLoading) {
     return <Loading />;

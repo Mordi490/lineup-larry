@@ -1,9 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import { prisma } from "../db/client";
+import { prisma } from "../../db";
 import { z } from "zod";
-import { createRouter } from "./context";
-import { createProtectedRouter } from "./protected-router";
 import { Prisma } from "@prisma/client";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 /**
  * Default selector for Users.
@@ -29,34 +28,30 @@ export const privateUserSelect = Prisma.validator<Prisma.UserSelect>()({
   email: true,
 });
 
-export const userRouter = createRouter().query("get-user", {
-  input: z.object({
-    id: z.string(),
-  }),
-  async resolve({ input }) {
-    const user = await prisma?.user.findUnique({
-      where: {
-        id: input.id,
-      },
-      select: defaultUserSelect,
-    });
-
-    if (!user) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "User was not found",
+// new router
+export const userRouter = createTRPCRouter({
+  getUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const user = await prisma?.user.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: defaultUserSelect,
       });
-    }
-    return user;
-  },
-});
 
-export const privateUserRouter = createProtectedRouter()
-  .mutation("delete-user", {
-    input: z.object({
-      userId: z.string(),
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User was not found",
+        });
+      }
+      return user;
     }),
-    async resolve({ ctx, input }) {
+
+  deleteUser: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findUnique({
         where: { id: input.userId },
       });
@@ -82,13 +77,10 @@ export const privateUserRouter = createProtectedRouter()
       return {
         id,
       };
-    },
-  })
-  .query("get-user-sentiment-by-id", {
-    input: z.object({
-      id: z.string(),
     }),
-    async resolve({ input, ctx }) {
+  getUserSentiment: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
       const res = await prisma.vote.findFirst({
         where: {
           AND: [{ lineupId: input.id }, { userId: ctx.session.user.id }],
@@ -99,13 +91,11 @@ export const privateUserRouter = createProtectedRouter()
         return "";
       }
       return res.sentiment;
-    },
-  })
-  .query("protected-user-info", {
-    input: z.object({
-      id: z.string(),
     }),
-    async resolve({ input, ctx }) {
+
+  fullUserInfo: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findUnique({
         where: { id: input.id },
         select: privateUserSelect,
@@ -126,5 +116,5 @@ export const privateUserRouter = createProtectedRouter()
       }
 
       return user;
-    },
-  });
+    }),
+});

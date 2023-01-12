@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { createRouter } from "./context";
 import { Prisma } from "@prisma/client";
-import { prisma } from "../db/client";
+import { prisma } from "../../db";
 import { TRPCError } from "@trpc/server";
 import { createCommentSchema } from "./schemas/comment.schema";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 const defaultCommentSelect = Prisma.validator<Prisma.CommentSelect>()({
   id: true,
@@ -18,28 +18,22 @@ const defaultCommentSelect = Prisma.validator<Prisma.CommentSelect>()({
   },
 });
 
-export const commentRouter = createRouter().query("get-lineup-comments", {
-  input: z.object({
-    id: z.string(),
-  }),
-  async resolve({ input }) {
-    // comments
-    const comments = await prisma.comment.findMany({
-      where: {
-        lineupId: input.id,
-      },
-      select: defaultCommentSelect,
-      // names and images associated with the
-    });
-    return comments;
-  },
-});
-
-export const protectedCommentRouter = createRouter().mutation(
-  "create-comment",
-  {
-    input: createCommentSchema,
-    async resolve({ ctx, input }) {
+export const commentRouter = createTRPCRouter({
+  getLineupComments: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const comments = await prisma.comment.findMany({
+        where: {
+          lineupId: input.id,
+        },
+        select: defaultCommentSelect,
+        // names and images associated with the
+      });
+      return comments;
+    }),
+  createComment: protectedProcedure
+    .input(createCommentSchema)
+    .mutation(async ({ ctx, input }) => {
       // find the lineup first
       const lineup = await ctx.prisma.lineup.findUnique({
         where: { id: input.lineupId },
@@ -70,6 +64,5 @@ export const protectedCommentRouter = createRouter().mutation(
       });
 
       return comment;
-    },
-  }
-);
+    }),
+});

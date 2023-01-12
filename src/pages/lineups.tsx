@@ -2,30 +2,30 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { trpc } from "../utils/trpc";
 import Loading from "../../components/loading";
 import Layout from "../../components/layout";
 import { Fragment, useState } from "react";
 import Select from "../../components/select";
+import { api } from "../utils/api";
 
 // old enum attempt
 //export type FilterTypes = "recent" | "most-likes" | "oldest";
 
 // proper TS enum
-const filterOptions = ["recent", "most-likes", "oldest"] as const
-type FilterTypes = typeof filterOptions[number]
+const filterOptions = ["recent", "most-likes", "oldest"] as const;
+type FilterTypes = (typeof filterOptions)[number];
 
 const Lineups = () => {
   const [filter, setFilter] = useState<FilterTypes>(filterOptions[0]);
-  
+
   const onValChangeTest = (val: FilterTypes) => {
     setFilter(val);
   };
-  
+
   const onItemClickTest = (val: FilterTypes) => {
     setFilter(val);
   };
-  
+
   const {
     data: paginatedData,
     hasNextPage,
@@ -34,14 +34,11 @@ const Lineups = () => {
     isLoading,
     isError,
     error,
-  } = trpc.useInfiniteQuery(
-    [
-      "lineup.infiniteLineups",
-      {
-        limit: 20,
-        filter: filter,
-      },
-    ],
+  } = api.lineup.infiniteLineups.useInfiniteQuery(
+    {
+      limit: 20,
+      filter: filter,
+    },
     {
       // getPreviousPageParam: (lastPage) => lastPage.nextCursor,
       getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
@@ -53,22 +50,25 @@ const Lineups = () => {
   }
 
   if (isError) {
-    console.log(error)
-    return <div className="text-center text-red-500 text-3xl my-auto">Something went wrong, soz 🙃</div>;
+    console.log(error);
+    return (
+      <div className="my-auto text-center text-3xl text-red-500">
+        Something went wrong, soz 🙃
+      </div>
+    );
   }
-
 
   return (
     <Layout>
       <div className="flex flex-col">
         <h1 className="my-2 justify-center text-center text-4xl">Lineups</h1>
         <div className="mr-2 mb-2 flex items-center justify-end">
-        <Select
+          <Select
             onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
             onItemClickFx={(val: FilterTypes) => onItemClickTest(val)}
             defaultValue={filterOptions[0]}
             values={filterOptions.map((e) => e)}
-            />
+          />
         </div>
       </div>
       <div className="mx-2 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
