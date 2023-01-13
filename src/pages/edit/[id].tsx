@@ -157,7 +157,6 @@ const EditLineup = () => {
       image: presigendUrls,
     };
 
-    console.log(currS3Key == id);
     const updateRes = updatedLineup({
       id: currS3Key,
       updatedData: updatedLineupObject,

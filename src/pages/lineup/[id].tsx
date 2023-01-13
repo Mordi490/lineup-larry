@@ -19,26 +19,6 @@ const SpecificLineup = () => {
 
   const { data: lineupQuery, isLoading } = api.lineup.byId.useQuery({ id });
 
-  const { mutate: delLineup } = api.lineup.delete.useMutation({
-    onSuccess: () => {
-      toast.remove();
-      toast.success("lineup deleted");
-      router.replace(`/lineup/${id}`, `/lineups`);
-    },
-    onError: (err) => {
-      toast.remove();
-      toast.error("Something went wrong");
-      console.log(err);
-    },
-  });
-
-  const { mutate: delS3Data } = api.lineup.deleteS3Object.useMutation({
-    onError: (err) => {
-      toast.error("Something went wrong uploading images/videos");
-      console.log(err);
-    },
-  });
-
   if (isLoading) {
     return <Loading />;
   }

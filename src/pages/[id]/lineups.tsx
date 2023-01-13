@@ -42,7 +42,7 @@ const Lineups = () => {
     isLoading: ratedIsLoading,
   } = api.lineup.highestRatedLineupsFromUser.useInfiniteQuery(
     { limit: 21, userID: id },
-    { getNextPageParam: (lastPage, pages) => lastPage.nextCursor }
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
 
   const { mutate: removeFromGroup } = api.group.removeFromGroup.useMutation({
@@ -63,14 +63,12 @@ const Lineups = () => {
     isFetchingNextPage,
     fetchNextPage,
     isLoading: recentIsLoading,
-    isError,
-    error,
   } = api.lineup.recentLineupsFromUser.useInfiniteQuery(
     { limit: 21, userID: id },
-    { getNextPageParam: (lastPage, pages) => lastPage.nextCursor }
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
 
-  if (recentIsLoading || userDataIsLoading) {
+  if (recentIsLoading || userDataIsLoading || ratedIsLoading) {
     return <Loading />;
   }
 

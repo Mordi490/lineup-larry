@@ -3,8 +3,8 @@ import Layout from "../../components/layout";
 const About = () => {
   return (
     <Layout title="About">
-      <div className="container mx-auto mt-4 text-center">
-        <h1 className="my-4 text-2xl font-bold">About?</h1>
+      <div className="mx-auto mt-4 max-w-2xl">
+        <h1 className="my-4 text-center text-2xl font-bold">About?</h1>
         <p className="my-4">
           This site/project aims to be a hub for Valorant lineups. This site
           also aims to be a different experience than lineup guides on YouTube

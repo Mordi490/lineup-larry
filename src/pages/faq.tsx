@@ -5,12 +5,14 @@ import Layout from "../../components/layout";
 const FAQ = () => {
   return (
     <Layout title="FAQ">
-      <div className="container mx-auto mt-4 text-center">
-        <h1 className="my-4 text-2xl font-bold">
+      <div className="mx-auto mt-4 max-w-2xl">
+        <h1 className="my-4 text-center text-2xl font-bold">
           Why does this exist? (TLDR version)
         </h1>
         <p className="my-4">For fun</p>
-        <h1 className="my-4 text-2xl font-bold">Why does this exist?</h1>
+        <h1 className="my-4 text-center text-2xl font-bold">
+          Why does this exist?
+        </h1>
         <p className="my-4">
           This site/project aims to be a hub for Valorant lineups. This site
           also aims to be a different experience than lineup guides on YouTube
@@ -21,7 +23,7 @@ const FAQ = () => {
           of character and crosshair placement.
         </p>
 
-        <h1 className="my-4 text-2xl font-bold">
+        <h1 className="my-4 text-center text-2xl font-bold">
           What about other sites that do the same thing
         </h1>
         <p className="my-4">
@@ -31,7 +33,7 @@ const FAQ = () => {
           contender vs others.
         </p>
 
-        <h1 className="my-4 text-2xl font-bold">
+        <h1 className="my-4 text-center text-2xl font-bold">
           Does this side project have goals
         </h1>
         <p className="my-4">
