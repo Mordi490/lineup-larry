@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -19,7 +20,12 @@ const Footer = () => {
         <a>Privacy Policy</a>
       </Link>
       <Link href="https://github.com/Mordi490/lineup-larry">
-        <a>GitHub</a>
+        <a className="mx-auto flex items-center">
+          <span className="mx-2">
+            <FaGithub />
+          </span>
+          GitHub
+        </a>
       </Link>
     </footer>
   );
