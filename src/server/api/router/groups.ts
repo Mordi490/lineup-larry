@@ -61,13 +61,6 @@ export const groupRouter = createTRPCRouter({
         where: { id: input.userId },
       });
 
-      if (!user) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `No user found with id: ${input.userId}`,
-        });
-      }
-
       const group = await ctx.prisma.group.create({
         data: {
           name: input.name,

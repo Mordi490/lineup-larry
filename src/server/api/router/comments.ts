@@ -47,14 +47,6 @@ export const commentRouter = createTRPCRouter({
       }
 
       const user = ctx.session?.user;
-
-      if (!user) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "you have to be logged in",
-        });
-      }
-
       const comment = await ctx.prisma.comment.create({
         data: {
           content: input.content,

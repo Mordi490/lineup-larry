@@ -40,12 +40,6 @@ export const userRouter = createTRPCRouter({
         select: defaultUserSelect,
       });
 
-      if (!user) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "User was not found",
-        });
-      }
       return user;
     }),
 
@@ -55,13 +49,6 @@ export const userRouter = createTRPCRouter({
       const user = await ctx.prisma.user.findUnique({
         where: { id: input.userId },
       });
-
-      if (!user) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "User was not found",
-        });
-      }
 
       if (user?.id !== ctx.session.user.id) {
         throw new TRPCError({
@@ -101,17 +88,10 @@ export const userRouter = createTRPCRouter({
         select: privateUserSelect,
       });
 
-      if (!user) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "User was not found",
-        });
-      }
-
-      if (ctx.session.user.id !== user.id) {
+      if (ctx.session.user.id !== user?.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "You are not authorieze to perform this action",
+          message: "You are not authorized to perform this action",
         });
       }
 
