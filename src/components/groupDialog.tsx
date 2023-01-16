@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { api } from "../src/utils/api";
+import { api } from "../utils/api";
 
 // new component for the create group input
 

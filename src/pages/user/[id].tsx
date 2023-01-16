@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import Layout from "../../../components/layout";
+import Layout from "../../components/layout";
 import { api } from "../../utils/api";
 
 /**

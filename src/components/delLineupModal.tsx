@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import { api } from "../src/utils/api";
+import { api } from "../utils/api";
 
 type props = {
   title: string;

@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { api } from "../src/utils/api";
+import { api } from "../utils/api";
 
 type voteProps = {
   votes: number;

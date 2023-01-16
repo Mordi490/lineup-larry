@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import { commentForm } from "../src/server/api/router/schemas/comment.schema";
-import { api } from "../src/utils/api";
+import { commentForm } from "../server/api/router/schemas/comment.schema";
+import { api } from "../utils/api";
 
 const CommentForm = () => {
   const { data: session } = useSession();

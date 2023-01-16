@@ -3,13 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import CommentForm from "../../../components/commentForm";
-import CommentSection from "../../../components/commentSection";
-import DelLineupModal from "../../../components/delLineupModal";
-import { GroupDialog } from "../../../components/groupDialog";
-import Layout from "../../../components/layout";
-import Loading from "../../../components/loading";
-import { Votes } from "../../../components/Votes";
+import CommentForm from "../../components/commentForm";
+import CommentSection from "../../components/commentSection";
+import DelLineupModal from "../../components/delLineupModal";
+import { GroupDialog } from "../../components/groupDialog";
+import Layout from "../../components/layout";
+import Loading from "../../components/loading";
+import { Votes } from "../../components/Votes";
 import { api } from "../../utils/api";
 
 const SpecificLineup = () => {

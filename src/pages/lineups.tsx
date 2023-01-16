@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import Loading from "../../components/loading";
-import Layout from "../../components/layout";
+import Loading from "../components/loading";
+import Layout from "../components/layout";
 import { Fragment, useState } from "react";
-import Select from "../../components/select";
+import Select from "../components/select";
 import { api } from "../utils/api";
 
 // old enum attempt

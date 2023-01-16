@@ -26,23 +26,23 @@ const NavbarProfileDropdown = () => {
             id="dropdown_bg_color"
             className="text-lg"
           >
-            <DropdownMenu.Item className="bg-yellow-300">
+            <DropdownMenu.Item className="hover:bg-gray-700">
               <Link href={`/${session.user?.id}/lineups`}>
                 <a>Your Lineups</a>
               </Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Item>
+            <DropdownMenu.Item className="hover:bg-gray-700">
               <Link href={`/create`}>
                 <a>Submit Lineup</a>
               </Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Item>
+            <DropdownMenu.Item className="hover:bg-gray-700">
               <Link href={`/user/${session.user?.id}`}>
                 <a>View Profile</a>
               </Link>
             </DropdownMenu.Item>
             <DropdownMenu.Separator className="my-1 h-px bg-green-300 fill-green-300" />
-            <DropdownMenu.Item>
+            <DropdownMenu.Item className="hover:bg-gray-700">
               <Link href={`/api/auth/signout`}>
                 <a>Logout</a>
               </Link>
@@ -51,10 +51,10 @@ const NavbarProfileDropdown = () => {
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       ) : (
-        <Link href="/api/auth/signin">
+        <Link href="/api/auth/signin" className="hover:bg-gray-700">
           <a>
             <button
-            aria-label="Login"
+              aria-label="Login"
               id="tailwind_crack_pipe_fix"
               className="inline-flex items-center justify-center gap-2 font-bold text-black"
             >

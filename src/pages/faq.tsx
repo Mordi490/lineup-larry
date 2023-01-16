@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
-import Layout from "../../components/layout";
+import Layout from "../components/layout";
 
 const FAQ = () => {
   return (

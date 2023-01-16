@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FaDiscord } from "react-icons/fa";
 import * as z from "zod";
-import Layout from "../../components/layout";
+import Layout from "../components/layout";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
 import { api } from "../utils/api";
 

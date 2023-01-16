@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import Layout from "../../../components/layout";
-import Loading from "../../../components/loading";
+import Layout from "../../components/layout";
+import Loading from "../../components/loading";
 import Link from "next/link";
 import { Fragment } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -147,13 +147,13 @@ const Lineups = () => {
             <h1 className="text-center text-xl font-medium">
               Highest rated lineups
             </h1>
-            <ul className="mx-auto mt-2 grid grid-cols-3">
+            <ul className="mx-auto mt-2 grid grid-cols-3 max-w-3xl">
               {ratedLineups?.pages.map((page, index) => (
                 <Fragment key={page.items[0]?.id || index}>
                   {page.items.length ? (
                     page.items.map((lineup) => (
                       <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                        <a className="truncate text-slate-300 underline">
+                        <a className="w-fit truncate text-slate-300 underline">
                           {lineup.title}
                         </a>
                       </Link>
@@ -183,78 +183,85 @@ const Lineups = () => {
 
         {/* showcase public groups */}
         <h1 className="text-center text-xl font-medium">Groups</h1>
-        {groups?.length ? (
-          groups.map((gr) => (
-            <div key={gr.id} className="flex py-2">
-              <Dialog.Root>
-                <Dialog.Trigger asChild className="ml-2">
-                  <button aria-label="Open group" className="underline">
-                    {gr.name}
-                  </button>
-                </Dialog.Trigger>
-                <button
-                  onClick={() => delGroup({ id: gr.id as string })}
-                  aria-label="Delete group"
-                  className="ml-2 flex items-center rounded-md bg-red-500 py-1 px-2 font-medium uppercase text-neutral-700 hover:bg-red-400"
-                >
-                  Delete{" "}
-                  <span className="ml-1">
-                    <FaTrashAlt size={14} color="black" />
-                  </span>
-                </button>
-                <Dialog.Portal>
-                  <Dialog.Overlay className="fixed inset-0 z-20 grid items-center overflow-y-auto bg-black/50">
-                    <Dialog.Content className="z-50 mx-auto w-[95vw] max-w-2xl flex-col rounded-lg bg-gray-800 p-8 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
-                      <Dialog.Title className="text-center text-lg font-semibold">
+        <div className="mx-auto max-w-xl">
+          {groups?.length ? (
+            groups.map((gr) => (
+              <div key={gr.id} className="flex p-2">
+                <Dialog.Root>
+                  <div className="flex w-full justify-between">
+                    <Dialog.Trigger asChild className="ml-2">
+                      <button
+                        aria-label="Open group"
+                        className="truncate underline"
+                      >
                         {gr.name}
-                      </Dialog.Title>
-                      {gr.Lineup.map((ln) => (
-                        <div key={ln.id} className="my-4 shadow-2xl">
-                          <div>
-                            <div className="mb-2 flex justify-between">
-                              <Link href={`/lineup/${ln.id}`}>
-                                <a className="truncate text-lg font-medium  hover:cursor-pointer">
-                                  {ln.title}
-                                </a>
-                              </Link>
+                      </button>
+                    </Dialog.Trigger>
+                    <button
+                      onClick={() => delGroup({ id: gr.id })}
+                      aria-label="Delete group"
+                      className="ml-2 flex items-center rounded-md bg-red-500 py-1 px-2 font-medium uppercase text-neutral-800 hover:bg-red-400"
+                    >
+                      Delete{" "}
+                      <span className="ml-1">
+                        <FaTrashAlt size={14} color="black" />
+                      </span>
+                    </button>
+                  </div>
+                  <Dialog.Portal>
+                    <Dialog.Overlay className="fixed inset-0 z-20 grid items-center overflow-y-auto bg-black/50">
+                      <Dialog.Content className="z-50 mx-auto w-[95vw] max-w-2xl flex-col rounded-lg bg-gray-800 p-8 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
+                        <Dialog.Title className="text-center text-lg font-semibold">
+                          {gr.name}
+                        </Dialog.Title>
+                        {gr.Lineup.map((ln) => (
+                          <div key={ln.id} className="my-4 shadow-2xl">
+                            <div>
+                              <div className="mb-2 flex justify-between">
+                                <Link href={`/lineup/${ln.id}`}>
+                                  <a className="truncate text-lg font-medium  hover:cursor-pointer">
+                                    {ln.title}
+                                  </a>
+                                </Link>
 
-                              {/* TODO/QoL: optimistic UI here */}
-                              <button
-                                className="rounded-md bg-red-500 p-1 font-medium capitalize"
-                                aria-label="Remove from group"
-                                onClick={() =>
-                                  removeFromGroup({
-                                    groupId: gr.id,
-                                    lineupId: ln.id,
-                                  })
-                                }
-                              >
-                                Remove <FaTrashAlt className="mb-1 inline" />
-                              </button>
+                                {/* TODO/QoL: optimistic UI here */}
+                                <button
+                                  className="rounded-md bg-red-500 p-1 font-medium capitalize"
+                                  aria-label="Remove from group"
+                                  onClick={() =>
+                                    removeFromGroup({
+                                      groupId: gr.id,
+                                      lineupId: ln.id,
+                                    })
+                                  }
+                                >
+                                  Remove <FaTrashAlt className="mb-1 inline" />
+                                </button>
+                              </div>
+                              <Link href={`/lineup/${ln.id}`}>
+                                <Image
+                                  className="hover:cursor-pointer"
+                                  width={900}
+                                  height={600}
+                                  alt="Valorant screenshot"
+                                  src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                                    ln.image.split(",")[ln.previewImg]
+                                  }`}
+                                />
+                              </Link>
                             </div>
-                            <Link href={`/lineup/${ln.id}`}>
-                              <Image
-                                className="hover:cursor-pointer"
-                                width={900}
-                                height={600}
-                                alt="Valorant screenshot"
-                                src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
-                                  ln.image.split(",")[ln.previewImg]
-                                }`}
-                              />
-                            </Link>
                           </div>
-                        </div>
-                      ))}
-                    </Dialog.Content>
-                  </Dialog.Overlay>
-                </Dialog.Portal>
-              </Dialog.Root>
-            </div>
-          ))
-        ) : (
-          <p className="mt-1 text-center">This user has no groups</p>
-        )}
+                        ))}
+                      </Dialog.Content>
+                    </Dialog.Overlay>
+                  </Dialog.Portal>
+                </Dialog.Root>
+              </div>
+            ))
+          ) : (
+            <p className="mt-1 text-center">This user has no groups</p>
+          )}
+        </div>
       </Layout>
     </>
   );
