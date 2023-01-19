@@ -23,7 +23,6 @@ const CommentSection = () => {
         comments?.map((comment) => (
           <div
             className="my-4 flex max-w-3xl shadow-md xl:max-w-4xl"
-            id="test"
             key={comment.id}
           >
             <div className="flex w-full">
@@ -57,10 +56,7 @@ const CommentSection = () => {
                   {comment.content}
                 </p>
 
-                <p
-                  className="mb-1 mr-1 flex justify-end text-sm font-light italic"
-                  id="tw_shit"
-                >
+                <p className="mb-1 mr-1 flex justify-end text-sm font-light italic">
                   Created: {comment.date.toLocaleDateString()}
                 </p>
               </div>
@@ -68,7 +64,7 @@ const CommentSection = () => {
           </div>
         ))
       ) : (
-        <p className="text-center font-light italic" id="tailwind_smile">
+        <p className="text-center font-light italic text-neutral-400">
           There currently are no comments
         </p>
       )}

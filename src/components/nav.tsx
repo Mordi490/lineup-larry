@@ -21,7 +21,7 @@ const Nav = ({ title, text }: Props) => {
       </Head>
 
       <nav className="bg-gray-800 px-2 py-2">
-        <div className="mx-auto max-w-7xl" id="tailwind_sucks">
+        <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between text-center">
             {/* left side */}
             <Link href={"/"}>

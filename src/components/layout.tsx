@@ -10,7 +10,7 @@ type Props = {
 
 const Layout = ({ children, title, text }: Props) => {
   return (
-    <div className="flex h-screen flex-col" id="layout_div">
+    <div className="flex h-screen flex-col">
       <Nav title={title} text={text} />
       <main className="flex-grow bg-gray-700 py-2">{children}</main>
       <Footer />

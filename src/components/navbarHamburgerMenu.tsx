@@ -9,11 +9,10 @@ const NavbarHamburgerMenu = () => {
     <div className="h-12">
       <DropdownMenu.Root>
         <DropdownMenu.Trigger aria-label="Menu button">
-          <AiOutlineMenu size={48}/>
+          <AiOutlineMenu size={48} />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content
-          className="flex flex-col rounded-lg text-lg"
-          id="dropdown_bg_color"
+          className="flex flex-col rounded-lg bg-gray-800 p-2 text-lg"
           sideOffset={10}
         >
           {/* cond render for some logged in vs not logged in options */}

@@ -21,9 +21,9 @@ export const Votes = (props: voteProps) => {
         onClick={() => castVote({ id, sentiment: "like" })}
       >
         {userLike == "like" ? (
-          <FaPlus color="cyan" id="why" />
+          <FaPlus color="cyan" className="hover:fill-red-400" />
         ) : (
-          <FaPlus id="why" />
+          <FaPlus className="hover:fill-red-400" />
         )}
       </button>
       <button
@@ -31,9 +31,9 @@ export const Votes = (props: voteProps) => {
         onClick={() => castVote({ id, sentiment: "dislike" })}
       >
         {userLike == "dislike" ? (
-          <FaMinus color="cyan" id="why" />
+          <FaMinus color="cyan" className="hover:fill-red-400" />
         ) : (
-          <FaMinus id="why" />
+          <FaMinus className="hover:fill-red-400" />
         )}
       </button>
     </div>

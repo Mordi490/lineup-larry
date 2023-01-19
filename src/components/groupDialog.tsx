@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { Button } from "@ui/button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
@@ -72,14 +73,14 @@ export const GroupDialog = () => {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button
+        <Button
           aria-label="Add to group"
-          id="tailwind_fail_2"
-          className="h-fit w-fit rounded-lg bg-neutral-600 px-2 py-2 font-semibold uppercase text-white hover:bg-neutral-500"
+          rounded="md"
+          intent="secondary"
           onClick={() => fetchGroups()}
         >
           Add to group
-        </button>
+        </Button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-20 bg-black/50" />

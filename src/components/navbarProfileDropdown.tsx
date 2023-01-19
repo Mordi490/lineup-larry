@@ -23,8 +23,7 @@ const NavbarProfileDropdown = () => {
           <DropdownMenu.Content
             loop
             sideOffset={4}
-            id="dropdown_bg_color"
-            className="text-lg"
+            className="rounded-xl bg-gray-800 p-2 text-lg"
           >
             <DropdownMenu.Item className="hover:bg-gray-700">
               <Link href={`/${session.user?.id}/lineups`}>
@@ -55,8 +54,7 @@ const NavbarProfileDropdown = () => {
           <a>
             <button
               aria-label="Login"
-              id="tailwind_crack_pipe_fix"
-              className="inline-flex items-center justify-center gap-2 font-bold text-black"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-300 p-2 font-bold text-slate-800 hover:bg-gray-200"
             >
               Login
               <span>
