@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import { commentForm } from "../server/api/router/schemas/comment.schema";
 import { api } from "../utils/api";
+import { Button } from "@ui/button";
 
 const CommentForm = () => {
   const { data: session } = useSession();
@@ -69,14 +70,14 @@ const CommentForm = () => {
               )}
             </div>
             <div className="mt-4 flex w-5/6 justify-end">
-              <button
+              <Button
                 aria-label="Submit form"
                 type="submit"
-                className="h-fit w-fit rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white hover:bg-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
                 disabled={isSubmitting}
+                intent="primary"
               >
                 {isSubmitting ? "Uploading..." : "Submit"}
-              </button>
+              </Button>
             </div>
           </form>
         </>

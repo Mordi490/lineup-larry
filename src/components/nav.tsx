@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Link from "next/link";
+import { Link } from "@ui/link";
 import { GiBowArrow } from "react-icons/gi";
 import NavbarHamburgerMenu from "./navbarHamburgerMenu";
 import NavbarProfileDropdown from "./navbarProfileDropdown";
@@ -25,19 +25,21 @@ const Nav = ({ title, text }: Props) => {
           <div className="flex items-center justify-between text-center">
             {/* left side */}
             <Link href={"/"}>
-              <a>
-                <GiBowArrow size={48} color="cyan" aria-label="Lineup Larry logo"/>
-              </a>
+              <span>
+                <GiBowArrow
+                  size={48}
+                  color="cyan"
+                  aria-label="Lineup Larry logo"
+                />
+              </span>
             </Link>
 
             {/* center */}
             <div className="hidden sm:block">
               <Link href={"/"}>
-                <a>
-                  <h1 className="flex text-4xl font-bold">
-                    {text?.length ? <p>{text}</p> : <p>Lineup Larry</p>}
-                  </h1>
-                </a>
+                <h1 className="flex text-4xl font-bold">
+                  {text?.length ? <p>{text}</p> : <p>Lineup Larry</p>}
+                </h1>
               </Link>
             </div>
 

@@ -1,6 +1,6 @@
 import { AiOutlineMenu } from "react-icons/ai";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import Link from "next/link";
+import { Link } from "@ui/link";
 import { useSession } from "next-auth/react";
 
 const NavbarHamburgerMenu = () => {
@@ -12,39 +12,48 @@ const NavbarHamburgerMenu = () => {
           <AiOutlineMenu size={48} />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content
-          className="flex flex-col rounded-lg bg-gray-800 p-2 text-lg"
+          className="flex flex-col rounded bg-gray-800 py-2 px-4 text-lg"
           sideOffset={10}
         >
           {/* cond render for some logged in vs not logged in options */}
           {session?.user?.id ? (
             <DropdownMenu.Item>
               <Link
-                className="hover:bg-red-400"
+                className="rounded-xl p-1 hover:bg-gray-700"
                 href={`/${session.user?.id}/lineups`}
               >
-                <a>Your Lineups</a>
+                Your Lineups
               </Link>
             </DropdownMenu.Item>
           ) : null}
 
           <DropdownMenu.Item>
-            <Link href={`/lineups`}>
-              <a>View Lineups</a>
+            <Link
+              className="rounded-xl p-1 hover:bg-gray-700"
+              href={`/lineups`}
+            >
+              View Lineups
             </Link>
           </DropdownMenu.Item>
 
           {session?.user?.id ? (
             <DropdownMenu.Item>
-              <Link href={`/create`}>
-                <a>Submit Lineup</a>
+              <Link
+                className="rounded-xl p-1 hover:bg-gray-700"
+                href={`/create`}
+              >
+                Submit Lineup
               </Link>
             </DropdownMenu.Item>
           ) : null}
 
           {session?.user?.id ? (
             <DropdownMenu.Item>
-              <Link href={`/user/${session.user?.id}`}>
-                <a>View Profile</a>
+              <Link
+                className="rounded-xl p-1 hover:bg-gray-700"
+                href={`/user/${session.user?.id}`}
+              >
+                View Profile
               </Link>
             </DropdownMenu.Item>
           ) : null}
@@ -52,14 +61,20 @@ const NavbarHamburgerMenu = () => {
           {/* expect for one, to login */}
           {session?.user?.id ? (
             <DropdownMenu.Item>
-              <Link href={`/api/auth/signout`}>
-                <a>Logout</a>
+              <Link
+                className="rounded-xl p-1 hover:bg-gray-700"
+                href={`/api/auth/signout`}
+              >
+                Logout
               </Link>
             </DropdownMenu.Item>
           ) : (
             <DropdownMenu.Item>
-              <Link href={`/api/auth/signin`}>
-                <a>Login</a>
+              <Link
+                className="rounded-xl p-1 hover:bg-gray-700"
+                href={`/api/auth/signin`}
+              >
+                Login
               </Link>
             </DropdownMenu.Item>
           )}

@@ -1,5 +1,5 @@
+import { Button } from "@ui/button";
 import type { NextPage } from "next";
-import Link from "next/link";
 import Layout from "../components/layout";
 
 const Home: NextPage = () => {
@@ -14,50 +14,40 @@ const Home: NextPage = () => {
           Lineup Larry
         </h1>
         <p className="text-2xl text-gray-400">Become a nerd today</p>
-        <div className="mt-3 hidden max-w-xl gap-3 py-3 text-center md:grid md:grid-cols-2 lg:w-2/3">
-          <Link href="/lineups">
-            <a className="rounded-l-lg bg-sky-400 p-1 text-xl text-gray-700 hover:bg-sky-500">
-              View lineups
-            </a>
-          </Link>
-          <Link href="/api/auth/signin">
-            <a className="rounded-r-lg bg-sky-400 p-1 text-xl text-gray-700 hover:bg-sky-500">
-              Login
-            </a>
-          </Link>
-          <Link href="/create">
-            <a className="rounded-l-lg bg-sky-400 p-1 text-xl text-gray-700 hover:bg-sky-500">
-              Submit lineup
-            </a>
-          </Link>
-          <Link href="/api/auth/signout">
-            <a className="rounded-r-lg bg-sky-400 p-1 text-xl text-gray-700 hover:bg-sky-500">
-              Logout
-            </a>
-          </Link>
+        <div className="mt-3 hidden max-w-xl gap-3 py-3 text-center md:grid md:grid-cols-2">
+          <Button intent="primary" href="/lineups">
+            View Lineups
+          </Button>
+
+          <Button intent="primary" href="/api/auth/signin">
+            Login
+          </Button>
+
+          <Button intent="primary" href="/create">
+            Submit Lineup
+          </Button>
+
+          <Button intent="primary" href="/api/auth/signout">
+            Logout
+          </Button>
         </div>
 
-        <div className="mt-3 grid gap-3 py-3 text-center md:hidden md:grid-cols-2 lg:w-2/3 ">
-          <Link href="/lineups">
-            <a className="rounded bg-sky-400 p-2 text-xl text-gray-700 hover:bg-sky-500">
-              View lineups
-            </a>
-          </Link>
-          <Link href="/api/auth/signin">
-            <a className="rounded bg-sky-400 p-2 text-xl text-gray-700 hover:bg-sky-500">
-              Login
-            </a>
-          </Link>
-          <Link href="/create">
-            <a className="rounded bg-sky-400 p-2 text-xl text-gray-700 hover:bg-sky-500">
-              Submit lineup
-            </a>
-          </Link>
-          <Link href="/api/auth/signout">
-            <a className="rounded bg-sky-400 p-2 text-xl text-gray-700 hover:bg-sky-500">
-              Logout
-            </a>
-          </Link>
+        <div className="mt-3 grid gap-3 py-3 text-center md:hidden md:grid-cols-2">
+          <Button intent="primary" href="/lineups">
+            View Lineups
+          </Button>
+
+          <Button intent="primary" href="/api/auth/signin">
+            Login
+          </Button>
+
+          <Button intent="primary" href="/create">
+            Submit Lineup
+          </Button>
+
+          <Button intent="primary" href="/api/auth/signout">
+            Logout
+          </Button>
         </div>
       </div>
     </Layout>

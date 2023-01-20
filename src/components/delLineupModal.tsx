@@ -51,7 +51,7 @@ const DelLineupModal = (data: props) => {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
-        <a className="rounded-md bg-red-500 py-1 px-2 text-xl font-medium capitalize text-gray-700 hover:bg-red-400">
+        <a className="capitalize text-gray-700">
           Delete
         </a>
       </AlertDialog.Trigger>
@@ -71,7 +71,7 @@ const DelLineupModal = (data: props) => {
             delete the lineup
           </AlertDialog.Description>
           <div className="mt-4 flex justify-end space-x-2">
-            <AlertDialog.Cancel className="inline-flex select-none justify-center rounded-md border border-gray-500 bg-slate-300 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-slate-400 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
+            <AlertDialog.Cancel className="inline-flex select-none justify-center rounded-md border border-gray-500 bg-slate-300 px-4 py-2 text-sm font-medium text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
               Cancel
             </AlertDialog.Cancel>
             <AlertDialog.Action

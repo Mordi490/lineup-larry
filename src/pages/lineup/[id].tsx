@@ -1,8 +1,8 @@
+import { Button } from "@ui/button";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@ui/link";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
 import CommentForm from "../../components/commentForm";
 import CommentSection from "../../components/commentSection";
 import DelLineupModal from "../../components/delLineupModal";
@@ -14,7 +14,6 @@ import { api } from "../../utils/api";
 
 const SpecificLineup = () => {
   const { data } = useSession();
-  const router = useRouter();
   const id = useRouter().query.id as string;
 
   const { data: lineupQuery, isLoading } = api.lineup.byId.useQuery({ id });
@@ -42,22 +41,23 @@ const SpecificLineup = () => {
       <div className="hidden sm:my-2 sm:flex sm:justify-between">
         {/* start of creation details */}
         {/* left side */}
-        <div className="ml-2 flex justify-start">
+        <div className="ml-2 flex items-center justify-start">
           {/* "Created by: <name>" */}
           <p className="justify-start">
             Created by:
             <span>
-              <Link href={`/user/${lineupQuery.user.id}`}>
-                <a className="ml-1 font-bold text-blue-400 underline">
-                  {lineupQuery.user.name}
-                </a>
+              <Link
+                className="ml-1 font-bold text-blue-400 underline"
+                href={`/user/${lineupQuery.user.id}`}
+              >
+                {lineupQuery.user.name}
               </Link>
             </span>
           </p>
         </div>
 
         {/* right side*/}
-        <div className="mr-2 flex justify-end">
+        <div className="mr-2 flex items-center  justify-end">
           {/* Dates 'n' stuff */}
           <div className="flex justify-between italic">
             <div>
@@ -71,16 +71,16 @@ const SpecificLineup = () => {
           {/* Conditional render of extra options of the user created the lineup */}
           {lineupQuery.user.id === data?.user?.id ? (
             <div className="grid grid-cols-2 gap-2 text-center">
-              <Link href={`/edit/${lineupQuery.id}`}>
-                <a className="rounded bg-sky-400 py-1 px-2 text-xl font-medium capitalize text-gray-700 hover:bg-sky-500">
-                  Edit
-                </a>
-              </Link>
-              <DelLineupModal
-                id={lineupQuery.id}
-                title={lineupQuery.title}
-                key={lineupQuery.id}
-              />
+              <Button intent={"primary"} href={`/edit/${lineupQuery.id}`}>
+                Edit
+              </Button>
+              <Button intent={"danger"}>
+                <DelLineupModal
+                  id={lineupQuery.id}
+                  title={lineupQuery.title}
+                  key={lineupQuery.id}
+                />
+              </Button>
             </div>
           ) : null}
         </div>
@@ -93,16 +93,16 @@ const SpecificLineup = () => {
         {/* For mobile view the edit/del buttons underneath the desc/text */}
         {lineupQuery.user.id === data?.user?.id ? (
           <div className="mx-2 flex justify-end gap-4 sm:hidden">
-            <Link href={`/edit/${lineupQuery.id}`}>
-              <a className="rounded bg-sky-400 py-1 px-2 text-xl font-medium capitalize text-gray-700 hover:bg-sky-500">
-                Edit
-              </a>
-            </Link>
-            <DelLineupModal
-              id={lineupQuery.id}
-              title={lineupQuery.title}
-              key={lineupQuery.id}
-            />
+            <Button intent={"primary"} href={`/edit/${lineupQuery.id}`}>
+              Edit
+            </Button>
+            <Button intent="danger">
+              <DelLineupModal
+                id={lineupQuery.id}
+                title={lineupQuery.title}
+                key={lineupQuery.id}
+              />
+            </Button>
           </div>
         ) : null}
         {lineupQuery.image.split(",").map((urlId) => (

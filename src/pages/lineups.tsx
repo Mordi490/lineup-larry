@@ -1,12 +1,13 @@
 // default page to showcase lineups
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@ui/link";
 import Loading from "../components/loading";
 import Layout from "../components/layout";
 import { Fragment, useState } from "react";
 import Select from "../components/select";
 import { api } from "../utils/api";
+import { Button } from "@ui/button";
 
 // old enum attempt
 //export type FilterTypes = "recent" | "most-likes" | "oldest";
@@ -77,32 +78,32 @@ const Lineups = () => {
             {page.items.map((lineup) => (
               <article key={lineup.id}>
                 <div className="grid grid-cols-4">
-                  <Link href={`/lineup/${lineup.id}`}>
-                    <a className="col-span-3 truncate text-xl">
-                      {lineup.title}
-                    </a>
+                  <Link
+                    className="col-span-3 truncate text-xl"
+                    href={`/lineup/${lineup.id}`}
+                  >
+                    {lineup.title}
                   </Link>
                   <p className="flex justify-end font-thin">
                     by:
-                    <Link href={`/${lineup.userId}/lineups`}>
-                      <a className="ml-1 text-sky-500 underline">
-                        {lineup.creator}
-                      </a>
+                    <Link
+                      className="ml-1 text-sky-500 underline"
+                      href={`/${lineup.userId}/lineups`}
+                    >
+                      {lineup.creator}
                     </Link>
                   </p>
                 </div>
 
                 <Link href={`/lineup/${lineup.id}`}>
-                  <a>
-                    <Image
-                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
-                        lineup.image.split(",")[lineup.previewImg]
-                      }`}
-                      alt="lineup"
-                      width={1280}
-                      height={720}
-                    />
-                  </a>
+                  <Image
+                    src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                      lineup.image.split(",")[lineup.previewImg]
+                    }`}
+                    alt="lineup"
+                    width={1280}
+                    height={720}
+                  />
                 </Link>
               </article>
             ))}
@@ -110,7 +111,8 @@ const Lineups = () => {
         ))}
       </div>
       <div className="mx-auto flex justify-end">
-        <button
+        <Button
+          intent={"primary"}
           onClick={() => fetchNextPage()}
           aria-label="Load more"
           disabled={!hasNextPage || isFetchingNextPage}
@@ -121,7 +123,7 @@ const Lineups = () => {
             : hasNextPage
             ? "Load More"
             : "Nothing more to load"}
-        </button>
+        </Button>
       </div>
     </Layout>
   );

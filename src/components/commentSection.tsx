@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@ui/link";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
 import Loading from "./loading";
@@ -31,23 +31,15 @@ const CommentSection = () => {
                 <div className="mb-2 truncate text-base font-medium">
                   {comment.user.name}
                 </div>
-                <Link href={`/${comment.user.name}/lineups`}>
-                  <a
-                    className="relative mx-auto h-12 w-12"
-                    onClick={() =>
-                      router.replace(
-                        `/lineup/${id}`,
-                        `/${comment.user.name}/lineups`
-                      )
-                    }
-                  >
-                    <Image
-                      src={`${comment.user.image}`}
-                      alt={`${comment.user.name}'s profile picture`}
-                      layout="fill"
-                      className="rounded-full"
-                    />
-                  </a>
+                <Link
+                  className="relative mx-auto h-12 w-12"
+                  href={`/${comment.user.id}/lineups`}
+                >
+                  <Image
+                    src={`${comment.user.image}`}
+                    alt={`${comment.user.name}'s profile picture`}
+                    layout="fill"
+                  />
                 </Link>
               </div>
               {/* right side: Comment content */}

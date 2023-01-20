@@ -57,9 +57,9 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      const id = user.id;
+      const id = user?.id;
       await ctx.prisma.user.delete({
-        where: { id: user.id },
+        where: { id: user?.id },
       });
       return {
         id,

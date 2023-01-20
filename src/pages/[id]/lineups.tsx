@@ -2,12 +2,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Layout from "../../components/layout";
 import Loading from "../../components/loading";
-import Link from "next/link";
+import { Link } from "@ui/link";
 import { Fragment } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { FaTrashAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { api } from "../../utils/api";
+import { Button } from "@ui/button";
 
 const Lineups = () => {
   const router = useRouter();
@@ -114,10 +115,12 @@ const Lineups = () => {
                 <Fragment key={page.items[0]?.id || index}>
                   {page.items.length ? (
                     page.items.map((lineup) => (
-                      <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                        <a className="truncate text-slate-300 underline">
-                          {lineup.title}
-                        </a>
+                      <Link
+                        className="truncate text-slate-300 underline"
+                        key={lineup.id}
+                        href={`/lineup/${lineup.id}`}
+                      >
+                        {lineup.title}
                       </Link>
                     ))
                   ) : (
@@ -147,15 +150,17 @@ const Lineups = () => {
             <h1 className="text-center text-xl font-medium">
               Highest rated lineups
             </h1>
-            <ul className="mx-auto mt-2 grid grid-cols-3 max-w-3xl">
+            <ul className="mx-auto mt-2 grid max-w-3xl grid-cols-3">
               {ratedLineups?.pages.map((page, index) => (
                 <Fragment key={page.items[0]?.id || index}>
                   {page.items.length ? (
                     page.items.map((lineup) => (
-                      <Link key={lineup.id} href={`/lineup/${lineup.id}`}>
-                        <a className="w-fit truncate text-slate-300 underline">
-                          {lineup.title}
-                        </a>
+                      <Link
+                        className="w-fit truncate text-slate-300 underline"
+                        key={lineup.id}
+                        href={`/lineup/${lineup.id}`}
+                      >
+                        {lineup.title}
                       </Link>
                     ))
                   ) : (
@@ -166,7 +171,8 @@ const Lineups = () => {
             </ul>
           </div>
           <div className="flex justify-end">
-            <button
+            <Button
+              intent={"primary"}
               onClick={() => ratedFetchNextPage()}
               aria-label="Load more"
               disabled={!ratedHasNextPage || ratedIsFetchingNextPage}
@@ -177,7 +183,7 @@ const Lineups = () => {
                 : ratedHasNextPage
                 ? "Load More"
                 : "Nothing more to load"}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -218,15 +224,16 @@ const Lineups = () => {
                           <div key={ln.id} className="my-4 shadow-2xl">
                             <div>
                               <div className="mb-2 flex justify-between">
-                                <Link href={`/lineup/${ln.id}`}>
-                                  <a className="truncate text-lg font-medium  hover:cursor-pointer">
-                                    {ln.title}
-                                  </a>
+                                <Link
+                                  className="truncate text-lg font-medium hover:cursor-pointer"
+                                  href={`/lineup/${ln.id}`}
+                                >
+                                  {ln.title}
                                 </Link>
 
                                 {/* TODO/QoL: optimistic UI here */}
-                                <button
-                                  className="rounded-md bg-red-500 p-1 font-medium capitalize"
+                                <Button
+                                  intent={"danger"}
                                   aria-label="Remove from group"
                                   onClick={() =>
                                     removeFromGroup({
@@ -236,7 +243,7 @@ const Lineups = () => {
                                   }
                                 >
                                   Remove <FaTrashAlt className="mb-1 inline" />
-                                </button>
+                                </Button>
                               </div>
                               <Link href={`/lineup/${ln.id}`}>
                                 <Image

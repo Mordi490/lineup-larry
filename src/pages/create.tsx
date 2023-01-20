@@ -8,6 +8,7 @@ import * as z from "zod";
 import Layout from "../components/layout";
 import { Agent, Map, TypedKeys } from "../../utils/enums";
 import { api } from "../utils/api";
+import { Button } from "@ui/button";
 
 // moving this one here since using the File API fucks over the import
 // describes the form object for creating & editing lineupsF
@@ -146,16 +147,16 @@ const Create = () => {
           You have to be logged in to create a lineup
         </h1>
         <div className="flex justify-center">
-          <button
+          <Button
+            intent={"secondary"}
             aria-label="Login button"
-            className="my-2 inline-flex items-center justify-center rounded-md border border-transparent  bg-gray-300 p-2 px-2 py-2 text-lg font-bold text-slate-800 hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75"
             onClick={() => signIn("discord")}
           >
             Sign in with Discord{" "}
             <span className="ml-2">
               <FaDiscord size={24} />
             </span>
-          </button>
+          </Button>
         </div>
       </Layout>
     );

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import Link from "next/link";
+import { Link } from "@ui/link";
 import Layout from "../components/layout";
 
 const FAQ = () => {
@@ -38,9 +38,10 @@ const FAQ = () => {
         </h1>
         <p className="my-4">
           Nothing, specific. I wanted to get better at TS in general, and the
-          <Link href="https://create.t3.gg/">
-            <a className="ml-1 font-medium underline">T3-stack</a>
-          </Link>{" "}
+          <Link
+            href="https://create.t3.gg/"
+            className="ml-1 font-medium underline"
+          ></Link>
           was starting to gain some traction, leading me to try it
         </p>
       </div>

@@ -11,6 +11,7 @@ import Loading from "../../components/loading";
 import { Agent, Map, TypedKeys } from "../../../utils/enums";
 import { api } from "../../utils/api";
 import { createLineupForm, getFileSize, MAX_FILE_SIZE } from "../create";
+import { Button } from "@ui/button";
 
 const EditLineup = () => {
   const { data: session } = useSession();
@@ -71,9 +72,14 @@ const EditLineup = () => {
 
         <h1>You have to be logged in to create a lineup</h1>
         <h1>Please log in</h1>
-        <button aria-label="Login" onClick={() => signIn("discord")}>
+        <Button
+          intent={"secondary"}
+          href="/api/auth/signin"
+          aria-label="Login"
+          onClick={() => signIn("discord")}
+        >
           Sign in with Discord
-        </button>
+        </Button>
       </>
     );
   }
@@ -276,14 +282,15 @@ const EditLineup = () => {
               </p>
             )}
 
-            <button
+            <Button
+              intent={"primary"}
               type="submit"
+              fullWidth
               aria-label="submit"
-              className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white disabled:bg-gray-100 disabled:text-gray-400"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Uploading..." : "Submit"}
-            </button>
+            </Button>
           </form>
         </div>
       </div>
