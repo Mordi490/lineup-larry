@@ -75,7 +75,6 @@ export const GroupDialog = () => {
       <Dialog.Trigger asChild>
         <Button
           aria-label="Add to group"
-          rounded="md"
           intent="secondary"
           onClick={() => fetchGroups()}
         >
