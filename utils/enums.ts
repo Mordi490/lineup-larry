@@ -18,6 +18,7 @@ export enum Agent {
   Chamber = "CHAMBER",
   Neon = "NEON",
   Fade = "FADE",
+  Harbor = "HARBOR"
 }
 
 export const AgentArr: string[] = [
@@ -40,6 +41,7 @@ export const AgentArr: string[] = [
   "Chamber",
   "Neon",
   "Fade",
+  "Harbor",
 ];
 
 export enum Map {
@@ -51,6 +53,7 @@ export enum Map {
   Breeze = "BREEZE",
   Pearl = "PEARL",
   Fracture = "FRACTURE",
+  Lotus = "LOTUS"
 }
 
 export const MapArr: string[] = [
@@ -62,6 +65,7 @@ export const MapArr: string[] = [
   "BREEZE",
   "PEARL",
   "FRACTURE",
+  "LOTUS"
 ];
 
 // helper function to help map over values in JSX componentes
