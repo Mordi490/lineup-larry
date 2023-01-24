@@ -1,74 +1,40 @@
-export enum Agent {
-  Brimstone = "BRIMSTONE",
-  Viper = "VIPER",
-  Omen = "OMEN",
-  Killjoy = "KILLJOY",
-  Cypher = "CYPHER",
-  Sova = "SOVA",
-  Sage = "SAGE",
-  Phoenix = "PHOENIX",
-  Jett = "JETT",
-  Reyna = "REYNA",
-  Raze = "RAZE",
-  Breach = "BREACH",
-  Skye = "SKYE",
-  Yoru = "YORU",
-  Astra = "ASTRA",
-  Kayo = "KAYO",
-  Chamber = "CHAMBER",
-  Neon = "NEON",
-  Fade = "FADE",
-  Harbor = "HARBOR",
-}
+// Alternative way to use enums
+// TODO: Figure out why
+export const agentZodYes = [
+  "BRIMSTONE",
+  "VIPER",
+  "OMEN",
+  "KILLJOY",
+  "CYPHER",
+  "SOVA",
+  "SAGE",
+  "PHOENIX",
+  "JETT",
+  "REYNA",
+  "RAZE",
+  "BREACH",
+  "SKYE",
+  "YORU",
+  "ASTRA",
+  "KAYO",
+  "CHAMBER",
+  "NEON",
+  "FADE",
+  "HARBOR",
+] as const;
 
-export const AgentArr: string[] = [
-  "Brimstone",
-  "Viper",
-  "Omen",
-  "killjoy",
-  "Cypher",
-  "Sova",
-  "Sage",
-  "Phoenix",
-  "Jett",
-  "Reyna",
-  "raze",
-  "Breach",
-  "Skye",
-  "Yoru",
-  "Astra",
-  "Kayo",
-  "Chamber",
-  "Neon",
-  "Fade",
-  "Harbor",
-];
+export type zodApprovedAgentEnum = (typeof agentZodYes)[number];
 
-export enum Map {
-  Bind = "BIND",
-  Haven = "HAVEN",
-  Split = "SPLIT",
-  Ascent = "ASCENT",
-  Icebox = "ICEBOX",
-  Breeze = "BREEZE",
-  Pearl = "PEARL",
-  Fracture = "FRACTURE",
-  Lotus = "LOTUS",
-}
-
-export const MapArr: string[] = [
-  "BIND",
-  "HAVEN",
-  "SPLIT",
+export const mapZodYes = [
   "ASCENT",
-  "ICEBOX",
+  "BIND",
   "BREEZE",
-  "PEARL",
   "FRACTURE",
+  "HAVEN",
+  "ICEBOX",
   "LOTUS",
-];
+  "PEARL",
+  "SPLIT",
+] as const;
 
-// helper function to help map over values in JSX componentes
-export const TypedKeys = <T extends {}>(object: T): (keyof T)[] => {
-  return Object.keys(object) as (keyof T)[];
-};
+export type zodApprovedMapEnum = (typeof mapZodYes)[number];

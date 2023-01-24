@@ -8,6 +8,7 @@ import { Fragment, useState } from "react";
 import Select from "../components/select";
 import { api } from "../utils/api";
 import { Button } from "@ui/button";
+import FilterDialog from "../components/filterDialog";
 
 // old enum attempt
 //export type FilterTypes = "recent" | "most-likes" | "oldest";
@@ -63,7 +64,8 @@ const Lineups = () => {
     <Layout>
       <div className="flex flex-col">
         <h1 className="my-2 justify-center text-center text-4xl">Lineups</h1>
-        <div className="mr-2 mb-2 flex items-center justify-end">
+        <div className="mr-2 mb-2 flex items-center justify-end space-x-2">
+          <FilterDialog />
           <Select
             onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
             onItemClickFx={(val: FilterTypes) => onItemClickTest(val)}
@@ -112,7 +114,7 @@ const Lineups = () => {
       </div>
       <div className="mx-auto flex justify-end">
         <Button
-          intent={"primary"}
+          intent="primary"
           onClick={() => fetchNextPage()}
           aria-label="Load more"
           disabled={!hasNextPage || isFetchingNextPage}

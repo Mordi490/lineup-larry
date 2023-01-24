@@ -1,8 +1,10 @@
-import { Lineup, Prisma } from "@prisma/client";
+import { Agent, Lineup, Map, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { ObjectIdentifierList } from "aws-sdk/clients/s3";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { agentZodYes, mapZodYes } from "../../../../utils/enums";
+
 import { MAX_FILE_SIZE } from "../../../pages/create";
 import { s3 } from "../../../utils/FileUpload";
 import { prisma } from "../../db";
@@ -36,7 +38,6 @@ const plsWork: [FilterTypes, ...FilterTypes[]] = [
   ...filterOptions.slice(1).map((val) => val),
 ];
 
-// that new new
 export const lineupRouter = createTRPCRouter({
   byId: publicProcedure
     .input(z.object({ id: z.string() }))
@@ -161,23 +162,128 @@ export const lineupRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
         filter: z.enum(plsWork),
+        // NB! this is
+        agent: z.enum(agentZodYes).optional(),
+        map: z.enum(mapZodYes).optional(),
+        // TODO after agents & maps
+        //setup: z.boolean().optional(),
       })
     )
     .query(async ({ input }) => {
-      //console.log("Dont mind me, I'm just debugging\n", input)
+      console.log("Dont mind me, I'm just debugging\n", input);
       const limit = input.limit ?? 20;
       const { cursor } = input;
       const filter = input.filter;
 
       let items: Lineup[];
 
+      // war crimes will be committed
+      // both map and agent selected
+      if (input.agent != null && input.map != null) {
+        console.log("Entered both map and agent selected");
+        switch (filter) {
+          case "oldest":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: { AND: [{ agent: input.agent }, { map: input.map }] },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "asc",
+              },
+            });
+            break;
+          case "most-likes":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: {
+                AND: [{ agent: input.agent }, { map: input.map }],
+              },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                votes: "desc",
+              },
+            });
+            break;
+          case "recent":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: { AND: [{ agent: input.agent }, { map: input.map }] },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "desc",
+              },
+            });
+            break;
+          default:
+            // defaults to recent
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: { AND: [{ agent: input.agent }, { map: input.map }] },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "desc",
+              },
+            });
+            break;
+        }
+      }
+
+      // just map
+      if (input.map != null) {
+        console.log("Entered just map selected");
+        switch (filter) {
+          case "oldest":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: { map: input.map },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "asc",
+              },
+            });
+            break;
+          case "most-likes":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: { map: input.map },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                votes: "desc",
+              },
+            });
+            break;
+          case "recent":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: { map: input.map },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "desc",
+              },
+            });
+            break;
+          default:
+            // defaults to recent
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: { map: input.map },
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "desc",
+              },
+            });
+            break;
+        }
+      }
+
+      //just agent
+      if (input.agent != null) console.log("Entered just agent selected");
+
       switch (filter) {
         case "oldest":
           items = await prisma.lineup.findMany({
             take: limit + 1, // get an extra item at the end which we'll use as next cursor
-            where: {
-              // OPTIONAL FILTERS GOES HERE, EG. MAP X, AGENT Y
-            },
+            where: { agent: input.agent },
             cursor: cursor ? { id: cursor } : undefined,
             orderBy: {
               createdAt: "asc",
@@ -187,7 +293,7 @@ export const lineupRouter = createTRPCRouter({
         case "most-likes":
           items = await prisma.lineup.findMany({
             take: limit + 1, // get an extra item at the end which we'll use as next cursor
-            where: {},
+            where: { agent: input.agent },
             cursor: cursor ? { id: cursor } : undefined,
             orderBy: {
               votes: "desc",
@@ -197,7 +303,7 @@ export const lineupRouter = createTRPCRouter({
         case "recent":
           items = await prisma.lineup.findMany({
             take: limit + 1, // get an extra item at the end which we'll use as next cursor
-            where: {},
+            where: { agent: input.agent },
             cursor: cursor ? { id: cursor } : undefined,
             orderBy: {
               createdAt: "desc",
@@ -208,7 +314,7 @@ export const lineupRouter = createTRPCRouter({
           // defaults to recent
           items = await prisma.lineup.findMany({
             take: limit + 1, // get an extra item at the end which we'll use as next cursor
-            where: {},
+            where: { agent: input.agent },
             cursor: cursor ? { id: cursor } : undefined,
             orderBy: {
               createdAt: "desc",
@@ -216,7 +322,53 @@ export const lineupRouter = createTRPCRouter({
           });
           break;
       }
-
+      // none of them have been selected
+      if (input.map == null && input.agent == null) {
+        console.log("Entered NO MAP & AGENT selected");
+        switch (filter) {
+          case "oldest":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: {},
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "asc",
+              },
+            });
+            break;
+          case "most-likes":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: {},
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                votes: "desc",
+              },
+            });
+            break;
+          case "recent":
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: {},
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "desc",
+              },
+            });
+            break;
+          default:
+            // defaults to recent
+            items = await prisma.lineup.findMany({
+              take: limit + 1, // get an extra item at the end which we'll use as next cursor
+              where: {},
+              cursor: cursor ? { id: cursor } : undefined,
+              orderBy: {
+                createdAt: "desc",
+              },
+            });
+            break;
+        }
+      }
       let nextCursor: typeof cursor | undefined = undefined;
       if (items.length > limit) {
         const nextItem = items.pop();

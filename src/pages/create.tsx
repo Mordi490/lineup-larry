@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { FaDiscord } from "react-icons/fa";
 import * as z from "zod";
 import Layout from "../components/layout";
-import { Agent, Map, TypedKeys } from "../../utils/enums";
+import { agentZodYes, mapZodYes } from "../../utils/enums";
 import { api } from "../utils/api";
 import { Button } from "@ui/button";
 
@@ -19,8 +19,8 @@ export const MAX_FILE_SIZE = 1024 * 1024 * 80; // 80MB, for now
 
 export const createLineupForm = z.object({
   title: z.string().min(1, { message: "Required" }),
-  agent: z.string().min(1, { message: "An Agent has to be selected" }),
-  map: z.string().min(1, { message: "A Map has to be selected" }),
+  agent: z.enum(agentZodYes),
+  map: z.enum(mapZodYes),
   text: z.string().min(1, { message: "Required" }),
   isSetup: z.boolean(),
   previewImg: z.number().nonnegative().default(2),
@@ -41,8 +41,9 @@ const Create = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const agentList = TypedKeys(Agent);
-  const mapList = TypedKeys(Map);
+  // These are noe longer what we want
+  const agentList = agentZodYes;
+  const mapList = mapZodYes;
 
   type formSchemaType = z.infer<typeof createLineupForm>;
 
@@ -195,7 +196,7 @@ const Create = () => {
               </option>
               {agentList.map((agent) => (
                 <option value={agent} key={agent} disabled={isSubmitting}>
-                  {agent.toUpperCase()}
+                  {agent}
                 </option>
               ))}
             </select>
@@ -212,7 +213,7 @@ const Create = () => {
               </option>
               {mapList.map((map) => (
                 <option key={map} value={map} disabled={isSubmitting}>
-                  {map.toUpperCase()}
+                  {map}
                 </option>
               ))}
             </select>
@@ -263,13 +264,14 @@ const Create = () => {
 
           {/* TODO: prompt user with which img to use for preview */}
 
-          <button
+          <Button
+            intent="primary"
+            fullWidth
             type="submit"
-            className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-8 py-4 font-semibold uppercase text-white hover:bg-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Uploading..." : "Submit"}
-          </button>
+          </Button>
         </form>
       </div>
     </Layout>
