@@ -1,13 +1,15 @@
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { FaChevronUp, FaChevronDown, FaCheck } from "react-icons/fa";
+import { Button } from "@ui/button";
+import { FaCheck, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { z } from "zod";
 
 const PropsZod = z.object({
+  buttonIntent: z.enum(["primary", "secondary", "danger"]),
   defaultValue: z.string(),
   ariaLabel: z.string().optional(),
   values: z.array(z.string()),
   onValueChangeFx: z.function().args(z.any()),
-  onItemClickFx: z.function().args(z.any()),
+  onItemClickFx: z.function().args(z.any()).optional(),
 });
 
 type Props = z.infer<typeof PropsZod>;
@@ -18,16 +20,20 @@ const Select = (props: Props) => {
       defaultValue={props.defaultValue}
       onValueChange={props.onValueChangeFx}
     >
-      <SelectPrimitive.Trigger asChild>
-        <button aria-label={props.ariaLabel} className="mx-2 inline-flex items-center rounded-md bg-gray-800 px-2 py-2">
+      <SelectPrimitive.Trigger
+        asChild
+        className="ml-2 inline-flex items-center"
+      >
+        <Button intent={props.buttonIntent} aria-label={props.ariaLabel}>
           <SelectPrimitive.Value />
           <SelectPrimitive.Icon className="ml-2">
             <FaChevronUp size={14} />
           </SelectPrimitive.Icon>
-        </button>
+        </Button>
       </SelectPrimitive.Trigger>
-      <SelectPrimitive.Content className="z-20">
-        <SelectPrimitive.ScrollUpButton className="inline-flex items-center justify-center bg-slate-900 text-gray-700 ">
+      {/** FIXME: give better view of the select options*/}
+      <SelectPrimitive.Content className="fixed z-30">
+        <SelectPrimitive.ScrollUpButton className="flex items-center justify-center bg-slate-900 text-gray-700 ">
           <FaChevronUp />
         </SelectPrimitive.ScrollUpButton>
         <SelectPrimitive.Viewport className="rounded-lg bg-gray-700 p-2 shadow-lg">
@@ -36,7 +42,7 @@ const Select = (props: Props) => {
               <SelectPrimitive.Item
                 key={`${string}-${idx}`}
                 value={string}
-                className="relative flex select-none items-center rounded-md px-8 py-2 text-sm font-semibold text-white"
+                className="relative flex select-none items-center rounded-md px-8 py-2 text-sm font-semibold text-white focus:bg-gray-800 focus:outline-none"
                 onClick={props.onItemClickFx}
               >
                 <SelectPrimitive.ItemText className="text-2xl font-bold">

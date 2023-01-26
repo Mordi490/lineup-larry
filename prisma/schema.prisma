@@ -16,14 +16,49 @@ enum Role {
     ADMIN
 }
 
+enum Map {
+    BIND
+    HAVEN
+    SPLIT
+    ASCENT
+    ICEBOX
+    BREEZE
+    PEARL
+    FRACTURE
+    LOTUS
+}
+
+enum Agent {
+    BRIMSTONE
+    VIPER
+    OMEN
+    KILLJOY
+    CYPHER
+    SOVA
+    SAGE
+    PHOENIX
+    JETT
+    REYNA
+    RAZE
+    BREACH
+    SKYE
+    YORU
+    ASTRA
+    KAYO
+    CHAMBER
+    NEON
+    FADE
+    HARBOR
+}
+
 model Lineup {
     id         String    @id @default(cuid())
     title      String
     creator    String
     userId     String
     user       User      @relation(fields: [userId], references: [id], onUpdate: Cascade)
-    agent      String
-    map        String
+    agent      Agent
+    map        Map
     createdAt  DateTime  @default(now())
     updatedAt  DateTime  @updatedAt
     previewImg Int       @default(1) // select 2nd img if user doesnt explicitly select a preview img

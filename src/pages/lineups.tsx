@@ -1,13 +1,15 @@
 // default page to showcase lineups
 
-import Image from "next/image";
+import { Button } from "@ui/button";
 import { Link } from "@ui/link";
-import Loading from "../components/loading";
-import Layout from "../components/layout";
+import Image from "next/image";
 import { Fragment, useState } from "react";
+import { zodApprovedAgentEnum, zodApprovedMapEnum } from "../../utils/enums";
+import FilterDialog from "../components/filterDialog";
+import Layout from "../components/layout";
+import Loading from "../components/loading";
 import Select from "../components/select";
 import { api } from "../utils/api";
-import { Button } from "@ui/button";
 
 // old enum attempt
 //export type FilterTypes = "recent" | "most-likes" | "oldest";
@@ -19,12 +21,32 @@ type FilterTypes = (typeof filterOptions)[number];
 const Lineups = () => {
   const [filter, setFilter] = useState<FilterTypes>(filterOptions[0]);
 
+  const [agent, setAgent] = useState<undefined | zodApprovedAgentEnum>();
+  const [map, setMap] = useState<undefined | zodApprovedMapEnum>();
+
   const onValChangeTest = (val: FilterTypes) => {
     setFilter(val);
   };
 
-  const onItemClickTest = (val: FilterTypes) => {
-    setFilter(val);
+  const agentChange = (e: zodApprovedAgentEnum) => {
+    setAgent(e);
+  };
+
+  const mapChange = (e: zodApprovedMapEnum) => {
+    setMap(e);
+  };
+
+  const clearMap = () => {
+    setMap(undefined);
+  };
+
+  const clearAgent = () => {
+    setAgent(undefined);
+  };
+
+  const clearAll = () => {
+    clearAgent();
+    clearMap();
   };
 
   const {
@@ -39,10 +61,12 @@ const Lineups = () => {
     {
       limit: 20,
       filter: filter,
+      agent: agent,
+      map: map,
     },
     {
       // getPreviousPageParam: (lastPage) => lastPage.nextCursor,
-      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+      getNextPageParam: (lastPage, pages) => lastPage?.nextCursor,
     }
   );
 
@@ -63,10 +87,19 @@ const Lineups = () => {
     <Layout>
       <div className="flex flex-col">
         <h1 className="my-2 justify-center text-center text-4xl">Lineups</h1>
-        <div className="mr-2 mb-2 flex items-center justify-end">
+        <div className="mr-2 mb-2 flex items-center justify-end space-x-2">
+          <FilterDialog
+            mapChangeFX={mapChange}
+            agentChangeFX={agentChange}
+            currentAgent={agent}
+            currentMap={map}
+            agentClearFx={clearAgent}
+            mapClearFx={clearMap}
+            clearAllFilters={clearAll}
+          />
           <Select
+            buttonIntent="secondary"
             onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
-            onItemClickFx={(val: FilterTypes) => onItemClickTest(val)}
             defaultValue={filterOptions[0]}
             values={filterOptions.map((e) => e)}
           />
@@ -74,45 +107,51 @@ const Lineups = () => {
       </div>
       <div className="mx-2 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {paginatedData?.pages.map((page, index) => (
-          <Fragment key={page.items[0]?.id || index}>
-            {page.items.map((lineup) => (
-              <article key={lineup.id}>
-                <div className="grid grid-cols-4">
-                  <Link
-                    className="col-span-3 truncate text-xl"
-                    href={`/lineup/${lineup.id}`}
-                  >
-                    {lineup.title}
-                  </Link>
-                  <p className="flex justify-end font-thin">
-                    by:
+          <Fragment key={page?.items[0]?.id || index}>
+            {page?.items.length ? (
+              page?.items.map((lineup) => (
+                <article key={lineup.id}>
+                  <div className="grid grid-cols-4">
                     <Link
-                      className="ml-1 text-sky-500 underline"
-                      href={`/${lineup.userId}/lineups`}
+                      className="col-span-3 truncate text-xl"
+                      href={`/lineup/${lineup.id}`}
                     >
-                      {lineup.creator}
+                      {lineup.title}
                     </Link>
-                  </p>
-                </div>
+                    <p className="flex justify-end font-thin">
+                      by:
+                      <Link
+                        className="ml-1 text-sky-500 underline"
+                        href={`/${lineup.userId}/lineups`}
+                      >
+                        {lineup.creator}
+                      </Link>
+                    </p>
+                  </div>
 
-                <Link href={`/lineup/${lineup.id}`}>
-                  <Image
-                    src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
-                      lineup.image.split(",")[lineup.previewImg]
-                    }`}
-                    alt="lineup"
-                    width={1280}
-                    height={720}
-                  />
-                </Link>
-              </article>
-            ))}
+                  <Link href={`/lineup/${lineup.id}`}>
+                    <Image
+                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                        lineup.image.split(",")[lineup.previewImg]
+                      }`}
+                      alt="lineup"
+                      width={1280}
+                      height={720}
+                    />
+                  </Link>
+                </article>
+              ))
+            ) : (
+              <p className="my-24 space-y-4 text-center text-lg text-red-300">
+                Whelp! Seems like there are no lineups that fit your criteria!
+              </p>
+            )}
           </Fragment>
         ))}
       </div>
       <div className="mx-auto flex justify-end">
         <Button
-          intent={"primary"}
+          intent="primary"
           onClick={() => fetchNextPage()}
           aria-label="Load more"
           disabled={!hasNextPage || isFetchingNextPage}

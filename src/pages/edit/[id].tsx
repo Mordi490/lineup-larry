@@ -8,18 +8,15 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import Layout from "../../components/layout";
 import Loading from "../../components/loading";
-import { Agent, Map, TypedKeys } from "../../../utils/enums";
 import { api } from "../../utils/api";
 import { createLineupForm, getFileSize, MAX_FILE_SIZE } from "../create";
 import { Button } from "@ui/button";
+import { agentZodYes, mapZodYes } from "../../../utils/enums";
 
 const EditLineup = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const id = router.query.id as string;
-
-  const agentList = TypedKeys(Agent);
-  const mapList = TypedKeys(Map);
 
   type formSchemaType = z.infer<typeof createLineupForm>;
 
@@ -198,7 +195,7 @@ const EditLineup = () => {
                   <option value="Agent" placeholder={`${lineup?.agent}`}>
                     {lineup?.agent}
                   </option>
-                  {agentList.map((agent) => (
+                  {agentZodYes.map((agent) => (
                     <option value={agent} key={agent} disabled={isSubmitting}>
                       {agent}
                     </option>
@@ -217,7 +214,7 @@ const EditLineup = () => {
               <div className="mt-1">
                 <select {...register("map")} className="text-white">
                   <option placeholder={`${lineup?.map}`}>{lineup?.map}</option>
-                  {mapList.map((map) => (
+                  {mapZodYes.map((map) => (
                     <option key={map} value={map} disabled={isSubmitting}>
                       {map}
                     </option>
