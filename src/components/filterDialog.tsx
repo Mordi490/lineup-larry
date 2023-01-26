@@ -7,10 +7,10 @@ import Select from "./select";
 
 const zodProps = z.object({
   currentAgent: z.string().optional(),
-  agentChangeFX: z.function(),
+  agentChangeFX: z.function().args(z.enum(agentZodYes)),
   agentClearFx: z.function(),
   currentMap: z.string().optional(),
-  mapChangeFX: z.function(),
+  mapChangeFX: z.function().args(z.enum(mapZodYes)),
   mapClearFx: z.function(),
   clearAllFilters: z.function(),
 });

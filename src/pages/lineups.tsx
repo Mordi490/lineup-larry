@@ -4,6 +4,7 @@ import { Button } from "@ui/button";
 import { Link } from "@ui/link";
 import Image from "next/image";
 import { Fragment, useState } from "react";
+import { zodApprovedAgentEnum, zodApprovedMapEnum } from "../../utils/enums";
 import FilterDialog from "../components/filterDialog";
 import Layout from "../components/layout";
 import Loading from "../components/loading";
@@ -20,18 +21,18 @@ type FilterTypes = (typeof filterOptions)[number];
 const Lineups = () => {
   const [filter, setFilter] = useState<FilterTypes>(filterOptions[0]);
 
-  const [agent, setAgent] = useState();
-  const [map, setMap] = useState();
+  const [agent, setAgent] = useState<undefined | zodApprovedAgentEnum>();
+  const [map, setMap] = useState<undefined | zodApprovedMapEnum>();
 
   const onValChangeTest = (val: FilterTypes) => {
     setFilter(val);
   };
 
-  const agentChange = (e) => {
+  const agentChange = (e: zodApprovedAgentEnum) => {
     setAgent(e);
   };
 
-  const mapChange = (e) => {
+  const mapChange = (e: zodApprovedMapEnum) => {
     setMap(e);
   };
 
