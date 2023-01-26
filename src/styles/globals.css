@@ -9,7 +9,3 @@ html {
 body {
   scrollbar-color: #000 #fff;
 }
-
-footer {
-  @apply grid grid-cols-3 gap-4 py-4 text-center;
-}
