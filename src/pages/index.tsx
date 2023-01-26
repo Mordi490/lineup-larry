@@ -1,14 +1,15 @@
 import { Button } from "@ui/button";
 import type { NextPage } from "next";
+import { toast } from "react-hot-toast";
 import Layout from "../components/layout";
 
 const Home: NextPage = () => {
+  toast.error(
+    "FYI this site a WIP, therefore odd design choices and errors may occur"
+  );
+
   return (
     <Layout>
-      <h1 className="mx-auto max-w-2xl text-center text-xl font-extrabold leading-normal text-red-400 md:text-3xl">
-        FYI THIS SITE IS A WIP AND IS BEING ACTIVELY WORKED ON!
-      </h1>
-      <hr className="my-4" />
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-5xl font-extrabold leading-normal md:text-[5rem]">
           Lineup Larry
