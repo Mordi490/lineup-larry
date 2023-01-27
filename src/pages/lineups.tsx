@@ -2,6 +2,7 @@
 
 import { Button } from "@ui/button";
 import { Link } from "@ui/link";
+import { NullString } from "aws-sdk/clients/quicksight";
 import Image from "next/image";
 import { Fragment, useState } from "react";
 import { zodApprovedAgentEnum, zodApprovedMapEnum } from "../../utils/enums";
@@ -21,8 +22,8 @@ type FilterTypes = (typeof filterOptions)[number];
 const Lineups = () => {
   const [filter, setFilter] = useState<FilterTypes>(filterOptions[0]);
 
-  const [agent, setAgent] = useState<undefined | zodApprovedAgentEnum>();
-  const [map, setMap] = useState<undefined | zodApprovedMapEnum>();
+  const [agent, setAgent] = useState<null | zodApprovedAgentEnum>();
+  const [map, setMap] = useState<null | zodApprovedMapEnum>();
 
   const onValChangeTest = (val: FilterTypes) => {
     setFilter(val);
@@ -37,11 +38,11 @@ const Lineups = () => {
   };
 
   const clearMap = () => {
-    setMap(undefined);
+    setMap(null);
   };
 
   const clearAgent = () => {
-    setAgent(undefined);
+    setAgent(null);
   };
 
   const clearAll = () => {

@@ -6,10 +6,10 @@ import { agentZodYes, mapZodYes } from "../../utils/enums";
 import Select from "./select";
 
 const zodProps = z.object({
-  currentAgent: z.string().optional(),
+  currentAgent: z.string().nullish(),
   agentChangeFX: z.function().args(z.enum(agentZodYes)),
   agentClearFx: z.function(),
-  currentMap: z.string().optional(),
+  currentMap: z.string().nullish(),
   mapChangeFX: z.function().args(z.enum(mapZodYes)),
   mapClearFx: z.function(),
   clearAllFilters: z.function(),

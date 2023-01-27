@@ -162,8 +162,8 @@ export const lineupRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
         filter: z.enum(plsWork),
-        agent: z.enum(agentZodYes).optional(),
-        map: z.enum(mapZodYes).optional(),
+        agent: z.enum(agentZodYes).nullish(),
+        map: z.enum(mapZodYes).nullish(),
         // TODO after agents & maps
         //setup: z.boolean().optional(),
       })
