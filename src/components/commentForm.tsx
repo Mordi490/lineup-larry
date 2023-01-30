@@ -54,12 +54,15 @@ const CommentForm = () => {
           <h1 className="mb-2 text-center text-xl font-bold">
             Write a comment
           </h1>
-          <form onSubmit={handleSubmit(onSubmit)} className="mx-4">
-            <div className="mx-4 flex justify-center xl:w-96">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mx-4 flex flex-col space-y-4"
+          >
+            <div className="mx-4 flex justify-center">
               <textarea
                 placeholder="Write a comment..."
                 rows={3}
-                className="block w-full bg-gray-600 px-3 text-white"
+                className="w-full rounded bg-gray-600 px-3 text-white"
                 {...register("content")}
                 disabled={isSubmitting || !session?.user}
               />
@@ -69,7 +72,7 @@ const CommentForm = () => {
                 </p>
               )}
             </div>
-            <div className="mt-4 flex w-5/6 justify-end">
+            <div className="mx-4 flex justify-end">
               <Button
                 aria-label="Submit form"
                 type="submit"
