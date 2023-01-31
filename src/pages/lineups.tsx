@@ -2,18 +2,15 @@
 
 import { Button } from "@ui/button";
 import { Link } from "@ui/link";
-import { NullString } from "aws-sdk/clients/quicksight";
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { zodApprovedAgentEnum, zodApprovedMapEnum } from "../../utils/enums";
 import FilterDialog from "../components/filterDialog";
 import Layout from "../components/layout";
 import Loading from "../components/loading";
 import Select from "../components/select";
 import { api } from "../utils/api";
-
-// old enum attempt
-//export type FilterTypes = "recent" | "most-likes" | "oldest";
+import PlaceholderImage from "../../public/placeholder-img.jpg";
 
 // proper TS enum
 const filterOptions = ["recent", "most-likes", "oldest"] as const;
@@ -131,11 +128,14 @@ const Lineups = () => {
                   </div>
 
                   <Link href={`/lineup/${lineup.id}`}>
-                    <Image
+                    {/* inserts a placeholder image if the lineup is just a video file or the img is missing */}
+                    <ImageWithFallback
                       src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
                         lineup.image.split(",")[lineup.previewImg]
                       }`}
-                      alt="lineup"
+                      onError={() => PlaceholderImage}
+                      fallbackSrc={PlaceholderImage}
+                      alt="screenshot from lineup"
                       width={1280}
                       height={720}
                     />
@@ -166,6 +166,31 @@ const Lineups = () => {
         </Button>
       </div>
     </Layout>
+  );
+};
+
+const ImageWithFallback = ({ alt, src, fallbackSrc, ...rest }: any) => {
+  const [imgSrc, setImgSrc] = useState(src);
+
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
+
+  return (
+    <Image
+      {...rest}
+      src={imgSrc}
+      alt={alt}
+      onLoadingComplete={(result) => {
+        if (result.naturalWidth === 0) {
+          // Broken image
+          setImgSrc(fallbackSrc);
+        }
+      }}
+      onError={() => {
+        setImgSrc(fallbackSrc);
+      }}
+    />
   );
 };
 

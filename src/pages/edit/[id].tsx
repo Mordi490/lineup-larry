@@ -156,7 +156,7 @@ const EditLineup = () => {
       map: formInput.map,
       text: formInput.text,
       isSetup: formInput.isSetup,
-      previewImg: 2, // Hardcoded, for now
+      previewImg: 0, // Hardcoded, for now
       image: presigendUrls,
     };
 
