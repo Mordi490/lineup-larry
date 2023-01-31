@@ -21,7 +21,7 @@ export const createLineupForm = z.object({
   title: z.string().min(1, { message: "Required" }),
   agent: z.enum(agentZodYes),
   map: z.enum(mapZodYes),
-  text: z.string().min(1, { message: "Required" }),
+  text: z.string(),
   isSetup: z.boolean(),
   previewImg: z.number().nonnegative().default(2),
   image: z.preprocess(
@@ -232,9 +232,6 @@ const Create = () => {
               {...register("text")}
               disabled={isSubmitting}
             />
-            {errors.text && (
-              <p className="text-sm text-red-600">{errors.text.message}</p>
-            )}
           </div>
 
           <div className="flex items-center gap-1">

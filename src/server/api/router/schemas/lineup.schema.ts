@@ -19,7 +19,7 @@ export const createLineupSchema = z.object({
   // TODO: figure out how to add err msgs to anything that isn't a string
   agent: z.enum(agentZodYes),
   map: z.enum(mapZodYes),
-  text: z.string().min(1, { message: "Text is required" }),
+  text: z.string(),
   isSetup: z.boolean(),
   previewImg: z.number().nonnegative(), // >= 0
   image: z.any(),
