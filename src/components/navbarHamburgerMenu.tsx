@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 const NavbarHamburgerMenu = () => {
   const { data: session } = useSession();
   return (
-    <div className="h-12">
+    <nav className="h-12">
       <DropdownMenu.Root>
         <DropdownMenu.Trigger aria-label="Menu button">
           <AiOutlineMenu size={48} />
@@ -80,7 +80,7 @@ const NavbarHamburgerMenu = () => {
           )}
         </DropdownMenu.Content>
       </DropdownMenu.Root>
-    </div>
+    </nav>
   );
 };
 
