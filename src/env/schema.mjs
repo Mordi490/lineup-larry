@@ -12,6 +12,10 @@ export const serverSchema = z.object({
   NEXTAUTH_URL: z.string().url(),
   DISCORD_CLIENT_ID: z.string(),
   DISCORD_CLIENT_SECRET: z.string(),
+  AWS_IAM_USER_KEY: z.string(),
+  AWS_IAM_USER_SECRET: z.string(),
+  AWS_BUCKET_NAME: z.string(),
+  AWS_S3_REGION: z.string(),
 });
 
 /**
