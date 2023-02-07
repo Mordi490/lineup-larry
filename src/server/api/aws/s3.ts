@@ -1,5 +1,5 @@
-import { S3 } from "aws-sdk/";
-import { env } from "../env/server.mjs";
+import { S3 } from "@aws-sdk/client-s3";
+import { env } from "../../../env/server.mjs";
 
 // init && conf s3 client
 export const s3 = new S3({
@@ -8,5 +8,4 @@ export const s3 = new S3({
     secretAccessKey: env.AWS_IAM_USER_SECRET as string,
   },
   region: env.AWS_S3_REGION as string,
-  signatureVersion: "v4",
 });
