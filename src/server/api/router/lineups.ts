@@ -7,8 +7,8 @@ import { agentZodYes, mapZodYes } from "../../../../utils/enums";
 import { env } from "../../../env/server.mjs";
 
 import { MAX_FILE_SIZE } from "../../../pages/create";
-import { s3 } from "../../../utils/FileUpload";
 import { prisma } from "../../db";
+import { s3 } from "../aws/s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 
@@ -529,7 +529,7 @@ export const lineupRouter = createTRPCRouter({
       return new Promise((resolve, reject) => {
         s3.deleteObjects(
           {
-            Bucket: env.AWS_BUCKET_NAME,
+            Bucket: env.AWS_BUCKET_NAME as string,
             Delete: { Objects: list },
           },
           (err, success) => {

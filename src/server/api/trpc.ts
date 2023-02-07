@@ -21,8 +21,6 @@ import { type Session } from "next-auth";
 
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
-// TODO: confirm that this is not an "illegal" manoeuver
-import { s3 } from "./aws/s3";
 
 type CreateContextOptions = {
   session: Session | null;
@@ -41,7 +39,6 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
-    s3,
   };
 };
 
