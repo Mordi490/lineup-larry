@@ -9,6 +9,9 @@ import Layout from "../components/layout";
 import { agentZodYes, mapZodYes } from "../../utils/enums";
 import { api } from "../utils/api";
 import { Button } from "@ui/button";
+import { useDropzone } from "react-dropzone";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 // moving this one here since using the File API fucks over the import
 // describes the form object for creating & editing lineupsF
@@ -38,6 +41,8 @@ export const getFileSize = (props: any[]): number => {
 };
 
 const Create = () => {
+  //const [files, setFiles] = useState([]);
+  //const [filePreview, setFilePreview] = useState([]);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -71,6 +76,25 @@ const Create = () => {
       console.log(err);
     },
   });
+
+  const handleFileChange = (e) => {
+    console.log(e.target.files);
+    setFiles([...e.target.files]);
+  };
+
+  const OrderCheckXddd = (e) => {
+    console.log(e.target.values);
+  };
+
+  /*
+  // useEffect to render the imgPreview
+  useEffect(() => {
+    if (files.length < 1) return;
+    const newImageUrls = [];
+    files.map((file) => newImageUrls.push(URL.createObjectURL(file)));
+    setFilePreview(newImageUrls);
+  }, [files]);
+  */
 
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
     toast.loading("Uploading lineup");
@@ -246,11 +270,12 @@ const Create = () => {
             </label>
           </div>
 
-          <div>
+          <div className="border-1 flex flex-col border border-red-500">
             <input
               type="file"
               multiple
               {...register("image")}
+              onChange={handleFileChange}
               disabled={isSubmitting}
               accept="image/*, video/*"
             />
@@ -258,6 +283,7 @@ const Create = () => {
               <p className=" text-sm text-red-600">{errors.image.message}</p>
             )}
           </div>
+          <MuhDropzoneThing />
 
           {/* TODO: prompt user with which img to use for preview */}
 
@@ -272,6 +298,89 @@ const Create = () => {
         </form>
       </div>
     </Layout>
+  );
+};
+
+const MuhDropzoneThing = () => {
+  const [previewImg, setPreviewImg] = useState(0);
+  const [files, setFiles] = useState<(File & { preview: string })[]>([]);
+
+  const onImgClick = (e: number) => {
+    setPreviewImg(e);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: {
+      "image/*": [],
+    },
+    onDrop: (acceptedFiles) => {
+      setFiles(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+
+  const thumbs = files.map((file, index) => (
+    <div
+      className="relative mx-4 my-2 inline-flex 
+     h-32 w-32 rounded"
+      key={file.name}
+    >
+      {index == previewImg ? (
+        <div className="border-2 border-red-500">
+          <div className="flex min-w-0 overflow-hidden">
+            <Image
+              src={file.preview}
+              key={index}
+              alt="This image will be used for preview"
+              width={300}
+              height={300}
+              onClick={() => onImgClick(index)}
+              // Revoke data uri after image is loaded
+              //onLoad={() => { URL.revokeObjectURL(file.preview) }} // may or may not be important
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="flex min-w-0 overflow-hidden">
+          <Image
+            src={file.preview}
+            alt="preview of your files"
+            width={300}
+            height={300}
+            onClick={() => onImgClick(index)}
+            // Revoke data uri after image is loaded
+            //onLoad={() => { URL.revokeObjectURL(file.preview) }} // may or may not be important
+          />
+        </div>
+      )}
+    </div>
+  ));
+
+  // TODO: make this actually updates when files change
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, [files]);
+
+  return (
+    <section className="rounded-lg border-2 border-dashed border-black bg-gray-400 px-8 py-4">
+      <div
+        {...getRootProps({ className: "dropzone" })}
+        className="p-1 hover:cursor-pointer"
+      >
+        <input {...getInputProps()} />
+        <p>Drag 'n' drop some files here, or click to select files</p>
+      </div>
+      <aside className="mt-4 flex flex-wrap">{thumbs}</aside>
+      {thumbs.length ? (
+        <p>Select which image you want to use as preview</p>
+      ) : null}
+    </section>
   );
 };
 
