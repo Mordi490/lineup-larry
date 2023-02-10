@@ -61,7 +61,7 @@ model Lineup {
     map        Map
     createdAt  DateTime  @default(now())
     updatedAt  DateTime  @updatedAt
-    previewImg Int       @default(1) // select 2nd img if user doesnt explicitly select a preview img
+    previewImg Int
     image      String
     text       String?
     isSetup    Boolean   @default(false)

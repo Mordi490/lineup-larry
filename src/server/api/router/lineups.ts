@@ -466,6 +466,7 @@ export const lineupRouter = createTRPCRouter({
           image: input.image,
           agent: input.agent,
           map: input.map,
+          previewImg: input.previewImg,
           isSetup: input.isSetup,
           userId: input.userId,
           creator: ctx.session.user.name as string,

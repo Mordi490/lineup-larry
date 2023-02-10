@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FaDiscord } from "react-icons/fa";
 import * as z from "zod";
@@ -16,17 +16,17 @@ import Image from "next/image";
 // moving this one here since using the File API fucks over the import
 // describes the form object for creating & editing lineupsF
 
-type imageFile = Record<string, any>;
 
 export const MAX_FILE_SIZE = 1024 * 1024 * 80; // 80MB, for now
 
+type imageFile = Record<string, any>;
+
 export const createLineupForm = z.object({
-  title: z.string().min(1, { message: "Required" }),
+  title: z.string(),
   agent: z.enum(agentZodYes),
   map: z.enum(mapZodYes),
   text: z.string(),
   isSetup: z.boolean(),
-  previewImg: z.number().nonnegative().default(2),
   image: z.preprocess(
     (val) => Object.values(val as Array<imageFile>),
     z.array(z.any())
@@ -34,15 +34,15 @@ export const createLineupForm = z.object({
 });
 
 // helper func for validation
-export const getFileSize = (props: any[]): number => {
+export const getFileSize = (props: File[]): number => {
   let res: number = 0;
   Object.values(props).forEach((val) => (res += val.size));
   return res;
 };
 
 const Create = () => {
-  //const [files, setFiles] = useState([]);
-  //const [filePreview, setFilePreview] = useState([]);
+  // Consider setting it to null initially, and refuse to send it until user selects a image to preview
+  const [previewImg, setPreviewImg] = useState<number>(0);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -55,10 +55,13 @@ const Create = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<formSchemaType>({
     resolver: zodResolver(createLineupForm),
+    defaultValues: {
+      image: [],
+    },
   });
 
   const { mutateAsync: preSignedUrl } =
@@ -77,29 +80,9 @@ const Create = () => {
     },
   });
 
-  const handleFileChange = (e) => {
-    console.log(e.target.files);
-    setFiles([...e.target.files]);
-  };
-
-  const OrderCheckXddd = (e) => {
-    console.log(e.target.values);
-  };
-
-  /*
-  // useEffect to render the imgPreview
-  useEffect(() => {
-    if (files.length < 1) return;
-    const newImageUrls = [];
-    files.map((file) => newImageUrls.push(URL.createObjectURL(file)));
-    setFilePreview(newImageUrls);
-  }, [files]);
-  */
 
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
     toast.loading("Uploading lineup");
-
-    // how much validation is possible on the frontend??? A LOT IT SEEMS
 
     if (getFileSize(formInput.image) > MAX_FILE_SIZE * 5) {
       // TODO: better feedback
@@ -110,6 +93,7 @@ const Create = () => {
     let presigendUrls = "";
     const len = formInput.image.length;
     let curr = 1;
+    // TODO: perform this async instead of sequentially, remember to keep the order intact
     for (let file of formInput.image) {
       const { url, fields } = await preSignedUrl({
         fileType: file.type as string,
@@ -154,16 +138,17 @@ const Create = () => {
       map: formInput.map,
       text: formInput.text,
       isSetup: formInput.isSetup,
-      previewImg: 2, // defaults to 2nd element
+      previewImg: previewImg,
       image: presigendUrls, // for now set it to be the 2nd element
     };
 
     try {
       mutate(createLineupObject);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
+
 
   if (!session)
     return (
@@ -270,22 +255,13 @@ const Create = () => {
             </label>
           </div>
 
-          <div className="border-1 flex flex-col border border-red-500">
-            <input
-              type="file"
-              multiple
-              {...register("image")}
-              onChange={handleFileChange}
-              disabled={isSubmitting}
-              accept="image/*, video/*"
-            />
-            {errors.image && (
-              <p className=" text-sm text-red-600">{errors.image.message}</p>
+          <Controller
+            control={control}
+            name="image"
+            render={({ field }) => (
+              <BasicDropzone previewImg={previewImg} setPreviewImg={setPreviewImg} files={field.value} onChangeFile={field.onChange} />
             )}
-          </div>
-          <MuhDropzoneThing />
-
-          {/* TODO: prompt user with which img to use for preview */}
+          />
 
           <Button
             intent="primary"
@@ -301,87 +277,80 @@ const Create = () => {
   );
 };
 
-const MuhDropzoneThing = () => {
-  const [previewImg, setPreviewImg] = useState(0);
-  const [files, setFiles] = useState<(File & { preview: string })[]>([]);
-
-  const onImgClick = (e: number) => {
-    setPreviewImg(e);
-  };
-
+const BasicDropzone = ({
+  files,
+  onChangeFile,
+  previewImg,
+  setPreviewImg
+}: {
+  files: File[];
+  onChangeFile: (file: File[]) => void;
+  previewImg: number;
+  setPreviewImg: (e: number) => void;
+}) => {
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
+      // TODO: make the user be unable to select video files as previewImg
+      "video/*": [],
     },
     onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
+      onChangeFile(acceptedFiles);
     },
   });
 
   const thumbs = files.map((file, index) => (
     <div
       className="relative mx-4 my-2 inline-flex 
-     h-32 w-32 rounded"
+   h-32 w-32 rounded"
       key={file.name}
     >
       {index == previewImg ? (
         <div className="border-2 border-red-500">
           <div className="flex min-w-0 overflow-hidden">
             <Image
-              src={file.preview}
+              src={URL.createObjectURL(file)}
               key={index}
               alt="This image will be used for preview"
+              onClick={() => setPreviewImg(index)}
               width={300}
               height={300}
-              onClick={() => onImgClick(index)}
-              // Revoke data uri after image is loaded
-              //onLoad={() => { URL.revokeObjectURL(file.preview) }} // may or may not be important
+            // Revoke data uri after image is loaded
+            //onLoad={() => { URL.revokeObjectURL(file.preview) }} // may or may not be important
             />
           </div>
         </div>
       ) : (
         <div className="flex min-w-0 overflow-hidden">
           <Image
-            src={file.preview}
+            src={URL.createObjectURL(file)}
             alt="preview of your files"
             width={300}
+            onClick={() => setPreviewImg(index)}
             height={300}
-            onClick={() => onImgClick(index)}
-            // Revoke data uri after image is loaded
-            //onLoad={() => { URL.revokeObjectURL(file.preview) }} // may or may not be important
+          // Revoke data uri after image is loaded
+          //onLoad={() => { URL.revokeObjectURL(file.preview) }} // may or may not be important
           />
         </div>
       )}
-    </div>
+    </div >
   ));
 
-  // TODO: make this actually updates when files change
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, [files]);
-
   return (
-    <section className="rounded-lg border-2 border-dashed border-black bg-gray-400 px-8 py-4">
-      <div
-        {...getRootProps({ className: "dropzone" })}
-        className="p-1 hover:cursor-pointer"
-      >
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
-      </div>
-      <aside className="mt-4 flex flex-wrap">{thumbs}</aside>
-      {thumbs.length ? (
-        <p>Select which image you want to use as preview</p>
-      ) : null}
-    </section>
+    <>
+      <section className="rounded-lg border-2 border-dashed border-black bg-gray-400 px-8 py-4">
+        <div {...getRootProps()}>
+          <input {...getInputProps()} />
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        </div>
+        <aside>
+          <h4>previews under here</h4>
+          <ul>{thumbs}</ul>
+        </aside>
+      </section>
+    </>
   );
 };
+
 
 export default Create;
