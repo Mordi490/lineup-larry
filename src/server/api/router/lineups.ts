@@ -491,10 +491,9 @@ export const lineupRouter = createTRPCRouter({
           // if the file is a video prefix it with "video", eg. "video-<UUID>"
           Key: input.fileType.includes("video") ? `video-${rndKey}` : rndKey,
         },
-        Expires: 90, // time in seconds the user have to upload,
+        Expires: 240, // time in seconds the user have to upload,
         Bucket: env.AWS_BUCKET_NAME,
         Conditions: [
-          // TODO: support video + multiple files, consider uploading to a folder
           ["starts-with", "$Content-Type", input.fileType], // whitelist images for now
           ["content-length-range", 0, MAX_FILE_SIZE],
         ],

@@ -130,9 +130,8 @@ const Lineups = () => {
                   <Link href={`/lineup/${lineup.id}`}>
                     {/* inserts a placeholder image if the lineup is just a video file or the img is missing */}
                     <ImageWithFallback
-                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
-                        lineup.image.split(",")[lineup.previewImg]
-                      }`}
+                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${lineup.image.split(",")[lineup.previewImg]
+                        }`}
                       onError={() => PlaceholderImage}
                       fallbackSrc={PlaceholderImage}
                       alt="screenshot from lineup"
@@ -161,8 +160,8 @@ const Lineups = () => {
           {isFetchingNextPage
             ? "Loading more..."
             : hasNextPage
-            ? "Load More"
-            : "Nothing more to load"}
+              ? "Load More"
+              : "Nothing more to load"}
         </Button>
       </div>
     </Layout>
