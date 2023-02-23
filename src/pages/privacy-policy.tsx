@@ -2,7 +2,7 @@ import Layout from "../components/layout";
 
 const Privacy = () => {
   return (
-    <Layout title="Privacy Policy" text="Privacy Policy">
+    <Layout title="Privacy Policy" text="Privacy Policy" description="privacy policy">
       <div className="mx-auto mt-4 max-w-2xl">
         <h1 className="my-4 text-center text-2xl font-bold">
           What do we collect?

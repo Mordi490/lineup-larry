@@ -173,7 +173,7 @@ const Create = () => {
 
   if (!session)
     return (
-      <Layout title="Create a lineup">
+      <Layout title="Submit Lineup" name="Submit Lineup" description="Login & submit a lineup" >
         <h1 className="my-2 text-center text-3xl text-red-300">
           You have to be logged in to create a lineup
         </h1>
@@ -189,7 +189,7 @@ const Create = () => {
             </span>
           </Button>
         </div>
-      </Layout>
+      </Layout >
     );
 
   return (
@@ -383,12 +383,13 @@ const BasicDropzone = ({
     })
   }
 
+  /*
   const assignPresignedUrls = ({ urls }: { urls: string[] }) => {
     console.log("assigning:", presignedUrl, "\nto:", images);
     images.map((file, index) => file.src = urls[index]);
   }
-
-  // keeping this here for refrence: https://codesandbox.io/s/dndkit-sortable-image-grid-py6ve?file=/src/App.jsx 
+  
+  // keeping this here for refeErence: https://codesandbox.io/s/dndkit-sortable-image-grid-py6ve?file=/src/App.jsx 
   // This one too: https://codesandbox.io/s/dnd-kit-yarn-1-eelbb?file=/src/App.tsx:703-817 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
@@ -416,17 +417,7 @@ const BasicDropzone = ({
     setActive(null);
   }, []);
 
-
-  /**
-   * im bad lol,
-   * <Image
-            src={URL.createObjectURL(file)}
-            alt="preview of your files"
-            width={300}
-            onClick={() => setPreviewImg(index)}
-            height={300}
-   */
-
+  */
   // TODO: don't use any
   const SortableImage = (props: SortableFile) => {
     //console.log(JSON.stringify(props))
@@ -500,6 +491,7 @@ const BasicDropzone = ({
     </div >
   ));
 
+  /*
   const NewThumbNails = () => (
     <DndContext collisionDetection={closestCenter} sensors={sensors}
       onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragCancel={handleDragCancel}
@@ -509,13 +501,14 @@ const BasicDropzone = ({
       </SortableContext>
     </DndContext >
   )
+  */
 
   return (
     <>
       <section className="rounded-lg border-2 border-dashed border-black bg-gray-400 px-8 py-4">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          <p>Drag 'n' drop some files here, or click to select files</p>
+          <p>Drag &apos;n&apos; drop some files here, or click to select files</p>
         </div>
         <aside>
           <ul>{Thumbnail}</ul>
