@@ -36,6 +36,7 @@ const CommentSection = () => {
                   href={`/${comment.user.id}/lineups`}
                 >
                   <Image
+                    className="rounded-full"
                     src={`${comment.user.image}`}
                     alt={`${comment.user.name}'s profile picture`}
                     layout="fill"
