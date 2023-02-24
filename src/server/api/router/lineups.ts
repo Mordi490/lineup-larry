@@ -4,10 +4,11 @@ import { ObjectIdentifierList } from "aws-sdk/clients/s3";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { agentZodYes, mapZodYes } from "../../../../utils/enums";
+import { env } from "../../../env/server.mjs";
 
 import { MAX_FILE_SIZE } from "../../../pages/create";
-import { s3 } from "../../../utils/FileUpload";
 import { prisma } from "../../db";
+import { s3 } from "../aws/s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 
@@ -465,6 +466,7 @@ export const lineupRouter = createTRPCRouter({
           image: input.image,
           agent: input.agent,
           map: input.map,
+          previewImg: input.previewImg,
           isSetup: input.isSetup,
           userId: input.userId,
           creator: ctx.session.user.name as string,
@@ -489,10 +491,9 @@ export const lineupRouter = createTRPCRouter({
           // if the file is a video prefix it with "video", eg. "video-<UUID>"
           Key: input.fileType.includes("video") ? `video-${rndKey}` : rndKey,
         },
-        Expires: 90, // time in seconds the user have to upload,
-        Bucket: process.env.BUCKET_NAME,
+        Expires: 240, // time in seconds the user have to upload,
+        Bucket: env.AWS_BUCKET_NAME,
         Conditions: [
-          // TODO: support video + multiple files, consider uploading to a folder
           ["starts-with", "$Content-Type", input.fileType], // whitelist images for now
           ["content-length-range", 0, MAX_FILE_SIZE],
         ],
@@ -528,7 +529,7 @@ export const lineupRouter = createTRPCRouter({
       return new Promise((resolve, reject) => {
         s3.deleteObjects(
           {
-            Bucket: process.env.BUCKET_NAME as string,
+            Bucket: env.AWS_BUCKET_NAME as string,
             Delete: { Objects: list },
           },
           (err, success) => {

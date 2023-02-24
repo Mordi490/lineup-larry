@@ -2,7 +2,7 @@ import Layout from "../components/layout";
 
 const About = () => {
   return (
-    <Layout title="About">
+    <Layout title="About" name="description" description="about the site/project">
       <div className="mx-auto mt-4 max-w-2xl">
         <h1 className="my-4 text-center text-2xl font-bold">About?</h1>
         <p className="my-4">

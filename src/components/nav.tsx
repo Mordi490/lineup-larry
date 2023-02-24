@@ -7,9 +7,11 @@ import NavbarProfileDropdown from "./navbarProfileDropdown";
 type Props = {
   title?: string;
   text?: string;
+  description?: string;
+  name?: string;
 };
 
-const Nav = ({ title, text }: Props) => {
+const Nav = ({ title, text, description, name }: Props) => {
   return (
     <>
       <Head>
@@ -18,6 +20,7 @@ const Nav = ({ title, text }: Props) => {
         ) : (
           <title className="capitalize">Lineup Larry</title>
         )}
+        {description?.length ? (<meta name={name} content={description} />) : (<meta name="description" content="Site to view & create Valorant lineups" />)}
       </Head>
 
       <nav className="bg-gray-800 p-2">

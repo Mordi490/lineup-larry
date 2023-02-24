@@ -9,7 +9,7 @@ const NavbarProfileDropdown = () => {
   const { data: session } = useSession();
 
   return (
-    <div>
+    <nav>
       {session?.user?.image ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
@@ -50,7 +50,7 @@ const NavbarProfileDropdown = () => {
           </span>
         </Button>
       )}
-    </div>
+    </nav>
   );
 };
 

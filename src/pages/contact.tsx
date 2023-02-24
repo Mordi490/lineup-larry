@@ -2,7 +2,7 @@ import Layout from "../components/layout";
 
 const Contact = () => {
   return (
-    <Layout title="Contact">
+    <Layout title="Contact" name="contact" description="ways of getting contact">
       <div className="mx-auto mt-4 max-w-2xl">
         <h1 className="my-4 text-center text-2xl font-bold">
           Found a bug or got a question?
