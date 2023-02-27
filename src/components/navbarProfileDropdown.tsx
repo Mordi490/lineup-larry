@@ -14,6 +14,8 @@ const NavbarProfileDropdown = () => {
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <Image
+              placeholder="blur"
+              blurDataURL="https://i.pinimg.com/736x/2e/ad/53/2ead53f5d9c64c6987ff27141023b96b.jpg"
               src={session.user.image}
               width={48}
               height={48}

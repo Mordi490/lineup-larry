@@ -22,9 +22,9 @@ export default defineNextConfig({
   images: {
     domains: [
       "cdn.discordapp.com", // URL for discord profile pics
-      "lh3.googleusercontent.com", // URL for google profile pics
-      "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)F
+      "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)
       "t3-larry-bucket.s3.eu-west-2.amazonaws.com",
+      "https://i.pinimg.com", // used for blurring profile pic til user's image is being fetched
     ],
   },
 });
