@@ -3,9 +3,9 @@ import { Link } from "@ui/link";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
 import Loading from "./loading";
+import ErrImg from "../../public/on_err_img_profile.png"
 
 const CommentSection = () => {
-  const router = useRouter();
   const id = useRouter().query.id as string;
 
   const { data: comments, isLoading } = api.comment.getLineupComments.useQuery({
@@ -36,6 +36,9 @@ const CommentSection = () => {
                   href={`/${comment.user.id}/lineups`}
                 >
                   <Image
+                    placeholder="blur"
+                    blurDataURL={comment.user.image}
+                    onError={() => ErrImg}
                     className="rounded-full"
                     src={`${comment.user.image}`}
                     alt={`${comment.user.name}'s profile picture`}

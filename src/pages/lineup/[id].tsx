@@ -11,6 +11,8 @@ import Layout from "../../components/layout";
 import Loading from "../../components/loading";
 import { Votes } from "../../components/Votes";
 import { api } from "../../utils/api";
+import ErrImg from "../../../public/PepeHands.png"
+import Placeholder from "../../../public/placeholder-img.jpg"
 
 const SpecificLineup = () => {
   const { data } = useSession();
@@ -114,6 +116,9 @@ const SpecificLineup = () => {
               />
             ) : (
               <Image
+                placeholder="blur"
+                blurDataURL={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+                onError={() => ErrImg}
                 src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
                 alt="Valorant screenshot"
                 width={1080}
