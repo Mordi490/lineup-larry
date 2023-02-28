@@ -4,10 +4,13 @@ import { Link } from "@ui/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Button } from "@ui/button";
+import ErrImg from "../../public/on_err_img_profile.png"
 
 const NavbarProfileDropdown = () => {
   const { data: session } = useSession();
+  const isError = false;
 
+  // might just create a svg instead
   return (
     <nav>
       {session?.user?.image ? (
@@ -16,7 +19,7 @@ const NavbarProfileDropdown = () => {
             <Image
               placeholder="blur"
               blurDataURL="https://i.pinimg.com/736x/2e/ad/53/2ead53f5d9c64c6987ff27141023b96b.jpg"
-              src={session.user.image}
+              src={isError ? (session.user.image) : (ErrImg)}
               width={48}
               height={48}
               className="rounded-full"
