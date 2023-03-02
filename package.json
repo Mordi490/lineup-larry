@@ -28,6 +28,7 @@
     "@types/uuid": "^8.3.4",
     "aws-sdk": "^2.1188.0",
     "class-variance-authority": "^0.4.0",
+    "clsx": "^1.2.1",
     "dotenv": "^16.0.3",
     "next": "^12.2.4",
     "next-auth": "^4.10.3",

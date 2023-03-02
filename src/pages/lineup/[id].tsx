@@ -146,7 +146,7 @@ const SpecificLineup = () => {
       </div>
       <CommentForm />
       <hr className="my-4" />
-      <CommentSection />
+      <CommentSection author={lineupQuery.user.id} />
     </Layout>
   );
 };

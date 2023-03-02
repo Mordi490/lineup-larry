@@ -5,7 +5,7 @@ const Guide = () => {
   // This page is meant to geforce/shadowplay settings for optimal images/video for the site
 
   return (
-    <Layout>
+    <Layout name="description" description="Recommended tools & settings for recordings & screenshots">
       <div className="mx-auto mt-4 max-w-2xl space-y-4">
         <h1 className="text-center text-2xl font-bold">
           Guidelines/recommendations for screenshots & videos

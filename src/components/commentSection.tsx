@@ -4,8 +4,13 @@ import { useRouter } from "next/router";
 import { api } from "../utils/api";
 import Loading from "./loading";
 import ErrImg from "../../public/on_err_img_profile.png"
+import clsx from "clsx"
 
-const CommentSection = () => {
+interface Props {
+  author: string;
+}
+
+const CommentSection = (props: Props) => {
   const id = useRouter().query.id as string;
 
   const { data: comments, isLoading } = api.comment.getLineupComments.useQuery({
@@ -47,7 +52,10 @@ const CommentSection = () => {
                 </Link>
               </div>
               {/* right side: Comment content */}
-              <div className="flex flex-grow flex-col">
+              <div className={clsx({
+                "flex flex-grow flex-col": true,
+                "border border-dotted  border-amber-500 rounded-lg": props.author == comment.user.id
+              })}>
                 <p className="ml-1 flex-grow items-center justify-center text-left text-base font-normal">
                   {comment.content}
                 </p>
@@ -64,7 +72,7 @@ const CommentSection = () => {
           There currently are no comments
         </p>
       )}
-    </div>
+    </div >
   );
 };
 
