@@ -15,6 +15,21 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    // update the user's profile picture, if its new
+    async signIn({ user, account, profile, email, credentials }) {
+      //@ts-ignore
+      const possiblyNewImage = profile.image_url;
+      const currentImage = user.image;
+
+      if (possiblyNewImage !== currentImage) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { image: possiblyNewImage },
+        });
+        return true;
+      }
+      return true;
+    },
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
