@@ -32,7 +32,7 @@ const Select = (props: Props) => {
         </Button>
       </SelectPrimitive.Trigger>
       {/** FIXME: give better view of the select options*/}
-      <SelectPrimitive.Content className="fixed z-30">
+      <SelectPrimitive.Content className="fixed">
         <SelectPrimitive.ScrollUpButton className="flex items-center justify-center bg-slate-900 text-gray-700 ">
           <FaChevronUp />
         </SelectPrimitive.ScrollUpButton>

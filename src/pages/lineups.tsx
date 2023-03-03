@@ -8,9 +8,10 @@ import { zodApprovedAgentEnum, zodApprovedMapEnum } from "../../utils/enums";
 import FilterDialog from "../components/filterDialog";
 import Layout from "../components/layout";
 import Loading from "../components/loading";
-import Select from "../components/select";
 import { api } from "../utils/api";
 import PlaceholderImage from "../../public/placeholder-img.jpg";
+import Select from "../components/select";
+
 
 // proper TS enum
 const filterOptions = ["recent", "most-likes", "oldest"] as const;
@@ -81,6 +82,8 @@ const Lineups = () => {
     );
   }
 
+
+
   return (
     <Layout>
       <div className="flex flex-col">
@@ -95,12 +98,15 @@ const Lineups = () => {
             mapClearFx={clearMap}
             clearAllFilters={clearAll}
           />
-          <Select
-            buttonIntent="secondary"
-            onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
-            defaultValue={filterOptions[0]}
-            values={filterOptions.map((e) => e)}
-          />
+
+          <div className="relative z-10">
+            <Select
+              buttonIntent="secondary"
+              onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
+              defaultValue={filterOptions[0]}
+              values={filterOptions.map((e) => e)}
+            />
+          </div>
         </div>
       </div>
       <div className="mx-2 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
