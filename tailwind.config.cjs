@@ -7,9 +7,11 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      /* adding this as a mistake, might look into fonts later tho
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      */
       keyframes: {
         "accordion-down": {
           from: { height: 0 },
