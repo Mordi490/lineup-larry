@@ -4,7 +4,7 @@ import Layout from "../components/layout";
 
 const FAQ = () => {
   return (
-    <Layout title="FAQ">
+    <Layout title="FAQ" name="description" description="frequently asked questions">
       <div className="mx-auto mt-4 max-w-2xl space-y-4">
         <h1 className="text-center text-2xl font-bold">
           Why does this exist? (TLDR version)
