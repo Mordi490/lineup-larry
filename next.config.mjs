@@ -1,23 +1,28 @@
 import { env } from "./src/env/server.mjs";
 
-/**
- * Don't be scared of the generics here.
- * All they do is to give us autocompletion when using this.
- *
- * @template {import('next').NextConfig} T
- * @param {T} config - A generic parameter that flows through to the return type
- * @constraint {{import('next').NextConfig}}
- */
-function defineNextConfig(config) {
-  return config;
-}
+import { withPlausibleProxy } from "next-plausible";
 
-export default defineNextConfig({
+// add whatever headers you need, see: https://nextjs.org/docs/advanced-features/security-headers
+// also this cannot be null, therefore I added a random example
+const securityHeaders = [{
+  key: 'X-Frame-Options',
+  value: 'SAMEORIGIN'
+}];
+
+const config = withPlausibleProxy()({
   reactStrictMode: true,
   swcMinify: true,
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
+  },
+  headers: async () => {
+    return [
+      {
+        source: "/(.*)",
+        headers: securityHeaders,
+      },
+    ];
   },
   images: {
     domains: [
@@ -28,3 +33,5 @@ export default defineNextConfig({
     ],
   },
 });
+
+export default config;
