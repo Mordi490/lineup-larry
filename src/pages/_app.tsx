@@ -13,7 +13,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <>
-      <PlausibleProvider domain="lineuplarry.com">
+      <PlausibleProvider domain="lineuplarry.com" enabled={true}>
         <SessionProvider session={session}>
           <Component {...pageProps} />
         </SessionProvider>
