@@ -60,6 +60,7 @@ const Create = () => {
     },
   });
 
+  // NB! a failed S3 upload still counts as success, look into it
   const { mutate } = api.lineup.create.useMutation({
     onSuccess: (data) => {
       toast.remove();
@@ -90,37 +91,51 @@ const Create = () => {
     let curr = 1;
     // TODO: perform this async instead of sequentially, remember to keep the order intact
     for (let file of formInput.image) {
+      const fileKey = file.type.includes("video")
+        ? "video-" + crypto.randomUUID()
+        : crypto.randomUUID();
+
       const { url, fields } = await createPresignedUrl({
-        fileType: file.type as string,
+        fileType: file.type,
+        key: fileKey,
       });
 
-      interface S3ImageData {
-        "Content-Type": string;
-        file: File;
-        Policy: string;
-        "X-Amz-Signature": string;
-      }
+      const formData = new FormData();
 
-      const s3Data: S3ImageData = {
+      const s3Data: Record<string, string | File | undefined> = {
         ...fields,
         "Content-Type": file.type,
         file,
       };
 
-      const formData = new FormData();
       for (const name in s3Data) {
-        formData.append(name, s3Data[name as keyof S3ImageData]);
+        const value = s3Data[name];
+        if (value) {
+          formData.append(name, value);
+        }
       }
 
+      
       await fetch(url, {
         method: "POST",
         body: formData,
-      });
+      })
+        .then((res) => {
+          //console.log("successful upload");
+          //console.log(res);
+        })
+        .catch((err) => {
+          toast.error("Failed to upload file(s)")
+          //console.log("unsuccessfully upload");
+          //console.log(err);
+        });
 
       if (curr == len) {
-        createdUrls += fields.Key;
+        createdUrls += fileKey;
+        //console.log("createdUrls is:", createdUrls);
       } else {
-        createdUrls += fields.Key + ",";
+        createdUrls += fileKey + ",";
+        //console.log("createdUrls is:", createdUrls);
       }
       curr++;
     }

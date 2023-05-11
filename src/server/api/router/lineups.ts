@@ -1,16 +1,13 @@
 import { Lineup, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { ObjectIdentifierList } from "aws-sdk/clients/s3";
-import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { agentZodYes, mapZodYes } from "../../../../utils/enums";
 import { env } from "../../../env/server.mjs";
-
-import { MAX_FILE_SIZE } from "../../../pages/create";
 import { prisma } from "../../db";
 import { s3 } from "../aws/s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 
 /**
  * Default selector for Lineup.
@@ -375,6 +372,9 @@ export const lineupRouter = createTRPCRouter({
       });
       return lineup;
     }),
+  getMultipartUploadPresignedUrl: protectedProcedure
+    .input(z.object({ key: z.string(), filePartTotal: z.number() }))
+    .mutation(async ({ ctx, input }) => {}),
   castVote: protectedProcedure
     .input(z.object({ id: z.string(), sentiment: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -459,6 +459,7 @@ export const lineupRouter = createTRPCRouter({
           message: "You have to be logged in to create a lineup",
         });
       }
+
       const lineup = await ctx.prisma.lineup.create({
         data: {
           title: input.title,
@@ -476,27 +477,13 @@ export const lineupRouter = createTRPCRouter({
       return lineup;
     }),
   createPresignedUrl: protectedProcedure
-    .input(z.object({ fileType: z.string() }))
+    .input(z.object({ fileType: z.string(), key: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.session) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You need to be logged in to perform this action",
-        });
-      }
-      const rndKey = uuidv4();
-
-      return s3.createPresignedPost({
-        Fields: {
-          // if the file is a video prefix it with "video", eg. "video-<UUID>"
-          Key: input.fileType.includes("video") ? `video-${rndKey}` : rndKey,
-        },
-        Expires: 240, // time in seconds the user have to upload,
+      return await createPresignedPost(s3, {
         Bucket: env.AWS_BUCKET_NAME,
-        Conditions: [
-          ["starts-with", "$Content-Type", input.fileType], // whitelist images for now
-          ["content-length-range", 0, MAX_FILE_SIZE],
-        ],
+        Key: input.key,
+        Expires: 3600, // the user has 1 hour to use the presigned URL
+        Conditions: [["starts-with", "$Content-Type", input.fileType]],
       });
     }),
   deleteS3Object: protectedProcedure
@@ -521,7 +508,7 @@ export const lineupRouter = createTRPCRouter({
       }
       // bulk del all the img associated with the lineup
       const imgUrls = lineup.image.split(",");
-      const list: ObjectIdentifierList = [];
+      const list: { Key: string }[] = [];
       for (let img of imgUrls) {
         list.push({ Key: img });
       }
