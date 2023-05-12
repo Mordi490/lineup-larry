@@ -28,6 +28,28 @@ export const createLineupForm = z.object({
   ),
 });
 
+export const splitFileIntoParts = (file: File) => {
+  const chunkSize = 1024 * 1024 * 6;
+  const numberOfChunks = Math.ceil(file.size / chunkSize);
+  let currentChunk = 0;
+  const fileParts: File[] = [];
+
+  while (currentChunk < numberOfChunks) {
+    const chunkStart = currentChunk * chunkSize;
+    const chunkEnd = Math.min(file.size, chunkStart + chunkSize);
+    const filePartBlob = file.slice(chunkStart, chunkEnd);
+    const filePartName = `CHUNK${currentChunk}-${file.name}`;
+    const filePart = new File([filePartBlob], filePartName);
+    fileParts.push(filePart);
+    currentChunk++;
+  }
+  const partsAsObject: { [partNumber: number]: File } = {};
+  for (let i = 1; i <= fileParts.length; i++) {
+    partsAsObject[i] = fileParts[i - 1] as File;
+  }
+  return partsAsObject;
+};
+
 // helper func for validation
 export const getFileSize = (props: File[]): number => {
   let res: number = 0;
@@ -39,6 +61,16 @@ const Create = () => {
   // Consider setting it to null initially, and refuse to send it until user selects a image to preview
   const [previewImg, setPreviewImg] = useState<number>(0);
   const [presignedUrls, setPresignedUrls] = useState<string[]>([]);
+
+  // states for multipart file uploads
+  const [fileParts, setFileParts] = useState<{ [partNumber: number]: File }>(
+    {}
+  );
+  // TODO: make it work for multiple large files, AFTER inital impl is working
+  const [multipartPartPresignedUrl, setMultipartPartPresignedUrl] = useState<
+    { url: string; partNumber: number }[]
+  >([]);
+  const [uploadId, setUploadId] = useState<string>("");
 
   const { data: session } = useSession();
   const router = useRouter();
@@ -77,6 +109,12 @@ const Create = () => {
   const { mutateAsync: createPresignedUrl } =
     api.lineup.createPresignedUrl.useMutation();
 
+  const { mutateAsync: createMultipartUpload } =
+    api.lineup.createMultipartUpload.useMutation();
+
+  const { mutateAsync: completeMultipartUpload } =
+    api.lineup.completeMultipartUpload.useMutation();
+
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
     toast.loading("Uploading lineup");
 
@@ -94,6 +132,33 @@ const Create = () => {
       const fileKey = file.type.includes("video")
         ? "video-" + crypto.randomUUID()
         : crypto.randomUUID();
+
+      // determine if multipart upload is needed or not
+      // use multipart file uploads when files are larger than 20 mb
+      if (file.size > 1024 * 1024 * 20) {
+        // remember S3 has a lower limit of 5 mb chunks
+        // split file into parts
+        const parts = splitFileIntoParts(file);
+        setFileParts(parts);
+        // request a multipart upload
+        createMultipartUpload({
+          key: fileKey,
+          totalFileParts: Object.keys(parts).length,
+        })
+          .then((response) => {
+            if (response) {
+              const urls = response.urls.map((data) => ({
+                url: data.url,
+                partNumber: data.partNumber,
+              }));
+              setMultipartPartPresignedUrl(urls);
+              setUploadId(response.uploadId);
+            }
+          })
+          .catch((error) => console.log(error));
+
+        // cont with complete multipart upload if needed
+      }
 
       const { url, fields } = await createPresignedUrl({
         fileType: file.type,
@@ -115,7 +180,6 @@ const Create = () => {
         }
       }
 
-      
       await fetch(url, {
         method: "POST",
         body: formData,
@@ -125,7 +189,7 @@ const Create = () => {
           //console.log(res);
         })
         .catch((err) => {
-          toast.error("Failed to upload file(s)")
+          toast.error("Failed to upload file(s)");
           //console.log("unsuccessfully upload");
           //console.log(err);
         });

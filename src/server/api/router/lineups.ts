@@ -8,6 +8,8 @@ import { s3 } from "../aws/s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
+import { UploadPartCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /**
  * Default selector for Lineup.
@@ -485,6 +487,76 @@ export const lineupRouter = createTRPCRouter({
         Expires: 3600, // the user has 1 hour to use the presigned URL
         Conditions: [["starts-with", "$Content-Type", input.fileType]],
       });
+    }),
+  // heavily based on: https://github.dev/nramkissoon/t3-s3
+  // TODO: test thatit works
+  createMultipartUpload: protectedProcedure
+    .input(z.object({ key: z.string(), totalFileParts: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { key, totalFileParts } = input;
+
+      const uploadId = (
+        await s3.createMultipartUpload({
+          Bucket: env.AWS_BUCKET_NAME,
+          Key: key,
+        })
+      ).UploadId;
+
+      if (!uploadId) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create a multipart upload url",
+        });
+      }
+
+      const presignedUploadUrls: Promise<{
+        url: string;
+        partNumber: number;
+      }>[] = [];
+
+      for (let i = 1; i <= totalFileParts; i++) {
+        const uploadPartCommand = new UploadPartCommand({
+          Bucket: env.AWS_BUCKET_NAME,
+          Key: key,
+          UploadId: uploadId,
+          PartNumber: i,
+        });
+
+        const url = getSignedUrl(s3, uploadPartCommand).then((url) => ({
+          url,
+          partNumber: i,
+        }));
+
+        presignedUploadUrls.push(url);
+      }
+
+      return {
+        uploadId,
+        urls: await Promise.all(presignedUploadUrls),
+      };
+    }),
+  // This one might actually be useless since S3 seems to complete itself once all parts have been received...
+  completeMultipartUpload: protectedProcedure
+    .input(
+      z.object({
+        key: z.string(),
+        uploadId: z.string(),
+        parts: z.array(z.object({ ETag: z.string(), PartNumber: z.number() })),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { key, uploadId, parts } = input;
+
+      const completeMultipartUpload = await s3.completeMultipartUpload({
+        Bucket: env.AWS_BUCKET_NAME,
+        Key: key,
+        UploadId: uploadId,
+        MultipartUpload: {
+          Parts: parts,
+        },
+      });
+
+      return completeMultipartUpload;
     }),
   deleteS3Object: protectedProcedure
     .input(z.object({ id: z.string() }))
