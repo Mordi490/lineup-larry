@@ -1,6 +1,6 @@
 // Alternative way to use enums
 // TODO: Figure out why
-export const agentZodYes = [
+export const agentList = [
   "BRIMSTONE",
   "VIPER",
   "OMEN",
@@ -23,9 +23,9 @@ export const agentZodYes = [
   "HARBOR",
 ] as const;
 
-export type zodApprovedAgentEnum = (typeof agentZodYes)[number];
+export type zodApprovedAgentEnum = (typeof agentList)[number];
 
-export const mapZodYes = [
+export const mapList = [
   "ASCENT",
   "BIND",
   "BREEZE",
@@ -37,4 +37,4 @@ export const mapZodYes = [
   "SPLIT",
 ] as const;
 
-export type zodApprovedMapEnum = (typeof mapZodYes)[number];
+export type zodApprovedMapEnum = (typeof mapList)[number];

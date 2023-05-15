@@ -7,10 +7,10 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FaDiscord } from "react-icons/fa";
 import * as z from "zod";
-import { agentZodYes, mapZodYes } from "../../utils/enums";
 import Layout from "../components/layout";
 import { api } from "../utils/api";
 import BasicDropzone from "../components/Dropzone";
+import { agentList, mapList } from "../../utils/enums";
 
 export const MAX_TOTAL_SIZE = 1024 * 1024 * 80; // 80MB, for now
 
@@ -18,8 +18,8 @@ type imageFile = Record<string, any>;
 
 export const createLineupForm = z.object({
   title: z.string(),
-  agent: z.enum(agentZodYes),
-  map: z.enum(mapZodYes),
+  agent: z.enum(agentList),
+  map: z.enum(mapList),
   text: z.string(),
   isSetup: z.boolean(),
   image: z.preprocess(
@@ -58,15 +58,12 @@ export const getFileSize = (props: File[]): number => {
 };
 
 const Create = () => {
-  // Consider setting it to null initially, and refuse to send it until user selects a image to preview
   const [previewImg, setPreviewImg] = useState<number>(0);
-  const [presignedUrls, setPresignedUrls] = useState<string[]>([]);
 
   // states for multipart file uploads
   const [fileParts, setFileParts] = useState<{ [partNumber: number]: File }>(
     {}
   );
-  // TODO: make it work for multiple large files, AFTER inital impl is working
   const [multipartPartPresignedUrl, setMultipartPartPresignedUrl] = useState<
     { url: string; partNumber: number }[]
   >([]);
@@ -74,9 +71,6 @@ const Create = () => {
 
   const { data: session } = useSession();
   const router = useRouter();
-
-  const agentList = agentZodYes;
-  const mapList = mapZodYes;
 
   type formSchemaType = z.infer<typeof createLineupForm>;
 
@@ -128,7 +122,7 @@ const Create = () => {
     const len = formInput.image.length;
     let curr = 1;
     // TODO: perform this async instead of sequentially, remember to keep the order intact
-    for (let file of formInput.image) {
+    for (const file of formInput.image) {
       const fileKey = file.type.includes("video")
         ? "video-" + crypto.randomUUID()
         : crypto.randomUUID();
@@ -137,10 +131,9 @@ const Create = () => {
       // use multipart file uploads when files are larger than 20 mb
       if (file.size > 1024 * 1024 * 20) {
         // remember S3 has a lower limit of 5 mb chunks
-        // split file into parts
         const parts = splitFileIntoParts(file);
         setFileParts(parts);
-        // request a multipart upload
+
         createMultipartUpload({
           key: fileKey,
           totalFileParts: Object.keys(parts).length,

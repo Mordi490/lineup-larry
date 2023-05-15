@@ -1,7 +1,7 @@
 import { Lineup, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { agentZodYes, mapZodYes } from "../../../../utils/enums";
+import { agentList, mapList } from "../../../../utils/enums";
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../db";
 import { s3 } from "../aws/s3";
@@ -162,8 +162,8 @@ export const lineupRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
         filter: z.enum(plsWork),
-        agent: z.enum(agentZodYes).nullish(),
-        map: z.enum(mapZodYes).nullish(),
+        agent: z.enum(agentList).nullish(),
+        map: z.enum(mapList).nullish(),
         // TODO after agents & maps
         //setup: z.boolean().optional(),
       })
@@ -360,6 +360,14 @@ export const lineupRouter = createTRPCRouter({
   updateLineup: protectedProcedure
     .input(z.object({ id: z.string(), updatedData: editLineupSchema }))
     .mutation(async ({ ctx, input }) => {
+      const oldLineup = await ctx.prisma.lineup.findFirst({
+        where: { id: input.id },
+      });
+
+      console.log("found the old lineup data:", oldLineup);
+      console.log("We're replacing that with this data:", input.updatedData);
+
+      // remove everything above this line as soon as we are sure this is not the culprit
       const lineup = await ctx.prisma.lineup.update({
         where: { id: input.id },
         data: {
@@ -561,12 +569,11 @@ export const lineupRouter = createTRPCRouter({
   deleteS3Object: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.session) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You need to be logged in to perform this action",
-        });
-      }
+      console.log(
+        "trying to delete S3-data from the lineup with the following id:",
+        input.id
+      );
+
       // fetch current lineup
       const lineup = await ctx.prisma.lineup.findUnique({
         where: { id: input.id },
@@ -578,10 +585,13 @@ export const lineupRouter = createTRPCRouter({
           message: `No lineup with id: ${input.id}`,
         });
       }
+
+      // might have to await here or something
       // bulk del all the img associated with the lineup
       const imgUrls = lineup.image.split(",");
+      console.log("the lineup has the following s3 keys:", imgUrls);
       const list: { Key: string }[] = [];
-      for (let img of imgUrls) {
+      for (const img of imgUrls) {
         list.push({ Key: img });
       }
 

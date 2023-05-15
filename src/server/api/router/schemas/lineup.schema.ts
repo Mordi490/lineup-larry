@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { agentZodYes, mapZodYes } from "../../../../../utils/enums";
+import { agentList, mapList } from "../../../../../utils/enums";
 
 /**
  * notes on how to handle file sizes
@@ -17,8 +17,8 @@ export const createLineupSchema = z.object({
   creator: z.string(),
   userId: z.string(),
   // TODO: figure out how to add err msgs to anything that isn't a string
-  agent: z.enum(agentZodYes),
-  map: z.enum(mapZodYes),
+  agent: z.enum(agentList),
+  map: z.enum(mapList),
   text: z.string(),
   isSetup: z.boolean(),
   previewImg: z.number().nonnegative(), // >= 0
@@ -27,8 +27,8 @@ export const createLineupSchema = z.object({
 
 export const editLineupSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
-  agent: z.enum(agentZodYes),
-  map: z.enum(mapZodYes),
+  agent: z.enum(agentList),
+  map: z.enum(mapList),
   text: z.string().min(1, { message: "Text is required" }),
   isSetup: z.boolean(),
   previewImg: z.number().nonnegative(),

@@ -2,15 +2,15 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@ui/button";
 import { AiOutlineClose } from "react-icons/ai";
 import { z } from "zod";
-import { agentZodYes, mapZodYes } from "../../utils/enums";
+import { agentList, mapList } from "../../utils/enums";
 import Select from "./select";
 
 const zodProps = z.object({
   currentAgent: z.string().nullish(),
-  agentChangeFX: z.function().args(z.enum(agentZodYes)),
+  agentChangeFX: z.function().args(z.enum(agentList)),
   agentClearFx: z.function(),
   currentMap: z.string().nullish(),
-  mapChangeFX: z.function().args(z.enum(mapZodYes)),
+  mapChangeFX: z.function().args(z.enum(mapList)),
   mapClearFx: z.function(),
   clearAllFilters: z.function(),
 });
@@ -36,10 +36,10 @@ const FilterDialog = (props: Props) => {
                 buttonIntent="secondary"
                 defaultValue={
                   props.currentAgent == null
-                    ? agentZodYes[0]
+                    ? agentList[0]
                     : props.currentAgent
                 }
-                values={agentZodYes.map((e) => e)}
+                values={agentList.map((e) => e)}
                 onValueChangeFx={props.agentChangeFX}
                 ariaLabel="Agent select input"
               />
@@ -53,9 +53,9 @@ const FilterDialog = (props: Props) => {
               <Select
                 buttonIntent="secondary"
                 defaultValue={
-                  props.currentMap == null ? mapZodYes[0] : props.currentMap
+                  props.currentMap == null ? mapList[0] : props.currentMap
                 }
-                values={mapZodYes.map((e) => e)}
+                values={mapList.map((e) => e)}
                 onValueChangeFx={props.mapChangeFX}
                 ariaLabel="Map select input"
               />
