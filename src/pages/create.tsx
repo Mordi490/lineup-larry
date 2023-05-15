@@ -12,7 +12,7 @@ import Layout from "../components/layout";
 import { api } from "../utils/api";
 import BasicDropzone from "../components/Dropzone";
 
-export const MAX_FILE_SIZE = 1024 * 1024 * 80; // 80MB, for now
+export const MAX_TOTAL_SIZE = 1024 * 1024 * 80; // 80MB, for now
 
 type imageFile = Record<string, any>;
 
@@ -112,15 +112,15 @@ const Create = () => {
   const { mutateAsync: createMultipartUpload } =
     api.lineup.createMultipartUpload.useMutation();
 
-  const { mutateAsync: completeMultipartUpload } =
-    api.lineup.completeMultipartUpload.useMutation();
-
   const onSubmit: SubmitHandler<formSchemaType> = async (formInput) => {
     toast.loading("Uploading lineup");
 
-    if (getFileSize(formInput.image) > MAX_FILE_SIZE * 5) {
-      // TODO: better feedback
-      alert("Your files are too large!");
+    if (getFileSize(formInput.image) > MAX_TOTAL_SIZE) {
+      // TODO: better feedback, toasts, disable submit or smth
+      alert("Your files are too large!\nPlease select fewer or smaller files!");
+      toast.remove();
+      toast.error("Total file size too large!");
+      return;
     }
 
     // create a presignedURL for each of the images
@@ -337,8 +337,6 @@ const Create = () => {
             name="image"
             render={({ field }) => (
               <BasicDropzone
-                setPresignedUrl={setPresignedUrls}
-                presignedUrl={presignedUrls}
                 previewImg={previewImg}
                 setPreviewImg={setPreviewImg}
                 files={field.value}

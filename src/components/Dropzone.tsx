@@ -6,22 +6,21 @@ const BasicDropzone = ({
   onChangeFile,
   previewImg,
   setPreviewImg,
-  setPresignedUrl,
-  presignedUrl,
 }: {
   files: File[];
   onChangeFile: (file: File[]) => void;
   previewImg: number;
   setPreviewImg: (e: number) => void;
-  setPresignedUrl: (urls: string[]) => void;
-  presignedUrl: string[];
 }) => {
   const { getRootProps, getInputProps } = useDropzone({
+    maxFiles: 6, // 3-4 imgs + 1-2 vids should cover a single lineup + some variations
+    maxSize: 1024 * 1024 * 60, // single file limit @ 60 MB
     accept: {
       "image/*": [],
       "video/*": [],
     },
     onDrop: (acceptedFiles) => {
+      // consider fetching the URLS as soon as the files are dropped
       onChangeFile(acceptedFiles);
     },
   });
