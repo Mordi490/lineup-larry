@@ -8,7 +8,7 @@ import { s3 } from "../aws/s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
-import { UploadPartCommand } from "@aws-sdk/client-s3";
+import { UploadPartCommand, DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /**
@@ -569,12 +569,7 @@ export const lineupRouter = createTRPCRouter({
   deleteS3Object: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      console.log(
-        "trying to delete S3-data from the lineup with the following id:",
-        input.id
-      );
-
-      // fetch current lineup
+      // alternative approach: set input to be an array of S3 keys and just blindly send them
       const lineup = await ctx.prisma.lineup.findUnique({
         where: { id: input.id },
       });
@@ -586,33 +581,25 @@ export const lineupRouter = createTRPCRouter({
         });
       }
 
-      // might have to await here or something
-      // bulk del all the img associated with the lineup
       const imgUrls = lineup.image.split(",");
-      console.log("the lineup has the following s3 keys:", imgUrls);
-      const list: { Key: string }[] = [];
-      for (const img of imgUrls) {
-        list.push({ Key: img });
-      }
+      // list has have following shape: { Key: <actual_key> }
+      const list = imgUrls.map((imgUrl) => ({
+        Key: imgUrl,
+      }));
 
-      return new Promise((resolve, reject) => {
-        s3.deleteObjects(
-          {
-            Bucket: env.AWS_BUCKET_NAME as string,
-            Delete: { Objects: list },
-          },
-          (err, success) => {
-            if (err) {
-              reject(err);
-              throw new TRPCError({
-                // TODO: Figure out a less cryptic err msg
-                code: "INTERNAL_SERVER_ERROR",
-                message: "Failed to communicate with server",
-              });
-            }
-            resolve(success);
-          }
-        );
-      });
+      const params = {
+        Bucket: env.AWS_BUCKET_NAME,
+        Delete: {
+          Objects: list,
+        },
+      };
+
+      s3.send(new DeleteObjectsCommand(params))
+        .then((data) => {
+          console.log("successfully deleted data!", data);
+        })
+        .catch((err) => {
+          console.error("Failed to delete data", err);
+        });
     }),
 });
