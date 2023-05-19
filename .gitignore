@@ -57,3 +57,8 @@ test_image.webp
 
 # Tailwind sanity checks
 Test.tsx
+
+# Playwright testing
+/test-results/
+/playwright-report/
+/playwright/.cache/
