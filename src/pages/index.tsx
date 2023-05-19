@@ -2,11 +2,16 @@ import { Button } from "@ui/button";
 import type { NextPage } from "next";
 import { toast } from "react-hot-toast";
 import Layout from "../components/layout";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  toast.error(
-    "FYI this site a WIP, therefore odd design choices and errors may occur"
-  );
+  useEffect(() => {
+    return () => {
+      toast.error(
+        "FYI this site a WIP, therefore odd design choices and errors may occur"
+      );
+    };
+  }, []);
 
   return (
     <Layout>
