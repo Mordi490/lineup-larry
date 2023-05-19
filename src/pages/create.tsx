@@ -12,7 +12,7 @@ import { api } from "../utils/api";
 import BasicDropzone from "../components/Dropzone";
 import { agentList, mapList } from "../../utils/enums";
 
-export const MAX_TOTAL_SIZE = 1024 * 1024 * 80; // 80MB, for now
+export const MAX_TOTAL_SIZE = 1024 * 1024 * 140; // 1400MB, for now
 
 type imageFile = Record<string, any>;
 

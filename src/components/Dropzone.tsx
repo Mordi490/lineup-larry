@@ -14,7 +14,7 @@ const BasicDropzone = ({
 }) => {
   const { getRootProps, getInputProps } = useDropzone({
     maxFiles: 6, // 3-4 imgs + 1-2 vids should cover a single lineup + some variations
-    maxSize: 1024 * 1024 * 60, // single file limit @ 60 MB
+    maxSize: 1024 * 1024 * 80, // likely to change: 80 MB, for now
     accept: {
       "image/*": [],
       "video/*": [],
