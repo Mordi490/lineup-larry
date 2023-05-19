@@ -58,7 +58,6 @@ const EditLineup = () => {
   const { mutateAsync: createMultipartUpload } =
     api.lineup.createMultipartUpload.useMutation();
 
-  // delete prev s3 obj
   const { mutate: deletedS3Obj } = api.lineup.deleteS3Object.useMutation();
 
   // persist the changes to db
@@ -125,6 +124,15 @@ const EditLineup = () => {
       toast.error("Total file size too large!");
       return;
     }
+
+    /**
+     * Current approach to S3 stored data, but dumb:
+     * we preemptively delete all the imageUrls for the lineup and replace them
+     */
+
+    // TODO: 
+    // delete prev the s3 data, curr impl takes in the lineup, id, consider moving to key based instead
+    deletedS3Obj({ id: id });
 
     // create a presignedURL for each of the images
     let createdUrls = "";
@@ -206,16 +214,6 @@ const EditLineup = () => {
       curr++;
     }
 
-    // delete prev obj(s) they are stored in lineup as: "presignedA, presignedB, presignedC"
-
-    // OBS! we seem to move on before deleting the images
-    // might have to wrap all this in a promise
-    const oldImgs = lineup.image.split(",");
-    for (let i = 0; i > oldImgs.length; i++) {
-      console.log("inside of del old s3 imgs loop, curr img is:", oldImgs[i]);
-      deletedS3Obj({ id: oldImgs[i] as string });
-    }
-    // old del process
     const currS3Key = lineup?.id as string;
 
     // update db
@@ -315,9 +313,8 @@ const EditLineup = () => {
             <input
               className="items-centers inline-flex rounded border-gray-600 bg-gray-700 text-blue-600 ring-offset-gray-800 focus:ring-2 focus:ring-blue-600"
               {...register("isSetup")}
-              checked={lineup?.isSetup === true ?  true : false}
+              checked={lineup?.isSetup === true ? true : false}
               type="checkbox"
-
               disabled={isSubmitting}
             />
             <label className="inline-flex items-center font-medium">
@@ -338,14 +335,14 @@ const EditLineup = () => {
             )}
           />
 
-            <Button
-              intent="primary"
-              fullWidth
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Uploading..." : "Submit"}
-            </Button>
+          <Button
+            intent="primary"
+            fullWidth
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Uploading..." : "Submit"}
+          </Button>
         </form>
       </div>
     </Layout>
