@@ -9,9 +9,8 @@ import { FaTrashAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { api } from "../../utils/api";
 import { Button } from "@ui/button";
-import ErrImg from "../../../public/on_err_img_profile.png"
-import Placeholder from "../../../public/placeholder-img.jpg"
-import PepeHands from "../../../public/PepeHands.png"
+import ErrImg from "../../../public/on_err_img_profile.png";
+import PepeHands from "../../../public/PepeHands.png";
 
 const Lineups = () => {
   const router = useRouter();
@@ -146,8 +145,8 @@ const Lineups = () => {
               {isFetchingNextPage
                 ? "Loading more..."
                 : hasNextPage
-                  ? "Load More"
-                  : "Nothing more to load"}
+                ? "Load More"
+                : "Nothing more to load"}
             </button>
           </div>
 
@@ -187,8 +186,8 @@ const Lineups = () => {
               {ratedIsFetchingNextPage
                 ? "Loading more..."
                 : ratedHasNextPage
-                  ? "Load More"
-                  : "Nothing more to load"}
+                ? "Load More"
+                : "Nothing more to load"}
             </Button>
           </div>
         </div>
@@ -255,15 +254,17 @@ const Lineups = () => {
                                 {/* TODO: fucks up w/vid previews */}
                                 <Image
                                   placeholder="blur"
-                                  blurDataURL={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${ln.image.split(",")[ln.previewImg]
-                                }`}
+                                  blurDataURL={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                                    ln.image.split(",")[ln.previewImg]
+                                  }`}
                                   onError={() => PepeHands}
                                   className="hover:cursor-pointer"
                                   width={900}
                                   height={600}
                                   alt="Valorant screenshot"
-                                  src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${ln.image.split(",")[ln.previewImg]
-                                    }`}
+                                  src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                                    ln.image.split(",")[ln.previewImg]
+                                  }`}
                                 />
                               </Link>
                             </div>
