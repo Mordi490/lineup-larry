@@ -11,8 +11,7 @@ import Layout from "../../components/layout";
 import Loading from "../../components/loading";
 import { Votes } from "../../components/Votes";
 import { api } from "../../utils/api";
-import ErrImg from "../../../public/PepeHands.png"
-import Placeholder from "../../../public/placeholder-img.jpg"
+import ErrImg from "../../../public/PepeHands.png";
 
 const SpecificLineup = () => {
   const { data } = useSession();

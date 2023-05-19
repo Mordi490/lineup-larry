@@ -360,13 +360,6 @@ export const lineupRouter = createTRPCRouter({
   updateLineup: protectedProcedure
     .input(z.object({ id: z.string(), updatedData: editLineupSchema }))
     .mutation(async ({ ctx, input }) => {
-      const oldLineup = await ctx.prisma.lineup.findFirst({
-        where: { id: input.id },
-      });
-
-      console.log("found the old lineup data:", oldLineup);
-      console.log("We're replacing that with this data:", input.updatedData);
-
       // remove everything above this line as soon as we are sure this is not the culprit
       const lineup = await ctx.prisma.lineup.update({
         where: { id: input.id },
@@ -581,11 +574,8 @@ export const lineupRouter = createTRPCRouter({
         });
       }
 
-      const imgUrls = lineup.image.split(",");
       // list has have following shape: { Key: <actual_key> }
-      const list = imgUrls.map((imgUrl) => ({
-        Key: imgUrl,
-      }));
+      const list = lineup.image.split(",").map((imgUrl) => ({ Key: imgUrl }));
 
       const params = {
         Bucket: env.AWS_BUCKET_NAME,
@@ -596,10 +586,10 @@ export const lineupRouter = createTRPCRouter({
 
       s3.send(new DeleteObjectsCommand(params))
         .then((data) => {
-          console.log("successfully deleted data!", data);
+          //console.log("successfully deleted data!", data);
         })
         .catch((err) => {
-          console.error("Failed to delete data", err);
+          //console.error("Failed to delete data", err);
         });
     }),
 });
