@@ -126,11 +126,13 @@ const EditLineup = () => {
     }
 
     /**
-     * Current approach to S3 stored data, but dumb:
+     * Current approach to deletion of S3 stored data is simple, but dumb:
      * we preemptively delete all the imageUrls for the lineup and replace them
+     *
+     * Ideally we find a way to detect if we already have the file in S3
      */
 
-    // TODO: 
+    // TODO:
     // delete prev the s3 data, curr impl takes in the lineup, id, consider moving to key based instead
     deletedS3Obj({ id: id });
 
