@@ -51,9 +51,7 @@ const DelLineupModal = (data: props) => {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
-        <a className="capitalize text-gray-700">
-          Delete
-        </a>
+        <a className="capitalize text-neutral-800">Delete</a>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="fixed inset-0 z-20 bg-black/50" />
