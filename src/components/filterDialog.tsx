@@ -21,7 +21,7 @@ type Props = z.infer<typeof zodProps>;
 const FilterDialog = (props: Props) => {
   return (
     <Dialog.Root>
-      <Dialog.Trigger>
+      <Dialog.Trigger asChild>
         <Button intent={"secondary"}>Filter</Button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -35,9 +35,7 @@ const FilterDialog = (props: Props) => {
               <Select
                 buttonIntent="secondary"
                 defaultValue={
-                  props.currentAgent == null
-                    ? agentList[0]
-                    : props.currentAgent
+                  props.currentAgent == null ? agentList[0] : props.currentAgent
                 }
                 values={agentList.map((e) => e)}
                 onValueChangeFx={props.agentChangeFX}
