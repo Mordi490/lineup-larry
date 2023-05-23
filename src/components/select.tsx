@@ -9,6 +9,7 @@ const PropsZod = z.object({
   ariaLabel: z.string().optional(),
   values: z.array(z.string()),
   onValueChangeFx: z.function().args(z.any()),
+  placeholder: z.string().optional(),
   onItemClickFx: z.function().args(z.any()).optional(),
 });
 
@@ -25,7 +26,11 @@ const Select = (props: Props) => {
         className="ml-2 inline-flex items-center"
       >
         <Button intent={props.buttonIntent} aria-label={props.ariaLabel}>
-          <SelectPrimitive.Value />
+          {props.placeholder?.length ? (
+            <SelectPrimitive.Value placeholder={props.placeholder} />
+          ) : (
+            <SelectPrimitive.Value />
+          )}
           <SelectPrimitive.Icon className="ml-2">
             <FaChevronUp size={14} />
           </SelectPrimitive.Icon>

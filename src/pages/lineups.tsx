@@ -12,8 +12,7 @@ import { api } from "../utils/api";
 import PlaceholderImage from "../../public/placeholder-img.jpg";
 import Select from "../components/select";
 
-
-// proper TS enum
+// "proper" TS enum
 const filterOptions = ["recent", "most-likes", "oldest"] as const;
 type FilterTypes = (typeof filterOptions)[number];
 
@@ -82,8 +81,6 @@ const Lineups = () => {
     );
   }
 
-
-
   return (
     <Layout>
       <div className="flex flex-col">
@@ -136,8 +133,9 @@ const Lineups = () => {
                   <Link href={`/lineup/${lineup.id}`}>
                     {/* inserts a placeholder image if the lineup is just a video file or the img is missing */}
                     <ImageWithFallback
-                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${lineup.image.split(",")[lineup.previewImg]
-                        }`}
+                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                        lineup.image.split(",")[lineup.previewImg]
+                      }`}
                       onError={() => PlaceholderImage}
                       fallbackSrc={PlaceholderImage}
                       alt="screenshot from lineup"
@@ -166,8 +164,8 @@ const Lineups = () => {
           {isFetchingNextPage
             ? "Loading more..."
             : hasNextPage
-              ? "Load More"
-              : "Nothing more to load"}
+            ? "Load More"
+            : "Nothing more to load"}
         </Button>
       </div>
     </Layout>
