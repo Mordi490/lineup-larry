@@ -2,15 +2,15 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@ui/button";
 import { AiOutlineClose } from "react-icons/ai";
 import { z } from "zod";
-import { agentList, mapList } from "../../utils/enums";
-import Select from "./select";
+import { agentList as agents, mapList as maps } from "../../utils/enums";
+import ScuffedSelect from "./scuffedSelect";
 
 const zodProps = z.object({
   currentAgent: z.string().nullish(),
-  agentChangeFX: z.function().args(z.enum(agentList)),
+  agentChangeFX: z.function().args(z.enum(agents)),
   agentClearFx: z.function(),
   currentMap: z.string().nullish(),
-  mapChangeFX: z.function().args(z.enum(mapList)),
+  mapChangeFX: z.function().args(z.enum(maps)),
   mapClearFx: z.function(),
   clearAllFilters: z.function(),
 });
@@ -32,12 +32,12 @@ const FilterDialog = (props: Props) => {
           </Dialog.Title>
           <Dialog.Description className="mx-1 flex w-fit flex-col space-y-4 px-2 py-1">
             <div className="inline-flex items-center space-x-4">
-              <Select
-                buttonIntent="secondary"
+              <ScuffedSelect
+                buttonIntent={"secondary"}
                 defaultValue={
-                  props.currentAgent == null ? agentList[0] : props.currentAgent
+                  props.currentAgent == null ? agents[0] : props.currentAgent
                 }
-                values={agentList.map((e) => e)}
+                values={agents.map((e) => e)}
                 onValueChangeFx={props.agentChangeFX}
                 ariaLabel="Agent select input"
               />
@@ -48,12 +48,12 @@ const FilterDialog = (props: Props) => {
               />
             </div>
             <div className="inline-flex items-center space-x-4">
-              <Select
+              <ScuffedSelect
                 buttonIntent="secondary"
                 defaultValue={
-                  props.currentMap == null ? mapList[0] : props.currentMap
+                  props.currentMap == null ? maps[0] : props.currentMap
                 }
-                values={mapList.map((e) => e)}
+                values={maps.map((e) => e)}
                 onValueChangeFx={props.mapChangeFX}
                 ariaLabel="Map select input"
               />

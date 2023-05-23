@@ -10,7 +10,13 @@ import Layout from "../components/layout";
 import Loading from "../components/loading";
 import { api } from "../utils/api";
 import PlaceholderImage from "../../public/placeholder-img.jpg";
-import Select from "../components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/select";
 
 // "proper" TS enum
 const filterOptions = ["recent", "most-likes", "oldest"] as const;
@@ -22,7 +28,7 @@ const Lineups = () => {
   const [agent, setAgent] = useState<null | zodApprovedAgentEnum>();
   const [map, setMap] = useState<null | zodApprovedMapEnum>();
 
-  const onValChangeTest = (val: FilterTypes) => {
+  const onFilterChange = (val: FilterTypes) => {
     setFilter(val);
   };
 
@@ -98,11 +104,20 @@ const Lineups = () => {
 
           <div className="relative z-10">
             <Select
-              buttonIntent="secondary"
-              onValueChangeFx={(val: FilterTypes) => onValChangeTest(val)}
               defaultValue={filterOptions[0]}
-              values={filterOptions.map((e) => e)}
-            />
+              onValueChange={(e: FilterTypes) => onFilterChange(e)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                {filterOptions.map((item) => (
+                  <SelectItem value={item} key={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
