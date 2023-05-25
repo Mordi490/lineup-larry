@@ -22,7 +22,7 @@ const ScuffedSelect = (props: Props) => {
     >
       <SelectPrimitive.Trigger
         asChild
-        className="ml-2 inline-flex items-center"
+        className="ml-2 flex items-center justify-center rounded bg-gray-300 py-2 px-4 font-medium text-slate-800 hover:bg-gray-200 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 focus:ring-offset-black disabled:pointer-events-none  disabled:opacity-60"
       >
         <Button intent={props.buttonIntent} aria-label={props.ariaLabel}>
           <SelectPrimitive.Value />
