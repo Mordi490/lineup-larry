@@ -4,7 +4,7 @@ import { Link } from "@ui/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Button } from "@ui/button";
-import ErrImg from "../../public/on_err_img_profile.png"
+import ErrImg from "../../public/on_err_img_profile.png";
 
 const NavbarProfileDropdown = () => {
   const { data: session } = useSession();
@@ -48,11 +48,13 @@ const NavbarProfileDropdown = () => {
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       ) : (
-        <Button href="/api/auth/signin" aria-label="Login" intent={"primary"}>
-          Login
-          <span>
-            <FaDiscord className="mt-1 ml-2" size={18} />
-          </span>
+        <Button aria-label="Login" intent={"primary"}>
+          <Link href="/api/auth/signin" className="flex justify-center">
+            Login
+            <span>
+              <FaDiscord className="mt-1 ml-2" size={20} />
+            </span>
+          </Link>
         </Button>
       )}
     </nav>
