@@ -17,12 +17,13 @@ const zodProps = z.object({
 
 type Props = z.infer<typeof zodProps>;
 
-// TODO: make it not as wacky css-wise
 const FilterDialog = (props: Props) => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button intent={"secondary"}>Filter</Button>
+        <button className="flex items-center justify-center rounded bg-gray-300 px-4 py-2 font-medium text-slate-800 hover:bg-gray-200 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 focus:ring-offset-black disabled:pointer-events-none disabled:opacity-60">
+          Filter
+        </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-30 bg-black/50" />
@@ -33,7 +34,7 @@ const FilterDialog = (props: Props) => {
           <Dialog.Description className="mx-1 flex w-fit flex-col space-y-4 px-2 py-1">
             <div className="inline-flex items-center space-x-4">
               <ScuffedSelect
-                buttonIntent={"secondary"}
+                buttonIntent="secondary"
                 defaultValue={
                   props.currentAgent == null ? agents[0] : props.currentAgent
                 }
@@ -63,13 +64,15 @@ const FilterDialog = (props: Props) => {
                 className="hover:cursor-pointer hover:fill-red-400"
               />
             </div>
+          </Dialog.Description>
+          <div className="mt-4 flex justify-between">
             <Button intent={"secondary"} onClick={props.clearAllFilters}>
               Clear all filters
             </Button>
-          </Dialog.Description>
-          <Dialog.Close className="absolute bottom-2 right-2 inline-flex">
-            <Button intent={"secondary"}>Cancel</Button>
-          </Dialog.Close>
+            <Dialog.Close className="bottom-2 right-2 inline-flex">
+              <Button intent={"secondary"}>Cancel</Button>
+            </Dialog.Close>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
