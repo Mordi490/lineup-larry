@@ -20,18 +20,16 @@ type Props = z.infer<typeof zodProps>;
 const FilterDialog = (props: Props) => {
   return (
     <Dialog.Root>
-      <Dialog.Trigger asChild>
-        <button className="flex items-center justify-center rounded bg-gray-300 px-4 py-2 font-medium text-slate-800 hover:bg-gray-200 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 focus:ring-offset-black disabled:pointer-events-none disabled:opacity-60">
-          Filter
-        </button>
+      <Dialog.Trigger className="flex items-center justify-center rounded bg-gray-300 px-4 py-2 font-medium text-slate-800 hover:bg-gray-200 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 focus:ring-offset-black disabled:pointer-events-none disabled:opacity-60">
+        Filter
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-30 bg-black/50" />
-        <Dialog.Content className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] flex-col rounded-lg bg-gray-800 p-4 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
+        <Dialog.Content className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] flex-col rounded-xl bg-gray-800 p-4 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
           <Dialog.Title className="text-center text-lg font-semibold">
             Filters
           </Dialog.Title>
-          <Dialog.Description className="mx-1 flex w-fit flex-col space-y-4 px-2 py-1">
+          <section className="mx-1 flex w-fit flex-col space-y-4 px-2 py-1">
             <div className="inline-flex items-center space-x-4">
               <ScuffedSelect
                 buttonIntent="secondary"
@@ -64,13 +62,13 @@ const FilterDialog = (props: Props) => {
                 className="hover:cursor-pointer hover:fill-red-400"
               />
             </div>
-          </Dialog.Description>
+          </section>
           <div className="mt-4 flex justify-between">
             <Button intent={"secondary"} onClick={props.clearAllFilters}>
               Clear all filters
             </Button>
-            <Dialog.Close className="bottom-2 right-2 inline-flex">
-              <Button intent={"secondary"}>Cancel</Button>
+            <Dialog.Close className="bottom-2 right-2 inline-flex items-center justify-center rounded bg-gray-300 py-2 px-4 font-medium text-slate-800 hover:bg-gray-200 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 focus:ring-offset-black disabled:pointer-events-none disabled:opacity-60">
+              Cancel
             </Dialog.Close>
           </div>
         </Dialog.Content>

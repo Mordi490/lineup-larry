@@ -36,7 +36,7 @@ const ScuffedSelect = (props: Props) => {
         <SelectPrimitive.ScrollUpButton className="flex items-center justify-center bg-slate-900 text-gray-700 ">
           <FaChevronUp />
         </SelectPrimitive.ScrollUpButton>
-        <SelectPrimitive.Viewport className="rounded-lg bg-gray-700 p-2 shadow-lg">
+        <SelectPrimitive.Viewport className=" rounded-lg bg-gray-700 p-2 shadow-lg">
           <SelectPrimitive.Group>
             {props.values.map((string, idx) => (
               <SelectPrimitive.Item
@@ -49,14 +49,14 @@ const ScuffedSelect = (props: Props) => {
                   {string}
                 </SelectPrimitive.ItemText>
                 <SelectPrimitive.ItemIndicator className="absolute left-2 inline-flex items-center">
-                  <FaCheck />
+                  <FaCheck className="h-4 w-4" />
                 </SelectPrimitive.ItemIndicator>
               </SelectPrimitive.Item>
             ))}
           </SelectPrimitive.Group>
         </SelectPrimitive.Viewport>
         <SelectPrimitive.ScrollDownButton className="flex items-center justify-center text-gray-700">
-          <FaChevronDown />
+          <FaChevronDown className="h-4 w-4" />
         </SelectPrimitive.ScrollDownButton>
       </SelectPrimitive.Content>
     </SelectPrimitive.Root>
