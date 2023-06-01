@@ -26,6 +26,7 @@ export const createLineupForm = z.object({
     (val) => Object.values(val as Array<imageFile>),
     z.array(z.any())
   ),
+  YTLink: z.string().optional(), // remember to properly
 });
 
 export const splitFileIntoParts = (file: File) => {
@@ -86,7 +87,6 @@ const Create = () => {
     },
   });
 
-  // NB! a failed S3 upload still counts as success, look into it
   const { mutate } = api.lineup.create.useMutation({
     onSuccess: (data) => {
       toast.remove();
@@ -206,6 +206,7 @@ const Create = () => {
       text: formInput.text,
       isSetup: formInput.isSetup,
       previewImg: previewImg,
+      YTLink: formInput.YTLink,
       image: createdUrls, // for now set it to be the 2nd element
     };
 
@@ -323,6 +324,22 @@ const Create = () => {
             <label className="inline-flex items-center font-medium">
               Is a setup
             </label>
+          </div>
+
+          <h3>
+            Do at least one of the options below: link to a youtube video of the
+            lineup or upload your own files
+          </h3>
+          <div className="flex flex-col space-y-1">
+            <label className="text-sm font-medium">
+              YouTube Link of lineup
+            </label>
+            <input
+              placeholder="YouTube link"
+              className="text-white"
+              {...register("YTLink")}
+              disabled={isSubmitting}
+            />
           </div>
 
           <Controller

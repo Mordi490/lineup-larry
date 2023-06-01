@@ -4,7 +4,7 @@ import { api } from "../utils/api";
 
 type voteProps = {
   votes: number;
-  id: string; // queryParam
+  lineupId: string; // queryParam
 };
 
 export const Votes = (props: voteProps) => {

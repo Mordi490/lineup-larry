@@ -146,17 +146,38 @@ const Lineups = () => {
                   </div>
 
                   <Link href={`/lineup/${lineup.id}`}>
-                    {/* inserts a placeholder image if the lineup is just a video file or the img is missing */}
-                    <ImageWithFallback
-                      src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
-                        lineup.image.split(",")[lineup.previewImg]
-                      }`}
-                      onError={() => PlaceholderImage}
-                      fallbackSrc={PlaceholderImage}
-                      alt="screenshot from lineup"
-                      width={1280}
-                      height={720}
-                    />
+                    {lineup.image?.length ? (
+                      <ImageWithFallback
+                        src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                          lineup.image?.length &&
+                          lineup.image.split(",")[lineup.previewImg]
+                        }`}
+                        onError={() => PlaceholderImage}
+                        fallbackSrc={PlaceholderImage}
+                        alt="screenshot from lineup"
+                        width={1280}
+                        height={720}
+                      />
+                    ) : lineup.YTLink ? (
+                      <Image
+                        width={1280}
+                        height={720}
+                        alt="Thumbnail for lineup"
+                        src={`https://img.youtube.com/vi/${lineup.YTLink}/maxresdefault.jpg`}
+                      />
+                    ) : (
+                      <ImageWithFallback
+                        src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
+                          lineup.image?.length &&
+                          lineup.image.split(",")[lineup.previewImg]
+                        }`}
+                        onError={() => PlaceholderImage}
+                        fallbackSrc={PlaceholderImage}
+                        alt="screenshot from lineup"
+                        width={1280}
+                        height={720}
+                      />
+                    )}
                   </Link>
                 </article>
               ))

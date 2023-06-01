@@ -30,6 +30,7 @@ const config = withPlausibleProxy()({
       "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)
       "t3-larry-bucket.s3.eu-west-2.amazonaws.com",
       "https://i.pinimg.com", // used for blurring profile pic til user's image is being fetched
+      "img.youtube.com", // used for thumbnails from YT 
     ],
   },
 });

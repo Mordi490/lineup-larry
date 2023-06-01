@@ -27,6 +27,7 @@ const defaultLineupSelect = Prisma.validator<Prisma.LineupSelect>()({
   text: true,
   votes: true,
   isSetup: true,
+  YTLink: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -472,6 +473,7 @@ export const lineupRouter = createTRPCRouter({
           map: input.map,
           previewImg: input.previewImg,
           isSetup: input.isSetup,
+          YTLink: input.YTLink,
           userId: input.userId,
           creator: ctx.session.user.name as string,
         },
@@ -574,22 +576,26 @@ export const lineupRouter = createTRPCRouter({
         });
       }
 
-      // list has have following shape: { Key: <actual_key> }
-      const list = lineup.image.split(",").map((imgUrl) => ({ Key: imgUrl }));
+      if (lineup.image !== null) {
+        // list has have following shape: { Key: <actual_key> }
+        const list = lineup.image
+          ?.split(",")
+          .map((imgUrl) => ({ Key: imgUrl }));
 
-      const params = {
-        Bucket: env.AWS_BUCKET_NAME,
-        Delete: {
-          Objects: list,
-        },
-      };
+        const params = {
+          Bucket: env.AWS_BUCKET_NAME,
+          Delete: {
+            Objects: list,
+          },
+        };
 
-      s3.send(new DeleteObjectsCommand(params))
-        .then((data) => {
-          //console.log("successfully deleted data!", data);
-        })
-        .catch((err) => {
-          //console.error("Failed to delete data", err);
-        });
+        s3.send(new DeleteObjectsCommand(params))
+          .then((data) => {
+            //console.log("successfully deleted data!", data);
+          })
+          .catch((err) => {
+            //console.error("Failed to delete data", err);
+          });
+      }
     }),
 });

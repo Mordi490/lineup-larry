@@ -23,6 +23,7 @@ export const createLineupSchema = z.object({
   isSetup: z.boolean(),
   previewImg: z.number().nonnegative(), // >= 0
   image: z.any(),
+  YTLink: z.string().optional(),
 });
 
 export const editLineupSchema = z.object({
@@ -33,10 +34,11 @@ export const editLineupSchema = z.object({
   isSetup: z.boolean(),
   previewImg: z.number().nonnegative(),
   image: z.any(),
+  YTLink: z.string().optional(),
 });
 
 /**
- * Attempt at file upload validationF
+ * Attempt at file upload validation
  * any()
     .refine((files) => files?.length == 1, "Image is required")
     .refine((files) => files?.[0].size <= MAX_FILE_SIZE, "Max file size is 5MB")

@@ -106,26 +106,36 @@ const SpecificLineup = () => {
             </Button>
           </div>
         ) : null}
-        {lineupQuery.image.split(",").map((urlId) => (
-          <div className="my-4 mx-auto" key={urlId}>
-            {urlId.includes("video") ? (
-              <video
-                controls
-                src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
-              />
-            ) : (
-              <Image
-                placeholder="blur"
-                blurDataURL={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
-                onError={() => ErrImg}
-                src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
-                alt="Valorant screenshot"
-                width={1080}
-                height={600}
-              />
-            )}
-          </div>
-        ))}
+        {lineupQuery.image?.length
+          ? lineupQuery.image.split(",").map((urlId) => (
+              <div className="my-4 mx-auto" key={urlId}>
+                {urlId.includes("video") ? (
+                  <video
+                    controls
+                    src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+                  />
+                ) : (
+                  <Image
+                    placeholder="blur"
+                    blurDataURL={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+                    onError={() => ErrImg}
+                    src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${urlId}`}
+                    alt="Valorant screenshot"
+                    width={1080}
+                    height={600}
+                  />
+                )}
+              </div>
+            ))
+          : null}
+        {lineupQuery.YTLink ? (
+          <iframe
+            className="aspect-video"
+            title={lineupQuery.title}
+            sandbox="allow-same-origin allow-forms allow-popups allow-scripts allow-presentation"
+            src={`https://youtube.com/embed/${lineupQuery.YTLink}?autoplay=0`}
+          ></iframe>
+        ) : null}
       </div>
       {/* This is for mobile*/}
       <div className="sm:hidden">
