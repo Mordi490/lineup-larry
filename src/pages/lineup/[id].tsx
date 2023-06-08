@@ -141,7 +141,7 @@ const SpecificLineup = () => {
       <div className="sm:hidden">
         <div className="flex flex-col items-center">
           <div className="my-2">
-            <Votes id={id} votes={lineupQuery.votes} />
+            <Votes lineupId={id} votes={lineupQuery.votes} />
           </div>
           <div className="my-2">{data?.user ? <GroupDialog /> : null}</div>
         </div>
@@ -149,7 +149,7 @@ const SpecificLineup = () => {
       {/* This is for non-mobile*/}
       <div className="hidden items-center justify-between sm:flex lg:justify-around">
         <div className="my-2 mx-4">
-          <Votes id={id} votes={lineupQuery.votes} />
+          <Votes lineupId={id} votes={lineupQuery.votes} />
         </div>
         <div className="my-2 mx-4">{data?.user ? <GroupDialog /> : null}</div>
       </div>

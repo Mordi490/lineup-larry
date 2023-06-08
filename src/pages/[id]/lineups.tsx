@@ -255,7 +255,7 @@ const Lineups = () => {
                                 <Image
                                   placeholder="blur"
                                   blurDataURL={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
-                                    ln.image.split(",")[ln.previewImg]
+                                    ln.image?.split(",")[ln.previewImg]
                                   }`}
                                   onError={() => PepeHands}
                                   className="hover:cursor-pointer"
@@ -263,7 +263,7 @@ const Lineups = () => {
                                   height={600}
                                   alt="Valorant screenshot"
                                   src={`https://t3-larry-bucket.s3.eu-west-2.amazonaws.com/${
-                                    ln.image.split(",")[ln.previewImg]
+                                    ln.image?.split(",")[ln.previewImg]
                                   }`}
                                 />
                               </Link>
