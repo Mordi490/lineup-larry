@@ -63,7 +63,7 @@ model Lineup {
     updatedAt  DateTime  @updatedAt
     previewImg Int
     image      String?
-    YTID       String?
+    YTLink     String?
     text       String?
     isSetup    Boolean   @default(false)
     votes      Int       @default(0)
