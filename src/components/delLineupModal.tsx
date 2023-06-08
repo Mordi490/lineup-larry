@@ -54,7 +54,7 @@ const DelLineupModal = (data: props) => {
         <a className="capitalize text-neutral-800">Delete</a>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-20 bg-black/50" />
+        <AlertDialog.Overlay className="fixed inset-0 z-20 bg-black/80" />
         <AlertDialog.Content
           className="fixed top-[50%]
                       left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%]

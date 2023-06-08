@@ -24,7 +24,7 @@ const FilterDialog = (props: Props) => {
         Filter
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-30 bg-black/50" />
+        <Dialog.Overlay className="fixed inset-0 z-30 bg-black/80" />
         <Dialog.Content className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] flex-col rounded-xl bg-gray-800 p-4 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
           <Dialog.Title className="text-center text-lg font-semibold">
             Filters

@@ -220,7 +220,7 @@ const Lineups = () => {
                     </button>
                   </div>
                   <Dialog.Portal>
-                    <Dialog.Overlay className="fixed inset-0 z-20 grid items-center overflow-y-auto bg-black/50">
+                    <Dialog.Overlay className="fixed inset-0 z-20 grid items-center overflow-y-auto bg-black/80">
                       <Dialog.Content className="z-50 mx-auto w-[95vw] max-w-2xl flex-col rounded-lg bg-gray-800 p-8 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:w-full">
                         <Dialog.Title className="text-center text-lg font-semibold">
                           {gr.name}
