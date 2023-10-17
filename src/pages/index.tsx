@@ -7,9 +7,13 @@ import { useEffect } from "react";
 const Home: NextPage = () => {
   useEffect(() => {
     return () => {
-      toast.error(
-        "FYI this site a WIP, therefore odd design choices and errors may occur"
-      );
+      const hasSeenToast = localStorage.getItem("hasSeenToast")
+      if (!hasSeenToast) {
+        toast.error(
+          "NB! this site a WIP, therefore odd design choices and errors may occur"
+        );
+        localStorage.setItem("hasSeenToast", "true");
+      }
     };
   }, []);
 
