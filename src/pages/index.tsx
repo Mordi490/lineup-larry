@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import { toast } from "react-hot-toast";
 import Layout from "../components/layout";
 import { useEffect } from "react";
+import { AlertCircle } from "lucide-react";
 
 const Home: NextPage = () => {
   useEffect(() => {
@@ -10,7 +11,7 @@ const Home: NextPage = () => {
       const hasSeenToast = localStorage.getItem("hasSeenToast")
       if (!hasSeenToast) {
         toast.error(
-          "NB! this site a WIP, therefore odd design choices and errors may occur"
+          "NB! this site a WIP, therefore odd design choices and errors may occur", { duration: 8000, icon: <AlertCircle size={64} fill="#FFD700"  /> }
         );
         localStorage.setItem("hasSeenToast", "true");
       }
