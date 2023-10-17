@@ -4,7 +4,7 @@ import { z } from "zod";
 import { agentList, mapList } from "../../../../utils/enums";
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../db";
-import { s3 } from "../aws/s3";
+import { myS3Client } from "../aws/s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
@@ -484,7 +484,7 @@ export const lineupRouter = createTRPCRouter({
   createPresignedUrl: protectedProcedure
     .input(z.object({ fileType: z.string(), key: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await createPresignedPost(s3, {
+      return await createPresignedPost(myS3Client, {
         Bucket: env.AWS_BUCKET_NAME,
         Key: input.key,
         Expires: 3600, // the user has 1 hour to use the presigned URL
@@ -499,7 +499,7 @@ export const lineupRouter = createTRPCRouter({
       const { key, totalFileParts } = input;
 
       const uploadId = (
-        await s3.createMultipartUpload({
+        await myS3Client.createMultipartUpload({
           Bucket: env.AWS_BUCKET_NAME,
           Key: key,
         })
@@ -525,7 +525,7 @@ export const lineupRouter = createTRPCRouter({
           PartNumber: i,
         });
 
-        const url = getSignedUrl(s3, uploadPartCommand).then((url) => ({
+        const url = getSignedUrl(myS3Client, uploadPartCommand).then((url) => ({
           url,
           partNumber: i,
         }));
@@ -550,7 +550,7 @@ export const lineupRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { key, uploadId, parts } = input;
 
-      const completeMultipartUpload = await s3.completeMultipartUpload({
+      const completeMultipartUpload = await myS3Client.completeMultipartUpload({
         Bucket: env.AWS_BUCKET_NAME,
         Key: key,
         UploadId: uploadId,
@@ -589,7 +589,7 @@ export const lineupRouter = createTRPCRouter({
           },
         };
 
-        s3.send(new DeleteObjectsCommand(params))
+        myS3Client.send(new DeleteObjectsCommand(params))
           .then((data) => {
             //console.log("successfully deleted data!", data);
           })
