@@ -33,7 +33,7 @@
     "clsx": "^1.2.1",
     "dotenv": "^16.0.3",
     "lucide-react": "^0.220.0",
-    "next": "^12.2.4",
+    "next": "^13.5.0",
     "next-auth": "^4.20.1",
     "next-plausible": "^3.6.3",
     "react": "18.2.0",
