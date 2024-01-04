@@ -26,6 +26,7 @@ enum Map {
     PEARL
     FRACTURE
     LOTUS
+    SUNSET
 }
 
 enum Agent {
@@ -49,6 +50,9 @@ enum Agent {
     NEON
     FADE
     HARBOR
+    GEKKO
+    ISO
+    DEADLOCK
 }
 
 model Lineup {
