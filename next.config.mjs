@@ -1,17 +1,20 @@
-import { env } from "./src/env/server.mjs";
-
 import { withPlausibleProxy } from "next-plausible";
 
 // add whatever headers you need, see: https://nextjs.org/docs/advanced-features/security-headers
 // also this cannot be null, therefore I added a random example
-const securityHeaders = [{
-  key: 'X-Frame-Options',
-  value: 'SAMEORIGIN'
-}];
+const securityHeaders = [
+  {
+    key: "X-Frame-Options",
+    value: "SAMEORIGIN",
+  },
+];
 
 const config = withPlausibleProxy()({
   reactStrictMode: true,
   swcMinify: true,
+  experimental: {
+    serverActions: true,
+  },
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
@@ -30,7 +33,7 @@ const config = withPlausibleProxy()({
       "s3.eu-west-2.amazonaws.com", // PICK ONE (I THINK)
       "t3-larry-bucket.s3.eu-west-2.amazonaws.com",
       "https://i.pinimg.com", // used for blurring profile pic til user's image is being fetched
-      "img.youtube.com", // used for thumbnails from YT 
+      "img.youtube.com", // used for thumbnails from YT
     ],
   },
 });
