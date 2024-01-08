@@ -2,14 +2,14 @@ import { Lineup, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { agentList, mapList } from "../../../../utils/enums";
-import { env } from "../../../env/server.mjs";
-import { prisma } from "../../db";
+import { db } from "../../db";
 import { myS3Client } from "../aws/s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { createLineupSchema, editLineupSchema } from "./schemas/lineup.schema";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { UploadPartCommand, DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { env } from "../../../app/env";
 
 /**
  * Default selector for Lineup.
@@ -43,7 +43,7 @@ export const lineupRouter = createTRPCRouter({
   byId: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      const lineup = await prisma.lineup.findUnique({
+      const lineup = await db.lineup.findUnique({
         where: {
           id: input.id,
         },
@@ -60,7 +60,7 @@ export const lineupRouter = createTRPCRouter({
   byAuthor: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      const lineup = await prisma.lineup.findUnique({
+      const lineup = await db.lineup.findUnique({
         where: {
           id: input.id,
         },
@@ -77,15 +77,15 @@ export const lineupRouter = createTRPCRouter({
   userStats: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      const numOfLineup = await prisma.lineup.aggregate({
+      const numOfLineup = await db.lineup.aggregate({
         where: { userId: input.id },
         _count: { id: true },
       });
-      const netVotes = await prisma.lineup.aggregate({
+      const netVotes = await db.lineup.aggregate({
         where: { userId: input.id },
         _sum: { votes: true },
       });
-      const joinedAt = await prisma.user.findFirst({
+      const joinedAt = await db.user.findFirst({
         where: { id: input.id },
         select: { joinedAt: true },
       });
@@ -99,12 +99,12 @@ export const lineupRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
         userID: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const limit = input.limit ?? 21;
       const { cursor } = input;
-      const items = await prisma.lineup.findMany({
+      const items = await db.lineup.findMany({
         take: limit + 1, // get an extra item at the end which we'll use as next cursor
         where: {
           userId: input.userID,
@@ -131,12 +131,12 @@ export const lineupRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
         userID: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const limit = input.limit ?? 21;
       const { cursor } = input;
-      const items = await prisma.lineup.findMany({
+      const items = await db.lineup.findMany({
         take: limit + 1, // get an extra item at the end which we'll use as next cursor
         where: {
           userId: input.userID,
@@ -167,7 +167,7 @@ export const lineupRouter = createTRPCRouter({
         map: z.enum(mapList).nullish(),
         // TODO after agents & maps
         //setup: z.boolean().optional(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const limit = input.limit ?? 20;
@@ -183,7 +183,7 @@ export const lineupRouter = createTRPCRouter({
           // for every scenario check if map and agent are "included"
           // just agent
           if (input.agent != null && input.map == null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { agent: input.agent },
               cursor: cursor ? { id: cursor } : undefined,
@@ -195,7 +195,7 @@ export const lineupRouter = createTRPCRouter({
           }
           // just map
           if (input.agent == null && input.map != null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { map: input.map },
               cursor: cursor ? { id: cursor } : undefined,
@@ -207,7 +207,7 @@ export const lineupRouter = createTRPCRouter({
           }
           // both agent & map hav been selected
           if (input.agent != null && input.map != null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { AND: [{ agent: input.agent }, { map: input.map }] },
               cursor: cursor ? { id: cursor } : undefined,
@@ -219,7 +219,7 @@ export const lineupRouter = createTRPCRouter({
           }
 
           // they are NOT included, eg. the default/initial state
-          items = await prisma.lineup.findMany({
+          items = await db.lineup.findMany({
             take: limit + 1, // get an extra item at the end which we'll use as next cursor
             where: {},
             cursor: cursor ? { id: cursor } : undefined,
@@ -230,7 +230,7 @@ export const lineupRouter = createTRPCRouter({
           break;
         case "most-likes":
           if (input.agent != null && input.map == null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { agent: input.agent },
               cursor: cursor ? { id: cursor } : undefined,
@@ -241,7 +241,7 @@ export const lineupRouter = createTRPCRouter({
             break;
           }
           if (input.agent == null && input.map != null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { map: input.map },
               cursor: cursor ? { id: cursor } : undefined,
@@ -252,7 +252,7 @@ export const lineupRouter = createTRPCRouter({
             break;
           }
           if (input.agent != null && input.map != null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { AND: [{ agent: input.agent }, { map: input.map }] },
               cursor: cursor ? { id: cursor } : undefined,
@@ -262,7 +262,7 @@ export const lineupRouter = createTRPCRouter({
             });
             break;
           }
-          items = await prisma.lineup.findMany({
+          items = await db.lineup.findMany({
             take: limit + 1, // get an extra item at the end which we'll use as next cursor
             where: {},
             cursor: cursor ? { id: cursor } : undefined,
@@ -273,7 +273,7 @@ export const lineupRouter = createTRPCRouter({
           break;
         case "recent":
           if (input.agent != null && input.map == null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { agent: input.agent },
               cursor: cursor ? { id: cursor } : undefined,
@@ -284,7 +284,7 @@ export const lineupRouter = createTRPCRouter({
             break;
           }
           if (input.agent == null && input.map != null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { map: input.map },
               cursor: cursor ? { id: cursor } : undefined,
@@ -295,7 +295,7 @@ export const lineupRouter = createTRPCRouter({
             break;
           }
           if (input.agent != null && input.map != null) {
-            items = await prisma.lineup.findMany({
+            items = await db.lineup.findMany({
               take: limit + 1, // get an extra item at the end which we'll use as next cursor
               where: { AND: [{ agent: input.agent }, { map: input.map }] },
               cursor: cursor ? { id: cursor } : undefined,
@@ -307,7 +307,7 @@ export const lineupRouter = createTRPCRouter({
           }
         default:
           // defaults to recent
-          items = await prisma.lineup.findMany({
+          items = await db.lineup.findMany({
             take: limit + 1, // get an extra item at the end which we'll use as next cursor
             where: {},
             cursor: cursor ? { id: cursor } : undefined,
@@ -327,16 +327,10 @@ export const lineupRouter = createTRPCRouter({
         nextCursor,
       };
     }),
-  // doesn't get used but
-  getAllLineups: publicProcedure.query(async () => {
-    return await prisma.lineup.findMany({
-      orderBy: { votes: "asc" },
-    });
-  }),
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const lineup = await ctx.prisma.lineup.findUnique({
+      const lineup = await ctx.db.lineup.findUnique({
         where: { id: input.id },
       });
 
@@ -353,7 +347,7 @@ export const lineupRouter = createTRPCRouter({
           message: "You are not authorized to perform this action",
         });
       }
-      await ctx.prisma.lineup.delete({
+      await ctx.db.lineup.delete({
         where: { id: lineup?.id },
       });
       return input.id;
@@ -362,7 +356,7 @@ export const lineupRouter = createTRPCRouter({
     .input(z.object({ id: z.string(), updatedData: editLineupSchema }))
     .mutation(async ({ ctx, input }) => {
       // remove everything above this line as soon as we are sure this is not the culprit
-      const lineup = await ctx.prisma.lineup.update({
+      const lineup = await ctx.db.lineup.update({
         where: { id: input.id },
         data: {
           title: input.updatedData.title,
@@ -389,14 +383,14 @@ export const lineupRouter = createTRPCRouter({
         });
       }
       // find the lineup
-      const lineup = await prisma.lineup.findFirstOrThrow({
+      const lineup = await ctx.db.lineup.findFirstOrThrow({
         where: { id: input.id },
       });
 
       const sent = input.sentiment == "like" ? 1 : -1;
 
       // see if a vote exists already exists
-      const vote = await prisma.vote.findFirst({
+      const vote = await ctx.db.vote.findFirst({
         where: {
           AND: [{ lineupId: lineup.id }, { userId: ctx.session?.user?.id }],
         },
@@ -405,12 +399,12 @@ export const lineupRouter = createTRPCRouter({
       // if the user's sentiment is the same as current: interpret as "undo"
       if (vote?.sentiment == input.sentiment) {
         // adjust votes
-        await prisma.lineup.update({
+        await ctx.db.lineup.update({
           where: { id: lineup.id },
           data: { votes: { decrement: sent } },
         });
         // delete the vote record
-        await prisma.vote.delete({
+        await ctx.db.vote.delete({
           where: { id: vote.id },
         });
         return "Vote undone";
@@ -418,7 +412,7 @@ export const lineupRouter = createTRPCRouter({
 
       // no vote exists: create one
       if (!vote) {
-        const vote = await prisma.vote.create({
+        const vote = await ctx.db.vote.create({
           data: {
             sentiment: input.sentiment,
             lineupId: lineup.id,
@@ -427,7 +421,7 @@ export const lineupRouter = createTRPCRouter({
         });
 
         // NB! fails when "neutral" state gets added
-        await prisma.lineup.update({
+        await ctx.db.lineup.update({
           where: { id: input.id },
           data: { votes: { increment: sent } },
         });
@@ -442,13 +436,13 @@ export const lineupRouter = createTRPCRouter({
       }
 
       // update Vote entity with new value
-      await prisma.vote.update({
+      await ctx.db.vote.update({
         where: { id: vote.id },
         data: { sentiment: input.sentiment },
       });
 
       // update Votes for lineup
-      await prisma.lineup.update({
+      await ctx.db.lineup.update({
         where: { id: input.id },
         data: { votes: { increment: sent } },
       });
@@ -464,7 +458,7 @@ export const lineupRouter = createTRPCRouter({
         });
       }
 
-      const lineup = await ctx.prisma.lineup.create({
+      const lineup = await ctx.db.lineup.create({
         data: {
           title: input.title,
           text: input.text,
@@ -492,7 +486,6 @@ export const lineupRouter = createTRPCRouter({
       });
     }),
   // heavily based on: https://github.dev/nramkissoon/t3-s3
-  // TODO: test thatit works
   createMultipartUpload: protectedProcedure
     .input(z.object({ key: z.string(), totalFileParts: z.number() }))
     .mutation(async ({ ctx, input }) => {
@@ -545,7 +538,7 @@ export const lineupRouter = createTRPCRouter({
         key: z.string(),
         uploadId: z.string(),
         parts: z.array(z.object({ ETag: z.string(), PartNumber: z.number() })),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { key, uploadId, parts } = input;
@@ -565,7 +558,7 @@ export const lineupRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       // alternative approach: set input to be an array of S3 keys and just blindly send them
-      const lineup = await ctx.prisma.lineup.findUnique({
+      const lineup = await ctx.db.lineup.findUnique({
         where: { id: input.id },
       });
 
@@ -589,7 +582,8 @@ export const lineupRouter = createTRPCRouter({
           },
         };
 
-        myS3Client.send(new DeleteObjectsCommand(params))
+        myS3Client
+          .send(new DeleteObjectsCommand(params))
           .then((data) => {
             //console.log("successfully deleted data!", data);
           })

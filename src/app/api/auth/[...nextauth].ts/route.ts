@@ -5,8 +5,8 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
-import { db } from "./db";
-import { env } from "../app/env";
+import { db } from "../../../../server/db";
+import { env } from "../../../env";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
+    // TODO: add check for updated discord images
   },
   adapter: PrismaAdapter(db),
   providers: [

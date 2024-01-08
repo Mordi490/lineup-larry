@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../db";
+import { db } from "../../db";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -23,7 +23,7 @@ export const groupRouter = createTRPCRouter({
   publicGroupsFromUser: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      const groups = await prisma.group.findMany({
+      const groups = await db.group.findMany({
         where: { AND: [{ userId: input.id }, { isPublic: true }] },
         select: {
           name: true,
@@ -38,7 +38,7 @@ export const groupRouter = createTRPCRouter({
   getSpecificGroup: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      const group = await prisma.group.findUniqueOrThrow({
+      const group = await db.group.findUniqueOrThrow({
         where: { id: input.id },
       });
       return group;
@@ -46,7 +46,7 @@ export const groupRouter = createTRPCRouter({
   createGroup: protectedProcedure
     .input(createGroupInput)
     .mutation(async ({ ctx, input }) => {
-      const lineup = await ctx.prisma.lineup.findUnique({
+      const lineup = await ctx.db.lineup.findUnique({
         where: { id: input.lineupId },
       });
 
@@ -57,11 +57,11 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const user = await ctx.prisma.user.findUnique({
+      const user = await ctx.db.user.findUnique({
         where: { id: input.userId },
       });
 
-      const group = await ctx.prisma.group.create({
+      const group = await ctx.db.group.create({
         data: {
           name: input.name,
           isPublic: input.isPublic,
@@ -74,14 +74,14 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
   getPrivateGroups: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.group.findMany({
+    return await ctx.db.group.findMany({
       where: {
         AND: [{ userId: ctx.session?.user?.id }, { isPublic: false }],
       },
     });
   }),
   getAllGroups: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.group.findMany({
+    return await ctx.db.group.findMany({
       where: { userId: ctx.session?.user?.id },
       select: {
         id: true,
@@ -93,7 +93,7 @@ export const groupRouter = createTRPCRouter({
   updateGroup: protectedProcedure
     .input(updateGroupInput)
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.group.update({
+      return await ctx.db.group.update({
         where: { id: input.id },
         data: {
           isPublic: input.isPublic,
@@ -105,7 +105,7 @@ export const groupRouter = createTRPCRouter({
   addToGroup: protectedProcedure
     .input(z.object({ groupId: z.string(), lineupId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.group.update({
+      return await ctx.db.group.update({
         where: { id: input.groupId },
         data: { Lineup: { connect: { id: input.lineupId } } },
       });
@@ -113,7 +113,7 @@ export const groupRouter = createTRPCRouter({
   removeFromGroup: protectedProcedure
     .input(z.object({ lineupId: z.string(), groupId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.group.update({
+      return await ctx.db.group.update({
         data: { Lineup: { disconnect: { id: input.lineupId } } },
         where: { id: input.groupId },
       });
@@ -121,7 +121,7 @@ export const groupRouter = createTRPCRouter({
   deleteGroup: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.group.delete({
+      return await ctx.db.group.delete({
         where: { id: input.id },
       });
     }),

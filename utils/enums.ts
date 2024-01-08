@@ -21,6 +21,9 @@ export const agentList = [
   "NEON",
   "FADE",
   "HARBOR",
+  "DEADLOCK",
+  "GEKKO",
+  "ISO"
 ] as const;
 
 export type zodApprovedAgentEnum = (typeof agentList)[number];
@@ -35,6 +38,7 @@ export const mapList = [
   "LOTUS",
   "PEARL",
   "SPLIT",
+  "SUNSET",
 ] as const;
 
 export type zodApprovedMapEnum = (typeof mapList)[number];

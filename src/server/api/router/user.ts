@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { prisma } from "../../db";
+import { db } from "../../db";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -33,7 +33,7 @@ export const userRouter = createTRPCRouter({
   getUser: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      const user = await prisma?.user.findUnique({
+      const user = await db.user.findUnique({
         where: {
           id: input.id,
         },
@@ -42,11 +42,10 @@ export const userRouter = createTRPCRouter({
 
       return user;
     }),
-
   deleteUser: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
+      const user = await ctx.db.user.findUnique({
         where: { id: input.userId },
       });
 
@@ -58,7 +57,7 @@ export const userRouter = createTRPCRouter({
       }
 
       const id = user?.id;
-      await ctx.prisma.user.delete({
+      await ctx.db.user.delete({
         where: { id: user?.id },
       });
       return {
@@ -68,7 +67,7 @@ export const userRouter = createTRPCRouter({
   getUserSentiment: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const res = await prisma.vote.findFirst({
+      const res = await db.vote.findFirst({
         where: {
           AND: [{ lineupId: input.id }, { userId: ctx.session.user.id }],
         },
@@ -83,7 +82,7 @@ export const userRouter = createTRPCRouter({
   fullUserInfo: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
+      const user = await ctx.db.user.findUnique({
         where: { id: input.id },
         select: privateUserSelect,
       });

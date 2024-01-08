@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
-import { prisma } from "../../db";
+import { db } from "../../db";
 import { TRPCError } from "@trpc/server";
 import { createCommentSchema } from "./schemas/comment.schema";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -22,7 +22,7 @@ export const commentRouter = createTRPCRouter({
   getLineupComments: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      const comments = await prisma.comment.findMany({
+      const comments = await db.comment.findMany({
         where: {
           lineupId: input.id,
         },
@@ -35,7 +35,7 @@ export const commentRouter = createTRPCRouter({
     .input(createCommentSchema)
     .mutation(async ({ ctx, input }) => {
       // find the lineup first
-      const lineup = await ctx.prisma.lineup.findUnique({
+      const lineup = await ctx.db.lineup.findUnique({
         where: { id: input.lineupId },
       });
 
@@ -47,7 +47,7 @@ export const commentRouter = createTRPCRouter({
       }
 
       const user = ctx.session?.user;
-      const comment = await ctx.prisma.comment.create({
+      const comment = await ctx.db.comment.create({
         data: {
           content: input.content,
           userId: user.id as string,
