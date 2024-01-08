@@ -12,9 +12,6 @@ const securityHeaders = [
 const config = withPlausibleProxy()({
   reactStrictMode: true,
   swcMinify: true,
-  experimental: {
-    serverActions: true,
-  },
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
