@@ -1,11 +1,11 @@
+"use client";
+
 import { AiOutlineMenu } from "react-icons/ai";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
-import { getServerAuthSession } from "../../server/auth";
+import { User } from "next-auth";
 
-const NavbarHamburgerMenu = async () => {
-  const session = await getServerAuthSession();
-
+const NavbarHamburgerMenu = ({ user }: { user: User }) => {
   return (
     <nav className="h-12">
       <DropdownMenu.Root>
@@ -17,11 +17,11 @@ const NavbarHamburgerMenu = async () => {
           sideOffset={10}
         >
           {/* cond render for some logged in vs not logged in options */}
-          {session?.user ? (
+          {user ? (
             <DropdownMenu.Item>
               <Link
                 className="rounded-xl p-1 hover:bg-gray-700"
-                href={`/${session.user?.id}/lineups`}
+                href={`/${user?.id}/lineups`}
               >
                 Your Lineups
               </Link>
@@ -37,7 +37,7 @@ const NavbarHamburgerMenu = async () => {
             </Link>
           </DropdownMenu.Item>
 
-          {session?.user?.id ? (
+          {user.id ? (
             <DropdownMenu.Item>
               <Link
                 className="rounded-xl p-1 hover:bg-gray-700"
@@ -48,11 +48,11 @@ const NavbarHamburgerMenu = async () => {
             </DropdownMenu.Item>
           ) : null}
 
-          {session?.user?.id ? (
+          {user.id ? (
             <DropdownMenu.Item>
               <Link
                 className="rounded-xl p-1 hover:bg-gray-700"
-                href={`/user/${session.user?.id}`}
+                href={`/user/${user.id}`}
               >
                 View Profile
               </Link>
@@ -60,7 +60,7 @@ const NavbarHamburgerMenu = async () => {
           ) : null}
 
           {/* expect for one, to login */}
-          {session?.user?.id ? (
+          {user.id ? (
             <DropdownMenu.Item>
               <Link
                 className="rounded-xl p-1 hover:bg-gray-700"
