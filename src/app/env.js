@@ -56,6 +56,10 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+    AWS_IAM_USER_KEY: process.env.AWS_IAM_USER_SECRET,
+    AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+    AWS_IAM_USER_SECRET: process.env.AWS_IAM_USER_SECRET,
+    AWS_S3_REGION: process.env.AWS_S3_REGION,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
