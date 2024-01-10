@@ -1,5 +1,5 @@
-import { S3 } from "@aws-sdk/client-s3"
-import { env } from "../../../env/server.mjs";
+import { S3 } from "@aws-sdk/client-s3";
+import { env } from "../../../app/env";
 
 // init && conf s3 client
 export const myS3Client = new S3({
