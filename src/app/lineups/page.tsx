@@ -152,8 +152,8 @@ const Lineups = () => {
                           lineup.image?.length &&
                           lineup.image.split(",")[lineup.previewImg]
                         }`}
-                        onError={() => "placeholder-img.jpg"}
-                        fallbackSrc={"placeholder-img.jpg"}
+                        onError={() => "/placeholder-img.jpg"}
+                        fallbackSrc={"/placeholder-img.jpg"}
                         alt="screenshot from lineup"
                         width={1280}
                         height={720}
@@ -171,8 +171,8 @@ const Lineups = () => {
                           lineup.image?.length &&
                           lineup.image.split(",")[lineup.previewImg]
                         }`}
-                        onError={() => "placeholder-img.jpg"}
-                        fallbackSrc={"placeholder-img.jpg"}
+                        onError={() => "/placeholder-img.jpg"}
+                        fallbackSrc={"/placeholder-img.jpg"}
                         alt="screenshot from lineup"
                         width={1280}
                         height={720}
