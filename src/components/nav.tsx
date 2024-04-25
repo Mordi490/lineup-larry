@@ -15,7 +15,7 @@ const Nav = ({ title, text, description, name }: Props) => {
   return (
     <>
       <Head>
-        <script defer data-domain="lineuplarry.com" src="https://mordi.dev/js/script.js"></script>
+        <script defer data-domain="lineuplarry.com" src="https://analytics.mordi.dev/js/script.js"></script>
         {title?.length ? (
           <title className="capitalize">{title}</title>
         ) : (
